@@ -6,8 +6,8 @@
 #SBATCH --time=0-04:00:00
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=64gb
-#SBATCH --output=/gscratch/tkishore/MAYO_AIM2/logs/gemma27b_%j.out
-#SBATCH --error=/gscratch/tkishore/MAYO_AIM2/logs/gemma27b_%j.err
+#SBATCH --output=/gscratch/tkishore/MAYO_AIM2/logs/gemma27b_with_conf_%j.out
+#SBATCH --error=/gscratch/tkishore/MAYO_AIM2/logs/gemma27b_with_conf_%j.err
 
 # ==========================================
 # CONFIG
@@ -22,7 +22,7 @@ VLLM_HOST="127.0.0.1"
 VLLM_API_BASE="http://${VLLM_HOST}:${VLLM_PORT}/v1"
 
 PROJECT_DIR="/gscratch/tkishore/MAYO_AIM2/"
-LOG_DIR="${PROJECT_DIR}/logs/Gemma/27B/sql"
+LOG_DIR="${PROJECT_DIR}/logs/Gemma/27B/sql_with_conf"
 mkdir -p "$LOG_DIR"
 
 # ==========================================
@@ -103,6 +103,7 @@ vllm serve "$MODEL_NAME" \
     --max-model-len 16384 \
     --gpu-memory-utilization $GPU_MEM \
     --chat-template-content-format openai \
+    --structured-outputs-config.backend xgrammar \
     > "${LOG_DIR}/vllm_server_${SLURM_JOB_ID}.log" 2>&1 &
 
 VLLM_PID=$!
@@ -129,6 +130,7 @@ echo ""
 
 python vllm_api_inference.py \
     --api_base "$VLLM_API_BASE" \
+    --api_key "dummy" \
     --model_name "$MODEL_NAME" \
     --input_file data/dataset.jsonl \
     --output_file "$OUTPUT_FILE" \
