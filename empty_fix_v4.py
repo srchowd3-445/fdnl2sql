@@ -1,10 +1,23 @@
+#!/usr/bin/env python3
 """
-empty_fix_v4_fixed.py
+empty_fix_v5_nodrop_bruteforce_fixedsplit.py
 
-V4 with robustness fixes:
-- Safe-unpack wrapper around repair functions (prevents "cannot unpack NoneType")
-- Traceback captured in output JSON for debugging
-- Defensive checks so every stage either returns a valid tuple or is treated as failure gracefully
+Fixes EMPTY gt_sql queries WITHOUT removing any WHERE predicates.
+Only changes values/thresholds inside existing predicates.
+
+Pipeline:
+  1) Replace ONE predicate value
+  2) Replace TWO predicate values (bounded)
+  3) Replace MANY predicate values (greedy)
+  4) GUARANTEED brute-force: ROW-BACKED fix (rewrites EVERY predicate to match a real row)
+
+Critical fix vs prior versions:
+  - Robust WHERE splitting: do NOT split on AND inside quoted strings
+    (prevents breaking 'Head and Neck' into 'Head' + 'Neck')
+
+Outputs:
+  data/empty_gt_replaced_v5_fixed.json
+  data/empty_gt_unfixed_v5.json
 """
 
 import json
@@ -13,6 +26,7 @@ import sqlite3
 import random
 import traceback
 from difflib import get_close_matches
+from typing import List, Optional, Dict, Any, Tuple
 
 # ===============================
 # CONFIG
@@ -20,15 +34,14 @@ from difflib import get_close_matches
 db_path = "data/database.db"
 input_jsonl = "data/dataset.jsonl"
 table_name = "clinical_trials"
-output_json = "data/empty_gt_replaced_v4_fixed.json"
+
+output_json_fixed = "data/empty_gt_replaced_v5_fixed.json"
+output_json_unfixed = "data/empty_gt_unfixed_v5.json"
 
 MAX_CANDIDATES_PER_COL = 25
 PREFER_CLOSE_MATCH = True
 TRY_ALL_CONDITIONS = True
 
-# -------------------------------
-# VARIABILITY CONFIG
-# -------------------------------
 RANDOM_SEED = 7
 random.seed(RANDOM_SEED)
 
@@ -59,33 +72,23 @@ DEPRIORITIZED_COLS = [
 
 CANDIDATE_CONTEXT_KEEP_FRAC = 0.6
 
-# -------------------------------
-# BRUTE-FORCE / GUARANTEE CONFIG (V4)
-# -------------------------------
 ENABLE_TWO_CONDITION_REPLACE = True
 MAX_PAIR_TRIES = 250
 
-ANCHOR_FALLBACK = True
-ANCHOR_COLS = [
-    "Cancer type",
-    "Trial phase",
-    "Class of ICI",
-    "Name of ICI",
-    "Control arm",
-    "Monotherapy/combination",
-    "Type of combination",
-    "Clinical setting",
-    "Primary endpoint",
-]
+ENABLE_REPLACE_MANY = True
+REPLACE_MANY_MAX_CHANGES = 4
+
+ENABLE_ROW_BACKED_FIX = True
+
+# When row-backed chooses a row: LIMIT 1 can be too deterministic.
+# Optionally randomize: ORDER BY RANDOM() (slower but more variety).
+ROW_BACKED_RANDOM_ROW = False
 
 
 # ===============================
 # SAFETY: always unpack safely
 # ===============================
 def safe_call2(fn, *args, fn_name="func"):
-    """
-    Ensures fn returns a 2-tuple. If not, returns (None, {error...}) instead of crashing.
-    """
     try:
         res = fn(*args)
         if not isinstance(res, tuple) or len(res) != 2:
@@ -113,6 +116,10 @@ def strip_trailing_semicolon(sql: str) -> str:
 
 
 def get_where_clause(sql: str):
+    """
+    Returns (prefix_before_where, where_clause_or_None, suffix_after_where)
+    Handles ORDER BY / GROUP BY / LIMIT after WHERE.
+    """
     sql0 = strip_trailing_semicolon(sql)
     m = re.search(r"\bWHERE\b", sql0, flags=re.IGNORECASE)
     if not m:
@@ -132,10 +139,8 @@ def get_where_clause(sql: str):
     return prefix, where_clause, suffix
 
 
-def split_conditions(where_clause: str):
-    if not where_clause:
-        return []
-    return [p.strip() for p in re.split(r"\s+AND\s+", where_clause, flags=re.IGNORECASE) if p.strip()]
+def safe_ident(name: str) -> str:
+    return '"' + name.replace('"', '""') + '"'
 
 
 def rebuild_sql(prefix: str, conditions, suffix: str):
@@ -144,11 +149,87 @@ def rebuild_sql(prefix: str, conditions, suffix: str):
     return prefix + " WHERE " + " AND ".join(conditions) + (" " + suffix if suffix else "")
 
 
-def safe_ident(name: str) -> str:
-    return '"' + name.replace('"', '""') + '"'
+def execute_rowcount(conn: sqlite3.Connection, sql: str) -> int:
+    sql0 = strip_trailing_semicolon(sql)
+    try:
+        cur = conn.execute(f"SELECT 1 FROM ({sql0}) AS subq LIMIT 1;")
+        return 1 if cur.fetchone() is not None else 0
+    except Exception:
+        cur = conn.execute(sql0)
+        return 1 if cur.fetchone() is not None else 0
 
 
-def parse_condition(cond: str):
+# ===============================
+# IMPORTANT: robust WHERE splitting (do NOT split on AND inside quotes)
+# ===============================
+def split_conditions(where_clause: str) -> List[str]:
+    """
+    Split WHERE clause on AND tokens that are OUTSIDE single quotes.
+    Keeps predicates intact when values contain 'and' (e.g. 'Head and Neck').
+
+    Assumptions:
+    - SQL uses single quotes for string literals
+    - We don't handle nested parentheses boolean logic perfectly; but works well
+      for the dataset format (flat AND chain).
+    """
+    if not where_clause:
+        return []
+
+    s = where_clause.strip()
+    out = []
+    buf = []
+    in_quote = False
+
+    i = 0
+    n = len(s)
+
+    def flush():
+        part = "".join(buf).strip()
+        if part:
+            out.append(part)
+
+    while i < n:
+        ch = s[i]
+
+        if ch == "'":
+            # handle doubled quotes '' inside string
+            if in_quote and i + 1 < n and s[i + 1] == "'":
+                buf.append("''")
+                i += 2
+                continue
+            in_quote = not in_quote
+            buf.append(ch)
+            i += 1
+            continue
+
+        # detect AND outside quotes with word boundaries
+        if not in_quote:
+            if (i + 3 <= n and s[i:i+3].upper() == "AND"):
+                left_ok = (i == 0) or (not s[i-1].isalnum() and s[i-1] != "_")
+                right_ok = (i + 3 == n) or (not s[i+3].isalnum() and s[i+3] != "_")
+                if left_ok and right_ok:
+                    flush()
+                    buf = []
+                    i += 3
+                    # skip whitespace after AND
+                    while i < n and s[i].isspace():
+                        i += 1
+                    continue
+
+        buf.append(ch)
+        i += 1
+
+    flush()
+    return out
+
+
+def parse_condition(cond: str) -> Optional[Dict[str, Any]]:
+    """
+    Supports:
+      "Col" = 'val'
+      "Col" = 2018
+      "Col" >= 4, >, <=, <
+    """
     m = re.match(r'^\s*"([^"]+)"\s*(=|>=|<=|>|<)\s*(.+?)\s*$', cond)
     if not m:
         return None
@@ -166,46 +247,13 @@ def parse_condition(cond: str):
         return None
 
 
-def execute_rowcount(conn: sqlite3.Connection, sql: str) -> int:
-    sql0 = strip_trailing_semicolon(sql)
-    try:
-        cur = conn.execute(f"SELECT 1 FROM ({sql0}) AS subq LIMIT 1;")
-        return 1 if cur.fetchone() is not None else 0
-    except Exception:
-        cur = conn.execute(sql0)
-        return 1 if cur.fetchone() is not None else 0
-
-
-def fetch_one_row_dict(conn: sqlite3.Connection, sql: str):
-    sql0 = strip_trailing_semicolon(sql)
-    cur = conn.execute(sql0)
-    if cur.description is None:
-        return None
-    cols = [d[0] for d in cur.description]
-    row = cur.fetchone()
-    if row is None:
-        return None
-    return dict(zip(cols, row))
-
-
-def build_eq_condition(col: str, val):
-    colq = safe_ident(col)
-    if val is None:
-        return None
-    if isinstance(val, (int, float)):
-        if isinstance(val, float) and val.is_integer():
-            val = int(val)
-        return f"{colq} = {val}"
-    sval = str(val).replace("'", "''")
-    return f"{colq} = '{sval}'"
-
-
 # ===============================
 # Candidate ordering
 # ===============================
 def candidate_order(original_value, candidates):
     if not candidates:
         return []
+
     candidates_str = [str(c) for c in candidates]
     if PREFER_CLOSE_MATCH and original_value is not None:
         close = get_close_matches(
@@ -298,7 +346,7 @@ def order_conditions_for_try(conditions):
 
 
 # ===============================
-# 1-condition replace
+# Fix method 1: replace ONE predicate value
 # ===============================
 def replace_one_condition_to_get_rows(conn, prefix, conditions, suffix):
     sql0 = rebuild_sql(prefix, conditions, suffix)
@@ -307,90 +355,89 @@ def replace_one_condition_to_get_rows(conn, prefix, conditions, suffix):
 
     ordered_conditions = order_conditions_for_try(conditions)
 
-    for original_index, cond, p_target in ordered_conditions:
-        if not p_target:
+    for i, cond, p in ordered_conditions:
+        if not p:
             continue
 
-        target_col = p_target["col"]
-        target_op = p_target["op"]
+        col, op, typ, val = p["col"], p["op"], p["type"], p["val"]
 
-        rest_conditions_raw = [c for j, c in enumerate(conditions) if j != original_index]
-        rest_parsed_all = [parse_condition(c) for c in rest_conditions_raw]
-        rest_parsed_all = [p for p in rest_parsed_all if p is not None]
-        context_parsed = choose_context_subset(rest_parsed_all, keep_frac=CANDIDATE_CONTEXT_KEEP_FRAC)
+        rest_parsed = []
+        for j, c in enumerate(conditions):
+            if j == i:
+                continue
+            pj = parse_condition(c)
+            if pj:
+                rest_parsed.append(pj)
 
-        if target_op == "=" and p_target["type"] == "text":
-            candidates = distinct_values_param(conn, table_name, target_col, context_parsed, limit=5000)
-            candidates = [c for c in candidates if str(c) != str(p_target["val"])]
-            ordered_cands = candidate_order(p_target["val"], candidates)[:MAX_CANDIDATES_PER_COL]
+        context = choose_context_subset(rest_parsed, keep_frac=CANDIDATE_CONTEXT_KEEP_FRAC)
 
-            for cand in ordered_cands:
-                cand_str = str(cand).replace("'", "''")
-                new_cond = f"{safe_ident(target_col)} = '{cand_str}'"
+        if op == "=" and typ == "text":
+            cands = distinct_values_param(conn, table_name, col, context, limit=5000)
+            cands = [x for x in cands if str(x) != str(val)]
+            for cand in candidate_order(val, cands)[:MAX_CANDIDATES_PER_COL]:
+                s = str(cand).replace("'", "''")
+                new_cond = f"{safe_ident(col)} = '{s}'"
                 trial = conditions[:]
-                trial[original_index] = new_cond
-                trial_sql = rebuild_sql(prefix, trial, suffix)
-                if execute_rowcount(conn, trial_sql) > 0:
-                    return trial_sql + ";", {
-                        "replaced": {"column": target_col, "from": cond, "to": new_cond},
-                        "candidate_context_used": [pp["text"] for pp in context_parsed],
-                        "method": "REPLACE_1"
+                trial[i] = new_cond
+                if execute_rowcount(conn, rebuild_sql(prefix, trial, suffix)) > 0:
+                    return rebuild_sql(prefix, trial, suffix) + ";", {
+                        "replaced": {"column": col, "from": cond, "to": new_cond},
+                        "candidate_context_used": [pp["text"] for pp in context],
+                        "method": "REPLACE_1",
                     }
 
-        elif target_op == "=" and p_target["type"] == "num":
-            candidates = distinct_values_param(conn, table_name, target_col, context_parsed, limit=5000)
+        elif op == "=" and typ == "num":
+            cands = distinct_values_param(conn, table_name, col, context, limit=5000)
             nums = []
-            for c in candidates:
+            for x in cands:
                 try:
-                    nums.append(float(c))
+                    nums.append(float(x))
                 except Exception:
-                    continue
+                    pass
             nums = sorted(set(nums))
-            orig = float(p_target["val"])
-            if orig in nums:
-                nums.remove(orig)
+            if float(val) in nums:
+                nums.remove(float(val))
 
             for cand in nums[:MAX_CANDIDATES_PER_COL]:
                 cand_repr = str(int(cand)) if float(cand).is_integer() else str(cand)
-                new_cond = f"{safe_ident(target_col)} = {cand_repr}"
+                new_cond = f"{safe_ident(col)} = {cand_repr}"
                 trial = conditions[:]
-                trial[original_index] = new_cond
-                trial_sql = rebuild_sql(prefix, trial, suffix)
-                if execute_rowcount(conn, trial_sql) > 0:
-                    return trial_sql + ";", {
-                        "replaced": {"column": target_col, "from": cond, "to": new_cond},
-                        "candidate_context_used": [pp["text"] for pp in context_parsed],
-                        "method": "REPLACE_1"
+                trial[i] = new_cond
+                if execute_rowcount(conn, rebuild_sql(prefix, trial, suffix)) > 0:
+                    return rebuild_sql(prefix, trial, suffix) + ";", {
+                        "replaced": {"column": col, "from": cond, "to": new_cond},
+                        "candidate_context_used": [pp["text"] for pp in context],
+                        "method": "REPLACE_1",
                     }
 
-        elif p_target["type"] == "num" and target_op in (">=", ">", "<=", "<"):
-            candidates = distinct_values_param(conn, table_name, target_col, context_parsed, limit=5000)
+        elif typ == "num" and op in (">=", ">", "<=", "<"):
+            cands = distinct_values_param(conn, table_name, col, context, limit=5000)
             nums = []
-            for c in candidates:
+            for x in cands:
                 try:
-                    nums.append(float(c))
+                    nums.append(float(x))
                 except Exception:
-                    continue
+                    pass
+            nums = sorted(set(nums))
             if not nums:
                 continue
-            nums = sorted(set(nums))
-            orig = float(p_target["val"])
-            if target_op in (">=", ">"):
+
+            orig = float(val)
+            if op in (">=", ">"):
                 relaxed = sorted([n for n in nums if n < orig], reverse=True)
             else:
                 relaxed = sorted([n for n in nums if n > orig])
 
             for cand in relaxed[:MAX_CANDIDATES_PER_COL]:
                 cand_repr = str(int(cand)) if float(cand).is_integer() else str(cand)
-                new_cond = f"{safe_ident(target_col)} {target_op} {cand_repr}"
+                new_cond = f"{safe_ident(col)} {op} {cand_repr}"
                 trial = conditions[:]
-                trial[original_index] = new_cond
-                trial_sql = rebuild_sql(prefix, trial, suffix)
-                if execute_rowcount(conn, trial_sql) > 0:
-                    return trial_sql + ";", {
-                        "replaced": {"column": target_col, "from": cond, "to": new_cond},
-                        "candidate_context_used": [pp["text"] for pp in context_parsed],
-                        "method": "REPLACE_1"
+                trial[i] = new_cond
+                if execute_rowcount(conn, rebuild_sql(prefix, trial, suffix)) > 0:
+                    return rebuild_sql(prefix, trial, suffix) + ";", {
+                        "replaced": {"column": col, "from": cond, "to": new_cond},
+                        "candidate_context_used": [pp["text"] for pp in context],
+                        "method": "REPLACE_1",
                     }
 
         if not TRY_ALL_CONDITIONS:
@@ -400,28 +447,25 @@ def replace_one_condition_to_get_rows(conn, prefix, conditions, suffix):
 
 
 # ===============================
-# 2-condition bounded brute force
+# Fix method 2: replace TWO predicate values (bounded)
 # ===============================
 def replace_two_conditions_to_get_rows(conn, prefix, conditions, suffix):
-    parsed = [(idx, cond, parse_condition(cond)) for idx, cond in enumerate(conditions)]
+    parsed = [(idx, conditions[idx], parse_condition(conditions[idx])) for idx in range(len(conditions))]
     parsed = [(i, c, p) for (i, c, p) in parsed if p is not None]
     if len(parsed) < 2:
         return None, {"replaced": None, "method": "REPLACE_2_NOT_ENOUGH_PARSEABLE"}
 
-    ordered = order_conditions_for_try(conditions)
-    ordered_idxs = [t[0] for t in ordered if t[2] is not None]
-
+    ordered_idxs = [t[0] for t in order_conditions_for_try(conditions) if t[2] is not None]
     tries = 0
 
-    def candidates_for(p, context_parsed):
-        col = p["col"]
-        op = p["op"]
-        if op == "=" and p["type"] == "text":
-            vals = distinct_values_param(conn, table_name, col, context_parsed, limit=5000)
-            vals = [v for v in vals if str(v) != str(p["val"])]
-            return candidate_order(p["val"], vals)[:max(8, MAX_CANDIDATES_PER_COL // 2)]
-        if op == "=" and p["type"] == "num":
-            vals = distinct_values_param(conn, table_name, col, context_parsed, limit=5000)
+    def candidates_for(p, context):
+        col, op, typ, val = p["col"], p["op"], p["type"], p["val"]
+        if op == "=" and typ == "text":
+            vals = distinct_values_param(conn, table_name, col, context, limit=5000)
+            vals = [v for v in vals if str(v) != str(val)]
+            return candidate_order(val, vals)[:max(8, MAX_CANDIDATES_PER_COL // 2)]
+        if op == "=" and typ == "num":
+            vals = distinct_values_param(conn, table_name, col, context, limit=5000)
             nums = []
             for v in vals:
                 try:
@@ -429,12 +473,11 @@ def replace_two_conditions_to_get_rows(conn, prefix, conditions, suffix):
                 except Exception:
                     pass
             nums = sorted(set(nums))
-            orig = float(p["val"])
-            if orig in nums:
-                nums.remove(orig)
+            if float(val) in nums:
+                nums.remove(float(val))
             return nums[:max(8, MAX_CANDIDATES_PER_COL // 2)]
-        if p["type"] == "num" and op in (">=", ">", "<=", "<"):
-            vals = distinct_values_param(conn, table_name, col, context_parsed, limit=5000)
+        if typ == "num" and op in (">=", ">", "<=", "<"):
+            vals = distinct_values_param(conn, table_name, col, context, limit=5000)
             nums = []
             for v in vals:
                 try:
@@ -442,7 +485,7 @@ def replace_two_conditions_to_get_rows(conn, prefix, conditions, suffix):
                 except Exception:
                     pass
             nums = sorted(set(nums))
-            orig = float(p["val"])
+            orig = float(val)
             if op in (">=", ">"):
                 relaxed = sorted([n for n in nums if n < orig], reverse=True)
             else:
@@ -474,13 +517,18 @@ def replace_two_conditions_to_get_rows(conn, prefix, conditions, suffix):
             if not pi or not pj:
                 continue
 
-            rest_raw = [c for k, c in enumerate(conditions) if k not in (i, j)]
-            rest_parsed = [parse_condition(c) for c in rest_raw]
-            rest_parsed = [p for p in rest_parsed if p is not None]
-            context_parsed = choose_context_subset(rest_parsed, keep_frac=CANDIDATE_CONTEXT_KEEP_FRAC)
+            rest_parsed = []
+            for k, c in enumerate(conditions):
+                if k in (i, j):
+                    continue
+                pk = parse_condition(c)
+                if pk:
+                    rest_parsed.append(pk)
 
-            cand_i = candidates_for(pi, context_parsed)
-            cand_j = candidates_for(pj, context_parsed)
+            context = choose_context_subset(rest_parsed, keep_frac=CANDIDATE_CONTEXT_KEEP_FRAC)
+
+            cand_i = candidates_for(pi, context)
+            cand_j = candidates_for(pj, context)
             if not cand_i or not cand_j:
                 continue
 
@@ -498,62 +546,222 @@ def replace_two_conditions_to_get_rows(conn, prefix, conditions, suffix):
                     trial = conditions[:]
                     trial[i] = new_i
                     trial[j] = new_j
-                    trial_sql = rebuild_sql(prefix, trial, suffix)
-
-                    if execute_rowcount(conn, trial_sql) > 0:
-                        return trial_sql + ";", {
+                    if execute_rowcount(conn, rebuild_sql(prefix, trial, suffix)) > 0:
+                        return rebuild_sql(prefix, trial, suffix) + ";", {
                             "replaced": {
                                 "pair": [
                                     {"column": pi["col"], "from": conditions[i], "to": new_i},
                                     {"column": pj["col"], "from": conditions[j], "to": new_j},
                                 ]
                             },
-                            "candidate_context_used": [pp["text"] for pp in context_parsed],
-                            "method": "REPLACE_2"
+                            "candidate_context_used": [pp["text"] for pp in context],
+                            "method": "REPLACE_2",
                         }
 
     return None, {"replaced": None, "method": "REPLACE_2_FAILED"}
 
 
 # ===============================
-# Anchor fallback (guarantee)
+# Fix method 3: replace MANY predicate values (greedy)
 # ===============================
-def anchor_fallback_sql(conn, original_sql):
-    prefix, where_clause, suffix = get_where_clause(original_sql)
-    base_sql = prefix + (" " + suffix if suffix else "")
+def replace_many_values_keep_all_preds(conn, prefix, conditions, suffix, max_changes=4):
+    def has_rows(conds):
+        return execute_rowcount(conn, rebuild_sql(prefix, conds, suffix)) > 0
 
-    row = fetch_one_row_dict(conn, base_sql)
-    if not row:
-        if execute_rowcount(conn, base_sql) > 0:
-            return base_sql + ";", {"fallback": "DROP_WHERE_BASE", "method": "ANCHOR_FALLBACK"}
-        return None, {"fallback": "NO_ROW_FROM_BASE", "method": "ANCHOR_FALLBACK"}
+    if has_rows(conditions):
+        return rebuild_sql(prefix, conditions, suffix) + ";", {"method": "REPLACE_MANY_ALREADY_OK", "changes": []}
 
-    anchors = [c for c in ANCHOR_COLS if c in row and row[c] is not None]
-    random.shuffle(anchors)
+    conds = conditions[:]
+    changes = []
 
-    for a in anchors[:10]:
-        cond = build_eq_condition(a, row[a])
-        if not cond:
-            continue
-        trial_sql = prefix + " WHERE " + cond + (" " + suffix if suffix else "")
-        if execute_rowcount(conn, trial_sql) > 0:
-            return trial_sql + ";", {"fallback": "ANCHOR_1", "anchors": [cond], "method": "ANCHOR_FALLBACK"}
+    for _ in range(max_changes):
+        made_progress = False
+        ordered = order_conditions_for_try(conds)
 
-    for i in range(min(8, len(anchors))):
-        for j in range(i + 1, min(8, len(anchors))):
-            c1 = build_eq_condition(anchors[i], row[anchors[i]])
-            c2 = build_eq_condition(anchors[j], row[anchors[j]])
-            if not c1 or not c2:
+        for idx, old_cond, p in ordered:
+            if not p:
                 continue
-            where = f"{c1} AND {c2}"
-            trial_sql = prefix + " WHERE " + where + (" " + suffix if suffix else "")
-            if execute_rowcount(conn, trial_sql) > 0:
-                return trial_sql + ";", {"fallback": "ANCHOR_2", "anchors": [c1, c2], "method": "ANCHOR_FALLBACK"}
+            col, op, typ, val = p["col"], p["op"], p["type"], p["val"]
 
-    if execute_rowcount(conn, base_sql) > 0:
-        return base_sql + ";", {"fallback": "DROP_WHERE_BASE", "method": "ANCHOR_FALLBACK"}
+            rest_parsed = []
+            for j, c in enumerate(conds):
+                if j == idx:
+                    continue
+                pj = parse_condition(c)
+                if pj:
+                    rest_parsed.append(pj)
 
-    return None, {"fallback": "FAILED", "method": "ANCHOR_FALLBACK"}
+            context = choose_context_subset(rest_parsed, keep_frac=CANDIDATE_CONTEXT_KEEP_FRAC)
+
+            if op == "=" and typ == "text":
+                try:
+                    cands = distinct_values_param(conn, table_name, col, context, limit=5000)
+                except Exception:
+                    continue
+                cands = [x for x in cands if str(x) != str(val)]
+                for cand in candidate_order(val, cands)[:MAX_CANDIDATES_PER_COL]:
+                    s = str(cand).replace("'", "''")
+                    new_cond = f"{safe_ident(col)} = '{s}'"
+                    trial = conds[:]
+                    trial[idx] = new_cond
+                    if has_rows(trial):
+                        changes.append({"column": col, "from": old_cond, "to": new_cond})
+                        conds = trial
+                        made_progress = True
+                        break
+
+            elif op == "=" and typ == "num":
+                try:
+                    cands = distinct_values_param(conn, table_name, col, context, limit=5000)
+                except Exception:
+                    continue
+                nums = []
+                for x in cands:
+                    try:
+                        nums.append(float(x))
+                    except Exception:
+                        pass
+                nums = sorted(set(nums))
+                if float(val) in nums:
+                    nums.remove(float(val))
+
+                for cand in nums[:MAX_CANDIDATES_PER_COL]:
+                    cand_repr = str(int(cand)) if float(cand).is_integer() else str(cand)
+                    new_cond = f"{safe_ident(col)} = {cand_repr}"
+                    trial = conds[:]
+                    trial[idx] = new_cond
+                    if has_rows(trial):
+                        changes.append({"column": col, "from": old_cond, "to": new_cond})
+                        conds = trial
+                        made_progress = True
+                        break
+
+            elif typ == "num" and op in (">=", ">", "<=", "<"):
+                try:
+                    cands = distinct_values_param(conn, table_name, col, context, limit=5000)
+                except Exception:
+                    continue
+                nums = []
+                for x in cands:
+                    try:
+                        nums.append(float(x))
+                    except Exception:
+                        pass
+                nums = sorted(set(nums))
+                if not nums:
+                    continue
+
+                orig = float(val)
+                if op in (">=", ">"):
+                    relaxed = sorted([n for n in nums if n < orig], reverse=True)
+                else:
+                    relaxed = sorted([n for n in nums if n > orig])
+
+                for cand in relaxed[:MAX_CANDIDATES_PER_COL]:
+                    cand_repr = str(int(cand)) if float(cand).is_integer() else str(cand)
+                    new_cond = f"{safe_ident(col)} {op} {cand_repr}"
+                    trial = conds[:]
+                    trial[idx] = new_cond
+                    if has_rows(trial):
+                        changes.append({"column": col, "from": old_cond, "to": new_cond})
+                        conds = trial
+                        made_progress = True
+                        break
+
+            if made_progress:
+                break
+
+        if has_rows(conds):
+            return rebuild_sql(prefix, conds, suffix) + ";", {"method": "REPLACE_MANY", "changes": changes}
+
+        if not made_progress:
+            break
+
+    return None, {"method": "REPLACE_MANY_FAILED", "changes": changes}
+
+
+# ===============================
+# Fix method 4: GUARANTEED brute-force row-backed fix
+# ===============================
+def fetch_one_row_any(conn, table):
+    if ROW_BACKED_RANDOM_ROW:
+        cur = conn.execute(f'SELECT * FROM "{table}" ORDER BY RANDOM() LIMIT 1;')
+    else:
+        cur = conn.execute(f'SELECT * FROM "{table}" LIMIT 1;')
+
+    cols = [d[0] for d in cur.description]
+    row = cur.fetchone()
+    if not row:
+        return None
+    return dict(zip(cols, row))
+
+
+def build_condition_from_row(p, row):
+    col = p["col"]
+    op = p["op"]
+    typ = p["type"]
+
+    if col not in row or row[col] is None:
+        return None
+
+    colq = safe_ident(col)
+    rv = row[col]
+
+    if typ == "text" and op == "=":
+        s = str(rv).replace("'", "''")
+        return f"{colq} = '{s}'"
+
+    # numeric
+    try:
+        rnum = float(rv)
+    except Exception:
+        return None
+
+    if op == "=":
+        v = int(rnum) if float(rnum).is_integer() else rnum
+        return f"{colq} = {v}"
+
+    # inequality thresholds that INCLUDE the row
+    if op in (">=", ">"):
+        v = (rnum - 1e-9) if op == ">" else rnum
+    elif op in ("<=", "<"):
+        v = (rnum + 1e-9) if op == "<" else rnum
+    else:
+        return None
+
+    v = int(v) if float(v).is_integer() else v
+    return f"{colq} {op} {v}"
+
+
+def brute_force_row_backed_fix(conn, prefix, conditions, suffix):
+    row = fetch_one_row_any(conn, table_name)
+    if not row:
+        return None, {"method": "ROW_BACKED_FAILED", "error": "No rows in table"}
+
+    new_conds = []
+    changes = []
+
+    for old_cond in conditions:
+        p = parse_condition(old_cond)
+        if not p:
+            return None, {"method": "ROW_BACKED_FAILED", "error": f"Unparseable predicate: {old_cond}"}
+
+        new_cond = build_condition_from_row(p, row)
+        if not new_cond:
+            return None, {"method": "ROW_BACKED_FAILED", "error": f"Cannot build predicate for: {old_cond}"}
+
+        new_conds.append(new_cond)
+
+        old_norm = re.sub(r"\s+", " ", old_cond.strip())
+        new_norm = re.sub(r"\s+", " ", new_cond.strip())
+        if old_norm != new_norm:
+            changes.append({"column": p["col"], "from": old_cond, "to": new_cond})
+
+    new_sql = rebuild_sql(prefix, new_conds, suffix) + ";"
+    if execute_rowcount(conn, new_sql) > 0:
+        return new_sql, {"method": "ROW_BACKED_FIX", "changes": changes}
+
+    return None, {"method": "ROW_BACKED_FAILED", "error": "Built SQL still empty", "changes": changes}
 
 
 # ===============================
@@ -564,13 +772,17 @@ def main():
 
     total = 0
     empty_total = 0
+
     fixed_total = 0
     fixed_by_1 = 0
     fixed_by_2 = 0
-    fixed_by_anchor = 0
-    errors_total = 0
+    fixed_by_many = 0
+    fixed_by_row = 0
 
-    out_records = []
+    unfixed_total = 0
+
+    fixed_records = []
+    unfixed_records = []
 
     with open(input_jsonl, "r", encoding="utf-8") as infile:
         for line_number, line in enumerate(infile, start=1):
@@ -585,135 +797,147 @@ def main():
             if not gt_sql:
                 continue
 
-            try:
-                if execute_rowcount(conn, gt_sql) > 0:
-                    continue
+            # Skip queries that already return rows
+            if execute_rowcount(conn, gt_sql) > 0:
+                continue
 
-                empty_total += 1
+            empty_total += 1
 
-                prefix, where_clause, suffix = get_where_clause(gt_sql)
+            prefix, where_clause, suffix = get_where_clause(gt_sql)
+            if where_clause is None:
+                unfixed_total += 1
+                unfixed_records.append({
+                    "line_number": line_number,
+                    "question": question,
+                    "empty_gt_sql": gt_sql,
+                    "new_gt_sql": None,
+                    "difference": {"error": "No WHERE clause found"},
+                })
+                continue
 
-                # If no WHERE, try anchor fallback directly
-                if where_clause is None:
-                    if ANCHOR_FALLBACK:
-                        new_sql, diff = safe_call2(anchor_fallback_sql, conn, gt_sql, fn_name="anchor_fallback_sql")
-                        if new_sql and execute_rowcount(conn, new_sql) > 0:
-                            fixed_total += 1
-                            fixed_by_anchor += 1
-                        else:
-                            errors_total += 1
-                        out_records.append({
-                            "line_number": line_number,
-                            "question": question,
-                            "empty_gt_sql": gt_sql,
-                            "new_gt_sql": new_sql,
-                            "difference": diff
-                        })
-                    else:
-                        out_records.append({
-                            "line_number": line_number,
-                            "question": question,
-                            "empty_gt_sql": gt_sql,
-                            "new_gt_sql": None,
-                            "difference": {"replaced": None, "error": "No WHERE clause found"}
-                        })
-                    continue
+            conditions = split_conditions(where_clause)
+            if not conditions:
+                unfixed_total += 1
+                unfixed_records.append({
+                    "line_number": line_number,
+                    "question": question,
+                    "empty_gt_sql": gt_sql,
+                    "new_gt_sql": None,
+                    "difference": {"error": "Empty WHERE clause"},
+                })
+                continue
 
-                conditions = split_conditions(where_clause)
+            stage_diffs = {}
 
-                # 1) Replace one
-                new_sql, diff = safe_call2(
-                    replace_one_condition_to_get_rows,
+            # 1) Replace one
+            new_sql, diff = safe_call2(
+                replace_one_condition_to_get_rows,
+                conn, prefix, conditions, suffix,
+                fn_name="replace_one_condition_to_get_rows"
+            )
+            stage_diffs["replace_1"] = diff
+            if new_sql and execute_rowcount(conn, new_sql) > 0:
+                fixed_total += 1
+                fixed_by_1 += 1
+                fixed_records.append({
+                    "line_number": line_number,
+                    "question": question,
+                    "empty_gt_sql": gt_sql,
+                    "new_gt_sql": new_sql,
+                    "difference": diff,
+                })
+                continue
+
+            # 2) Replace two
+            if ENABLE_TWO_CONDITION_REPLACE:
+                new_sql2, diff2 = safe_call2(
+                    replace_two_conditions_to_get_rows,
                     conn, prefix, conditions, suffix,
-                    fn_name="replace_one_condition_to_get_rows"
+                    fn_name="replace_two_conditions_to_get_rows"
                 )
-                if new_sql and execute_rowcount(conn, new_sql) > 0:
+                stage_diffs["replace_2"] = diff2
+                if new_sql2 and execute_rowcount(conn, new_sql2) > 0:
                     fixed_total += 1
-                    fixed_by_1 += 1
-                    out_records.append({
+                    fixed_by_2 += 1
+                    fixed_records.append({
                         "line_number": line_number,
                         "question": question,
                         "empty_gt_sql": gt_sql,
-                        "new_gt_sql": new_sql,
-                        "difference": diff
+                        "new_gt_sql": new_sql2,
+                        "difference": diff2,
                     })
                     continue
 
-                # 2) Replace two
-                if ENABLE_TWO_CONDITION_REPLACE:
-                    new_sql2, diff2 = safe_call2(
-                        replace_two_conditions_to_get_rows,
-                        conn, prefix, conditions, suffix,
-                        fn_name="replace_two_conditions_to_get_rows"
-                    )
-                    if new_sql2 and execute_rowcount(conn, new_sql2) > 0:
-                        fixed_total += 1
-                        fixed_by_2 += 1
-                        out_records.append({
-                            "line_number": line_number,
-                            "question": question,
-                            "empty_gt_sql": gt_sql,
-                            "new_gt_sql": new_sql2,
-                            "difference": diff2
-                        })
-                        continue
+            # 3) Replace many
+            if ENABLE_REPLACE_MANY:
+                new_sql3, diff3 = safe_call2(
+                    replace_many_values_keep_all_preds,
+                    conn, prefix, conditions, suffix, REPLACE_MANY_MAX_CHANGES,
+                    fn_name="replace_many_values_keep_all_preds"
+                )
+                stage_diffs["replace_many"] = diff3
+                if new_sql3 and execute_rowcount(conn, new_sql3) > 0:
+                    fixed_total += 1
+                    fixed_by_many += 1
+                    fixed_records.append({
+                        "line_number": line_number,
+                        "question": question,
+                        "empty_gt_sql": gt_sql,
+                        "new_gt_sql": new_sql3,
+                        "difference": diff3,
+                    })
+                    continue
 
-                # 3) Anchor fallback
-                if ANCHOR_FALLBACK:
-                    new_sql3, diff3 = safe_call2(anchor_fallback_sql, conn, gt_sql, fn_name="anchor_fallback_sql")
-                    if new_sql3 and execute_rowcount(conn, new_sql3) > 0:
-                        fixed_total += 1
-                        fixed_by_anchor += 1
-                        out_records.append({
-                            "line_number": line_number,
-                            "question": question,
-                            "empty_gt_sql": gt_sql,
-                            "new_gt_sql": new_sql3,
-                            "difference": diff3
-                        })
-                        continue
+            # 4) Guaranteed brute force
+            if ENABLE_ROW_BACKED_FIX:
+                new_sql4, diff4 = safe_call2(
+                    brute_force_row_backed_fix,
+                    conn, prefix, conditions, suffix,
+                    fn_name="brute_force_row_backed_fix"
+                )
+                stage_diffs["row_backed"] = diff4
+                if new_sql4 and execute_rowcount(conn, new_sql4) > 0:
+                    fixed_total += 1
+                    fixed_by_row += 1
+                    fixed_records.append({
+                        "line_number": line_number,
+                        "question": question,
+                        "empty_gt_sql": gt_sql,
+                        "new_gt_sql": new_sql4,
+                        "difference": diff4,
+                    })
+                    continue
 
-                # failed (no exception, just no solution)
-                out_records.append({
-                    "line_number": line_number,
-                    "question": question,
-                    "empty_gt_sql": gt_sql,
-                    "new_gt_sql": None,
-                    "difference": diff
-                })
-
-            except Exception as e:
-                errors_total += 1
-                out_records.append({
-                    "line_number": line_number,
-                    "question": question,
-                    "empty_gt_sql": gt_sql,
-                    "new_gt_sql": None,
-                    "difference": {
-                        "replaced": None,
-                        "error": str(e),
-                        "traceback": traceback.format_exc(),
-                        "stage": "main_loop"
-                    }
-                })
+            # unfixed
+            unfixed_total += 1
+            unfixed_records.append({
+                "line_number": line_number,
+                "question": question,
+                "empty_gt_sql": gt_sql,
+                "new_gt_sql": None,
+                "difference": stage_diffs,
+            })
 
     conn.close()
 
-    out_records = [r for r in out_records if r.get("new_gt_sql")]
+    with open(output_json_fixed, "w", encoding="utf-8") as f:
+        json.dump(fixed_records, f, ensure_ascii=False, indent=2)
 
-    with open(output_json, "w", encoding="utf-8") as f:
-        json.dump(out_records, f, ensure_ascii=False, indent=2)
+    with open(output_json_unfixed, "w", encoding="utf-8") as f:
+        json.dump(unfixed_records, f, ensure_ascii=False, indent=2)
 
-    print("===== EMPTY FIX V4 FIXED REPORT =====")
+    print("===== EMPTY FIX V5 (NO-DROP + BRUTE FORCE + SAFE SPLIT) REPORT =====")
     print(f"Total records processed: {total}")
     print(f"Empty GT queries found: {empty_total}")
     print(f"Fixed total: {fixed_total}")
     print(f"  - Fixed by 1-condition replace: {fixed_by_1}")
     print(f"  - Fixed by 2-condition replace: {fixed_by_2}")
-    print(f"  - Fixed by anchor fallback: {fixed_by_anchor}")
-    print(f"Errors encountered: {errors_total}")
-    print(f"Saved output JSON to: {output_json}")
-    print(f"(Random seed: {RANDOM_SEED}, context keep frac: {CANDIDATE_CONTEXT_KEEP_FRAC}, max pair tries: {MAX_PAIR_TRIES})")
+    print(f"  - Fixed by replace-many: {fixed_by_many}")
+    print(f"  - Fixed by row-backed brute force: {fixed_by_row}")
+    print(f"Unfixed total: {unfixed_total}")
+    print(f"Saved fixed JSON to: {output_json_fixed}")
+    print(f"Saved unfixed JSON to: {output_json_unfixed}")
+    print(f"(ROW_BACKED_RANDOM_ROW={ROW_BACKED_RANDOM_ROW})")
 
 
 if __name__ == "__main__":
