@@ -699,6 +699,8 @@ def main():
 
     conn.close()
 
+    out_records = [r for r in out_records if r.get("new_gt_sql")]
+
     with open(output_json, "w", encoding="utf-8") as f:
         json.dump(out_records, f, ensure_ascii=False, indent=2)
 
