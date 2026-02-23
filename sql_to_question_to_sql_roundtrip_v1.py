@@ -232,7 +232,7 @@ def from_clause(sql: str, dialect: str = "sqlite") -> Optional[str]:
     if not sql0:
         return None
     tree = sqlglot.parse_one(sql0, read=dialect)
-    frm = tree.args.get("from")
+    frm = tree.args.get("from") or tree.args.get("from_")
     return frm.sql(dialect=dialect, pretty=False) if frm else None
 
 
@@ -277,6 +277,52 @@ def where_match_commutative(sql_a: str, sql_b: str, dialect: str = "sqlite") -> 
         return fa == fb, None
     except Exception as e:
         return False, f"WHERE_FINGERPRINT_ERROR: {e}"
+
+
+def set_jaccard(a: List[str], b: List[str]) -> float:
+    sa, sb = set(a), set(b)
+    if not sa and not sb:
+        return 1.0
+    u = sa | sb
+    return (len(sa & sb) / len(u)) if u else 0.0
+
+
+def ast_relaxed_components(
+    sql_a: str,
+    sql_b: str,
+    dialect: str = "sqlite",
+) -> Tuple[Optional[Dict[str, float]], Optional[str]]:
+    """
+    Less-strict AST similarity using root-level components:
+    - projection_jaccard: SELECT projection overlap as set similarity
+    - where_jaccard: AND-flattened WHERE overlap as set similarity
+    - from_sim: 1 if FROM clause matches else 0
+    Weighted score: 0.40 * projection + 0.40 * where + 0.20 * from
+    """
+    try:
+        pa = select_projection_set(sql_a, dialect=dialect)
+        pb = select_projection_set(sql_b, dialect=dialect)
+        wa = where_clause_fingerprint(sql_a, dialect=dialect)
+        wb = where_clause_fingerprint(sql_b, dialect=dialect)
+        fa = from_clause(sql_a, dialect=dialect)
+        fb = from_clause(sql_b, dialect=dialect)
+
+        if pa is None or pb is None or wa is None or wb is None or fa is None or fb is None:
+            return None, "EMPTY_SQL"
+
+        proj_j = set_jaccard(pa, pb)
+        where_j = set_jaccard(wa, wb)
+        from_sim = 1.0 if fa == fb else 0.0
+
+        score = 0.40 * proj_j + 0.40 * where_j + 0.20 * from_sim
+        return {
+            "score": score,
+            "projection_jaccard": proj_j,
+            "where_jaccard": where_j,
+            "from_sim": from_sim,
+        }, None
+    except Exception as e:
+        return None, f"AST_RELAXED_ERROR: {e}"
 
 
 # -------------------------
@@ -459,10 +505,19 @@ def main():
     ap.add_argument("--sql_max_tokens", type=int, default=512)
     ap.add_argument("--sql_temperature", type=float, default=0.0)
     ap.add_argument("--sql_top_p", type=float, default=1.0)
+    ap.add_argument("--sql_min_tokens", type=int, default=16)
+    ap.add_argument("--sql_retry_attempts", type=int, default=1)
+    ap.add_argument("--sql_retry_temperature", type=float, default=0.2)
+    ap.add_argument("--sql_retry_top_p", type=float, default=0.95)
 
     ap.add_argument("--batch_size", type=int, default=32)
     ap.add_argument("--max_rows_compare", type=int, default=200)
     ap.add_argument("--preview_rows", type=int, default=3)
+
+    # Combined scoring controls
+    ap.add_argument("--relaxed_overall_threshold", type=float, default=0.60)
+    ap.add_argument("--relaxed_weight_ast", type=float, default=0.70)
+    ap.add_argument("--relaxed_weight_exec_loose", type=float, default=0.30)
 
     ap.add_argument("--schema_sanity_only", action="store_true")
 
@@ -513,11 +568,31 @@ def main():
         temperature=args.q_temperature,
         top_p=args.q_top_p,
     )
-    sql_sampling = SamplingParams(
+    sql_sampling_kwargs = dict(
         max_tokens=args.sql_max_tokens,
         temperature=args.sql_temperature,
         top_p=args.sql_top_p,
     )
+    if args.sql_min_tokens and args.sql_min_tokens > 0:
+        sql_sampling_kwargs["min_tokens"] = args.sql_min_tokens
+    try:
+        sql_sampling = SamplingParams(**sql_sampling_kwargs)
+    except TypeError:
+        sql_sampling_kwargs.pop("min_tokens", None)
+        sql_sampling = SamplingParams(**sql_sampling_kwargs)
+
+    retry_sampling_kwargs = dict(
+        max_tokens=args.sql_max_tokens,
+        temperature=args.sql_retry_temperature,
+        top_p=args.sql_retry_top_p,
+    )
+    if args.sql_min_tokens and args.sql_min_tokens > 0:
+        retry_sampling_kwargs["min_tokens"] = args.sql_min_tokens
+    try:
+        sql_retry_sampling = SamplingParams(**retry_sampling_kwargs)
+    except TypeError:
+        retry_sampling_kwargs.pop("min_tokens", None)
+        sql_retry_sampling = SamplingParams(**retry_sampling_kwargs)
 
     # Prepare items + SQL previews
     items: List[Dict[str, Any]] = []
@@ -586,6 +661,8 @@ def main():
             raw_sql_outputs[idx] = gen_text
 
             pred = extract_sql(gen_text)
+            if not pred and gen_text and "SELECT" not in gen_text.upper():
+                pred = extract_sql("SELECT " + gen_text)
             pred = auto_quote_allowed_columns(pred, allowed_cols_per_item[idx])
             pred_sqls[idx] = pred
 
@@ -597,6 +674,42 @@ def main():
                 } if out.outputs else None
             except Exception:
                 sql_meta[idx] = None
+
+    # Retry empty SQL generations with a stronger start cue.
+    for _ in range(max(0, args.sql_retry_attempts)):
+        retry_indices = [i for i, p in enumerate(pred_sqls) if not p]
+        if not retry_indices:
+            break
+
+        retry_prompts = [
+            sql_prompts[i] + "\nStart directly with SELECT and output only SQL.\nSELECT"
+            for i in retry_indices
+        ]
+
+        for b0 in range(0, len(retry_indices), args.batch_size):
+            batch_indices = retry_indices[b0 : b0 + args.batch_size]
+            outs = llm.generate(retry_prompts[b0 : b0 + args.batch_size], sql_retry_sampling)
+
+            for j, out in enumerate(outs):
+                idx = batch_indices[j]
+                gen_text = (out.outputs[0].text or "").strip() if out.outputs else ""
+
+                pred = extract_sql(gen_text)
+                if not pred and gen_text and "SELECT" not in gen_text.upper():
+                    pred = extract_sql("SELECT " + gen_text)
+                pred = auto_quote_allowed_columns(pred, allowed_cols_per_item[idx])
+
+                if pred:
+                    pred_sqls[idx] = pred
+                    raw_sql_outputs[idx] = gen_text
+                    try:
+                        sql_meta[idx] = {
+                            "finish_reason": getattr(out.outputs[0], "finish_reason", None),
+                            "stop_reason": getattr(out.outputs[0], "stop_reason", None),
+                            "token_ids_len": len(getattr(out.outputs[0], "token_ids", []) or []),
+                        } if out.outputs else None
+                    except Exception:
+                        sql_meta[idx] = None
 
     # Evaluation + output rows
     out_rows: List[Dict[str, Any]] = []
@@ -614,6 +727,13 @@ def main():
     empty_pred_cnt = 0
     exec_err_cnt = 0
     ast_err_cnt = 0
+
+    overall_strict_yes = 0
+    relaxed_overall_sum = 0.0
+    relaxed_overall_yes = 0
+
+    ast_relaxed_sum = 0.0
+    ast_relaxed_err_cnt = 0
 
     for i, it in enumerate(items):
         total += 1
@@ -638,6 +758,16 @@ def main():
         frm_ok = False
         frm_err = None
 
+        ast_relaxed_score = 0.0
+        ast_relaxed_projection_jaccard = 0.0
+        ast_relaxed_where_jaccard = 0.0
+        ast_relaxed_from_sim = 0.0
+        ast_relaxed_err = None
+
+        strict_overall_match = False
+        relaxed_overall_score = 0.0
+        relaxed_overall_match = False
+
         if not pred_sql:
             empty_pred_cnt += 1
 
@@ -651,6 +781,16 @@ def main():
             where_ok, where_err = where_match_commutative(pred_sql, new_sql, dialect="sqlite")
             proj_ok, proj_err = projection_match_set(pred_sql, new_sql, dialect="sqlite")
             frm_ok, frm_err = from_match(pred_sql, new_sql, dialect="sqlite")
+
+            ast_relaxed, ast_relaxed_err = ast_relaxed_components(pred_sql, new_sql, dialect="sqlite")
+            if ast_relaxed is None:
+                ast_relaxed_err_cnt += 1
+            else:
+                ast_relaxed_score = ast_relaxed.get("score", 0.0)
+                ast_relaxed_projection_jaccard = ast_relaxed.get("projection_jaccard", 0.0)
+                ast_relaxed_where_jaccard = ast_relaxed.get("where_jaccard", 0.0)
+                ast_relaxed_from_sim = ast_relaxed.get("from_sim", 0.0)
+                ast_relaxed_sum += ast_relaxed_score
 
             exec_ok_strict, exec_err_strict = results_match_strict(conn, pred_sql, new_sql, max_rows=args.max_rows_compare)
             if exec_err_strict and exec_err_strict.startswith("EXEC_ERROR"):
@@ -672,6 +812,24 @@ def main():
             proj_yes += 1
         if frm_ok:
             from_yes += 1
+
+        strict_overall_match = bool(exact or ast_ok or exec_ok_strict)
+        w_ast = max(0.0, float(args.relaxed_weight_ast))
+        w_exec = max(0.0, float(args.relaxed_weight_exec_loose))
+        w_sum = w_ast + w_exec
+        if w_sum > 0:
+            relaxed_overall_score = (
+                (w_ast * ast_relaxed_score) + (w_exec * (1.0 if exec_ok_loose else 0.0))
+            ) / w_sum
+        else:
+            relaxed_overall_score = 0.0
+        relaxed_overall_match = relaxed_overall_score >= float(args.relaxed_overall_threshold)
+
+        if strict_overall_match:
+            overall_strict_yes += 1
+        relaxed_overall_sum += relaxed_overall_score
+        if relaxed_overall_match:
+            relaxed_overall_yes += 1
 
         out_rows.append({
             "item_id": it["item_id"],
@@ -706,6 +864,16 @@ def main():
             "execution_match_loose": bool(exec_ok_loose),
             "execution_error_loose": exec_err_loose,
 
+            "ast_relaxed_score": round(ast_relaxed_score, 4),
+            "ast_relaxed_projection_jaccard": round(ast_relaxed_projection_jaccard, 4),
+            "ast_relaxed_where_jaccard": round(ast_relaxed_where_jaccard, 4),
+            "ast_relaxed_from_sim": round(ast_relaxed_from_sim, 4),
+            "ast_relaxed_error": ast_relaxed_err,
+
+            "overall_strict_match": bool(strict_overall_match),
+            "overall_relaxed_score": round(relaxed_overall_score, 4),
+            "overall_relaxed_match": bool(relaxed_overall_match),
+
             # Debugging: what columns we allowed for this item
             "allowed_columns_used_for_prompt": allowed_cols_per_item[i],
         })
@@ -729,8 +897,18 @@ def main():
     print(f"where_match_commutative:    {where_yes}/{total} ({pct(where_yes, total):.2f}%)")
     print(f"execution_match_strict:     {exec_strict_yes}/{total} ({pct(exec_strict_yes, total):.2f}%)")
     print(f"execution_match_loose:      {exec_loose_yes}/{total} ({pct(exec_loose_yes, total):.2f}%)")
+
+    print(f"overall_strict_match:       {overall_strict_yes}/{total} ({pct(overall_strict_yes, total):.2f}%)")
+    print(f"ast_relaxed_avg_score:      {(ast_relaxed_sum / total) if total else 0.0:.4f}")
+    print(f"overall_relaxed_avg_score:  {(relaxed_overall_sum / total) if total else 0.0:.4f}")
+    print(
+        f"overall_relaxed_match@{args.relaxed_overall_threshold:.2f}: "
+        f"{relaxed_overall_yes}/{total} ({pct(relaxed_overall_yes, total):.2f}%)"
+    )
+
     print(f"Empty pred_sql:             {empty_pred_cnt}")
     print(f"AST errors:                 {ast_err_cnt}")
+    print(f"AST relaxed errors:         {ast_relaxed_err_cnt}")
     print(f"Execution errors (real):    {exec_err_cnt}")
     print("==============================================\n")
 
