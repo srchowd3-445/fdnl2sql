@@ -395,6 +395,14 @@ def has_limit_without_order(sql: str) -> bool:
     return (" limit " in s2) and (" order by " not in s2)
 
 
+def normalize_sql_table_refs(sql: str) -> str:
+    s = sql or ""
+    # vLLM runs produced table name as `clinical.trials` (dot). SQLite table is `clinical_trials`.
+    s = re.sub(r"\bclinical\.trials\b", "clinical_trials", s, flags=re.IGNORECASE)
+    s = re.sub(r'"clinical"\."trials"', "clinical_trials", s, flags=re.IGNORECASE)
+    return s
+
+
 def evaluate_execution(
     conn: sqlite3.Connection,
     pred_sql: str,
@@ -427,6 +435,9 @@ def evaluate_execution(
         "pred_limit_no_order": False,
         "gt_limit_no_order": False,
     }
+
+    pred_sql = normalize_sql_table_refs(pred_sql)
+    gt_sql = normalize_sql_table_refs(gt_sql)
 
     out["pred_limit_no_order"] = has_limit_without_order(pred_sql)
     out["gt_limit_no_order"] = has_limit_without_order(gt_sql)
@@ -542,12 +553,10 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--id_key", default="item_id")
     ap.add_argument("--pred_sql_key", default="pred_sql")
     ap.add_argument("--gt_sql_key", default="gt_sql")
-    ap.add_argument("--question_key", default="question")
-    ap.add_argument("--pred_question_keys", default="question_used,question")
+    ap.add_argument("--question_key", default="natural_question")
     ap.add_argument("--confidence_key", default="confidence_overall")
     ap.add_argument("--max_rows", type=int, default=10000)
     ap.add_argument("--compute_bertscore", type=int, default=0)
-    ap.add_argument("--join_on_question_fallback", type=int, default=1)
     return ap.parse_args()
 
 
@@ -558,34 +567,13 @@ def main() -> None:
 
     pred_map = {str(r.get(args.id_key)): r for r in pred_rows if r.get(args.id_key) is not None}
     gt_map = {str(r.get(args.id_key)): r for r in gt_rows if r.get(args.id_key) is not None}
-    pred_qkeys = [x.strip() for x in (args.pred_question_keys or "").split(",") if x.strip()]
-
-    pred_by_q: Dict[str, Dict[str, Any]] = {}
-    if bool(args.join_on_question_fallback):
-        for r in pred_rows:
-            qv = ""
-            for k in pred_qkeys:
-                v = r.get(k)
-                if isinstance(v, str) and v.strip():
-                    qv = v.strip()
-                    break
-            if qv:
-                pred_by_q.setdefault(normalize_text(qv), r)
 
     conn = sqlite3.connect(args.db_path)
 
     per_item: List[Dict[str, Any]] = []
     for item_id, gt in gt_map.items():
-        join_method = "item_id"
-        pred = pred_map.get(item_id)
-        if pred is None and bool(args.join_on_question_fallback):
-            gt_q = gt.get(args.question_key) or gt.get("natural_question") or ""
-            pred = pred_by_q.get(normalize_text(str(gt_q)))
-            if pred is not None:
-                join_method = "question_fallback"
-        if pred is None:
-            pred = {}
-            join_method = "missing"
+        pred = pred_map.get(item_id, {})
+        join_method = "item_id" if pred else "missing"
 
         pred_sql = (pred.get(args.pred_sql_key) or "").strip()
         gt_sql = (gt.get(args.gt_sql_key) or "").strip()

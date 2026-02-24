@@ -1,0 +1,26 @@
+2026-02-24 15:48:00,951 | INFO | Log file: /gscratch/tkishore/MAYO_AIM2//results/logs/generated_sql_zero_shot_20260224_154800.log
+2026-02-24 15:48:01,291 | INFO | =========== RUN START ===========
+2026-02-24 15:48:01,292 | INFO | Input: /gscratch/tkishore/MAYO_AIM2//data/natural_question_1500.json
+2026-02-24 15:48:01,292 | INFO | Input format used: json
+2026-02-24 15:48:01,292 | INFO | Output: /gscratch/tkishore/MAYO_AIM2//logs/Gemma/27B/sql_with_conf_new/generated_sql_zero_shot.jsonl
+2026-02-24 15:48:01,292 | INFO | Error log: /gscratch/tkishore/MAYO_AIM2//logs/Gemma/27B/sql_with_conf_new/error_log_zero_shot.jsonl
+2026-02-24 15:48:01,292 | INFO | Checkpoint: /gscratch/tkishore/MAYO_AIM2//logs/Gemma/27B/sql_with_conf_new/generated_sql_zero_shot.jsonl.checkpoint.json
+2026-02-24 15:48:01,292 | INFO | Rows selected: 1500
+2026-02-24 15:48:01,292 | INFO | Resuming: True
+2026-02-24 15:48:01,292 | INFO | Already completed: 0
+2026-02-24 15:48:01,292 | INFO | Prompt style: zero_shot
+2026-02-24 15:48:01,292 | INFO | Backend: openai_compat
+2026-02-24 15:48:01,292 | INFO | Model: google/gemma-3-27b-it
+2026-02-24 15:48:01,292 | INFO | Logprob mode: structured
+2026-02-24 15:48:01,292 | INFO | Batch size: 32
+2026-02-24 15:48:01,292 | INFO | Batch concurrency: 8
+2026-02-24 15:48:01,292 | INFO | Use pydantic response schema: True
+2026-02-24 15:48:01,292 | INFO | Schema columns: 32
+2026-02-24 15:48:01,292 | INFO | Schema hints columns: 32
+2026-02-24 15:48:52,620 | INFO | Batch 1/47 processed=32 elapsed=51.16s throughput=0.63 rec/s completed=32/1500 success=32 error=0
+2026-02-24 15:49:44,144 | INFO | Batch 2/47 processed=32 elapsed=51.47s throughput=0.62 rec/s completed=64/1500 success=64 error=0
+2026-02-24 15:50:37,986 | INFO | Batch 3/47 processed=32 elapsed=53.79s throughput=0.59 rec/s completed=96/1500 success=96 error=0
+2026-02-24 15:51:19,768 | INFO | Batch 4/47 processed=32 elapsed=41.72s throughput=0.77 rec/s completed=128/1500 success=128 error=0
+2026-02-24 15:51:57,714 | INFO | Batch 5/47 processed=32 elapsed=37.88s throughput=0.84 rec/s completed=160/1500 success=160 error=0
+2026-02-24 15:52:34,373 | INFO | Batch 6/47 processed=32 elapsed=36.59s throughput=0.87 rec/s completed=192/1500 success=192 error=0
+2026-02-24 15:53:12,718 | INFO | Batch 7/47 processed=32 elapsed=38.28s throughput=0.84 rec/s completed=224/1500 success=224 error=0

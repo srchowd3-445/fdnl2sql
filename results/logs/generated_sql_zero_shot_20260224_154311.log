@@ -1,0 +1,31 @@
+2026-02-24 15:43:11,087 | INFO | Log file: /gscratch/tkishore/MAYO_AIM2//results/logs/generated_sql_zero_shot_20260224_154311.log
+2026-02-24 15:43:11,378 | INFO | =========== RUN START ===========
+2026-02-24 15:43:11,379 | INFO | Input: /gscratch/tkishore/MAYO_AIM2//data/dataset.jsonl
+2026-02-24 15:43:11,379 | INFO | Input format used: jsonl
+2026-02-24 15:43:11,379 | INFO | Output: /gscratch/tkishore/MAYO_AIM2//logs/Gemma/27B/sql_with_conf_new/generated_sql_zero_shot.jsonl
+2026-02-24 15:43:11,379 | INFO | Error log: /gscratch/tkishore/MAYO_AIM2//logs/Gemma/27B/sql_with_conf_new/error_log_zero_shot.jsonl
+2026-02-24 15:43:11,379 | INFO | Checkpoint: /gscratch/tkishore/MAYO_AIM2//logs/Gemma/27B/sql_with_conf_new/generated_sql_zero_shot.jsonl.checkpoint.json
+2026-02-24 15:43:11,379 | INFO | Rows selected: 500
+2026-02-24 15:43:11,379 | INFO | Resuming: True
+2026-02-24 15:43:11,379 | INFO | Already completed: 0
+2026-02-24 15:43:11,379 | INFO | Prompt style: zero_shot
+2026-02-24 15:43:11,379 | INFO | Backend: openai_compat
+2026-02-24 15:43:11,379 | INFO | Model: google/gemma-3-27b-it
+2026-02-24 15:43:11,379 | INFO | Logprob mode: structured
+2026-02-24 15:43:11,379 | INFO | Batch size: 32
+2026-02-24 15:43:11,379 | INFO | Batch concurrency: 8
+2026-02-24 15:43:11,379 | INFO | Use pydantic response schema: True
+2026-02-24 15:43:11,379 | INFO | Schema columns: 32
+2026-02-24 15:43:11,379 | INFO | Schema hints columns: 32
+2026-02-24 15:43:55,169 | INFO | Batch 1/16 processed=32 elapsed=43.65s throughput=0.73 rec/s completed=32/500 success=0 error=32
+2026-02-24 15:44:36,175 | INFO | Batch 2/16 processed=32 elapsed=40.89s throughput=0.78 rec/s completed=64/500 success=0 error=64
+2026-02-24 15:45:17,236 | INFO | Batch 3/16 processed=32 elapsed=40.94s throughput=0.78 rec/s completed=96/500 success=0 error=96
+2026-02-24 15:45:58,122 | INFO | Batch 4/16 processed=32 elapsed=40.87s throughput=0.78 rec/s completed=128/500 success=0 error=128
+2026-02-24 15:46:39,010 | INFO | Batch 5/16 processed=32 elapsed=40.87s throughput=0.78 rec/s completed=160/500 success=0 error=160
+2026-02-24 15:47:19,943 | INFO | Batch 6/16 processed=32 elapsed=40.92s throughput=0.78 rec/s completed=192/500 success=0 error=192
+2026-02-24 15:48:00,843 | INFO | Batch 7/16 processed=32 elapsed=40.88s throughput=0.78 rec/s completed=224/500 success=0 error=224
+2026-02-24 15:49:24,971 | INFO | Batch 8/16 processed=32 elapsed=84.11s throughput=0.38 rec/s completed=256/500 success=0 error=256
+2026-02-24 15:50:36,816 | INFO | Batch 9/16 processed=32 elapsed=71.82s throughput=0.45 rec/s completed=288/500 success=0 error=288
+2026-02-24 15:51:46,821 | INFO | Batch 10/16 processed=32 elapsed=69.98s throughput=0.46 rec/s completed=320/500 success=0 error=320
+2026-02-24 15:52:46,297 | INFO | Batch 11/16 processed=32 elapsed=59.43s throughput=0.54 rec/s completed=352/500 success=0 error=352
+2026-02-24 15:53:38,075 | INFO | Batch 12/16 processed=32 elapsed=51.75s throughput=0.62 rec/s completed=384/500 success=0 error=384

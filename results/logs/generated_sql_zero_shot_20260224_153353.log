@@ -1,0 +1,22 @@
+2026-02-24 15:33:53,078 | INFO | Log file: /gscratch/tkishore/MAYO_AIM2//results/logs/generated_sql_zero_shot_20260224_153353.log
+2026-02-24 15:33:53,388 | INFO | =========== RUN START ===========
+2026-02-24 15:33:53,388 | INFO | Input: /gscratch/tkishore/MAYO_AIM2//data/dataset.jsonl
+2026-02-24 15:33:53,388 | INFO | Input format used: jsonl
+2026-02-24 15:33:53,388 | INFO | Output: /gscratch/tkishore/MAYO_AIM2//logs/Gemma/27B/sql_with_conf_new/generated_sql_zero_shot.jsonl
+2026-02-24 15:33:53,388 | INFO | Error log: /gscratch/tkishore/MAYO_AIM2//logs/Gemma/27B/sql_with_conf_new/error_log_zero_shot.jsonl
+2026-02-24 15:33:53,388 | INFO | Checkpoint: /gscratch/tkishore/MAYO_AIM2//logs/Gemma/27B/sql_with_conf_new/generated_sql_zero_shot.jsonl.checkpoint.json
+2026-02-24 15:33:53,388 | INFO | Rows selected: 500
+2026-02-24 15:33:53,388 | INFO | Resuming: True
+2026-02-24 15:33:53,388 | INFO | Already completed: 0
+2026-02-24 15:33:53,388 | INFO | Prompt style: zero_shot
+2026-02-24 15:33:53,388 | INFO | Backend: openai_compat
+2026-02-24 15:33:53,388 | INFO | Model: google/gemma-3-27b-it
+2026-02-24 15:33:53,388 | INFO | Logprob mode: structured
+2026-02-24 15:33:53,388 | INFO | Batch size: 32
+2026-02-24 15:33:53,388 | INFO | Batch concurrency: 8
+2026-02-24 15:33:53,388 | INFO | Use pydantic response schema: True
+2026-02-24 15:33:53,388 | INFO | Schema columns: 32
+2026-02-24 15:33:53,388 | INFO | Schema hints columns: 32
+2026-02-24 15:34:36,974 | INFO | Batch 1/16 processed=32 elapsed=43.44s throughput=0.74 rec/s completed=32/500 success=0 error=32
+2026-02-24 15:35:17,806 | INFO | Batch 2/16 processed=32 elapsed=40.81s throughput=0.78 rec/s completed=64/500 success=0 error=64
+2026-02-24 15:35:58,614 | INFO | Batch 3/16 processed=32 elapsed=40.79s throughput=0.78 rec/s completed=96/500 success=0 error=96

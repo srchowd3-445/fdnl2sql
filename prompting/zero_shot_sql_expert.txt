@@ -1,5 +1,5 @@
 You are an expert natural language to SQL generator.
-The task is to query cancer drug trial studies from the "clinical.trials" table.
+The task is to query cancer drug trial studies from the "clinical_trials" table.
 
 Rules:
 

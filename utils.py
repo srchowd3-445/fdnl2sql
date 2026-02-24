@@ -333,11 +333,15 @@ def build_prompt(
     q = (question or "").strip()
     schema_inline = prompt_schema_inline(schema_cols)
     # Base prompt for all styles is always the zero-shot template.
-    prompt = zs_template.replace("{SCHEMA}", schema_inline).replace("{Question}", q)
+    prompt = (
+        zs_template.replace("{SCHEMA}", schema_inline)
+        .replace("{QUESTION}", q)
+        .replace("{Question}", q)
+    )
 
     if schema_hints_text and "Observed unique row values for schema:" not in prompt:
-        prompt = prompt.rstrip() + "\n\n" + schema_hints_text + "\n\nQuestion: {Question}\nGenerate SQL:"
-        prompt = prompt.replace("{Question}", q)
+        prompt = prompt.rstrip() + "\n\n" + schema_hints_text + "\n\nQuestion: {QUESTION}\nGenerate SQL:"
+        prompt = prompt.replace("{QUESTION}", q).replace("{Question}", q)
 
     if prompt_style == "few_shot":
         prompt = prompt.rstrip() + "\n\nFew-shot examples:\n" + few_shot_text.strip()

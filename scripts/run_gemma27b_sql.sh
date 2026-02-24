@@ -26,7 +26,7 @@ LOG_DIR="${PROJECT_DIR}/logs/Gemma/27B/sql_with_conf_new"
 mkdir -p "$LOG_DIR"
 
 PROMPT_STYLE="${PROMPT_STYLE:-zero_shot}"            # zero_shot | few_shot | cot
-INPUT_PATH="${INPUT_PATH:-${PROJECT_DIR}/data/dataset.jsonl}"
+INPUT_PATH="${INPUT_PATH:-${PROJECT_DIR}/data/natural_question_1500.json}"
 OUTPUT_FILE="${OUTPUT_FILE:-${LOG_DIR}/generated_sql_${PROMPT_STYLE}.jsonl}"
 ERROR_FILE="${ERROR_FILE:-${LOG_DIR}/error_log_${PROMPT_STYLE}.jsonl}"
 CHECKPOINT_FILE="${CHECKPOINT_FILE:-${OUTPUT_FILE}.checkpoint.json}"
@@ -34,6 +34,8 @@ RUN_LOG_DIR="${RUN_LOG_DIR:-${PROJECT_DIR}/results/logs}"
 BATCH_SIZE="${BATCH_SIZE:-32}"
 BATCH_CONCURRENCY="${BATCH_CONCURRENCY:-8}"
 LOGPROB_MODE="${LOGPROB_MODE:-structured}"           # structured | none
+ZS_PROMPT_FILE="${ZS_PROMPT_FILE:-${PROJECT_DIR}/prompting/zero_shot_sql_expert.txt}"
+FEW_SHOT_FILE="${FEW_SHOT_FILE:-${PROJECT_DIR}/prompting/few_shot_sql.txt}"
 
 # ==========================================
 # ENVIRONMENT SETUP
@@ -60,6 +62,7 @@ echo "Starting Gemma-3-27B Baseline SQL Job"
 echo "Prompt style: $PROMPT_STYLE"
 echo "Input path: $INPUT_PATH"
 echo "Output file: $OUTPUT_FILE"
+echo "Zero-shot prompt: $ZS_PROMPT_FILE"
 echo "=========================================="
 echo "Model: $MODEL_NAME"
 echo "Tensor Parallel: $TP_SIZE"
@@ -148,9 +151,10 @@ python run_baselines.py \
     --log_dir "$RUN_LOG_DIR" \
     --schema_file "${PROJECT_DIR}/data/schema.json" \
     --db_path "${PROJECT_DIR}/data/database.db" \
+    --question_keys "natural_question" \
     --prompt_style "$PROMPT_STYLE" \
-    --zs_prompt_file "${PROJECT_DIR}/prompting/zs.txt" \
-    --few_shot_file "${PROJECT_DIR}/prompting/few_shot_sql.txt" \
+    --zs_prompt_file "$ZS_PROMPT_FILE" \
+    --few_shot_file "$FEW_SHOT_FILE" \
     --batch_size "$BATCH_SIZE" \
     --batch_concurrency "$BATCH_CONCURRENCY" \
     --temperature 0.0 \

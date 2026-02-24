@@ -79,7 +79,7 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--save_every", type=int, default=10)
 
     # Data mapping
-    ap.add_argument("--question_keys", default="question,new_question,generated_question,original_question")
+    ap.add_argument("--question_keys", default="natural_question")
     ap.add_argument("--id_key", default="item_id")
     ap.add_argument("--table_name", default="clinical_trials")
     ap.add_argument("--schema_file", default="data/schema.json")
@@ -87,7 +87,7 @@ def parse_args() -> argparse.Namespace:
 
     # Prompting
     ap.add_argument("--prompt_style", choices=["zero_shot", "few_shot", "cot"], required=True)
-    ap.add_argument("--zs_prompt_file", default="prompting/zs.txt")
+    ap.add_argument("--zs_prompt_file", default="prompting/zero_shot_sql_expert.txt")
     ap.add_argument("--few_shot_file", default="prompting/few_shot_sql.txt")
     ap.add_argument("--cot_suffix", default=DEFAULT_COT_SUFFIX)
     ap.add_argument("--use_schema_hints", type=int, default=1)
@@ -300,6 +300,18 @@ def run() -> None:
     payload = load_input(args.input_path, args.input_format)
     rows = payload.records
     input_format_used = payload.format_used
+    if rows:
+        has_any_q = False
+        for r in rows:
+            if pick_question(r, question_keys):
+                has_any_q = True
+                break
+        if not has_any_q:
+            sample_keys = sorted(list(rows[0].keys()))
+            raise RuntimeError(
+                f"No rows contain any of question_keys={question_keys} in input={args.input_path}. "
+                f"Sample available keys: {sample_keys}"
+            )
 
     schema_cols = fetch_schema_columns_from_json(args.schema_file)
     schema_hints: Dict[str, Dict[str, Any]] = {}
