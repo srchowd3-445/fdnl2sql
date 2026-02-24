@@ -1,21 +1,16 @@
 #!/usr/bin/env python3
 """
-sql_to_question_to_sql_roundtrip_v2.py
+sql_to_question_to_sql_roundtrip_v3.py
 
 Flip-the-script pipeline: SQL -> question -> SQL -> eval.
 
-Changes vs v1 (based on your notes):
-1) Stronger, general SQL-gen prompt that nudges selecting more columns:
-   - Always include core context columns if present: NCT, Author, Year, Cancer type, Trial phase.
-2) Avoid empty generations by shrinking the schema:
-   - Instead of passing full schema line-by-line, pass an ALLOWED column list:
-     = (columns used in new_sql) U (core columns)
-   - This is *especially* effective in this flipped pipeline because we know new_sql.
-3) Add “root” AST metrics:
-   - projection_match_set: compare SELECT projection as a set (order-insensitive)
-   - from_match: compare FROM clause string
-   - where_match_commutative: already present (AND-order-insensitive)
-   - Keep full ast_match too.
+Adds the “plumbing fixes”:
+- SQL->Question prompt tightened (one-line output, no "Question:" prefixes)
+- sanitize_generated_question() to drop junk outputs ("Question:", "---", "Allowed column names...")
+- extract_sql() robust to prose before SQL and code fences; extracts from first SELECT onward
+- build_question_to_sql_prompt(): defines core_inline; enforces quoting rule explicitly
+- allowed_cols_per_item + auto_quote_allowed_columns() to repair missing quotes on spaced column names
+- bump default q_max_tokens to 120 (you can override)
 
 Output:
 - JSON LIST to --output_json (default: empty_gt_fixed_v7.json)
@@ -29,7 +24,16 @@ import re
 import sqlite3
 from typing import Any, Dict, List, Optional, Tuple
 
-from vllm import LLM, SamplingParams
+try:
+    from vllm import LLM, SamplingParams
+except Exception:
+    LLM = None
+    SamplingParams = None
+
+try:
+    from litellm import completion as litellm_completion
+except Exception:
+    litellm_completion = None
 
 # pip install sqlglot
 import sqlglot
@@ -237,7 +241,7 @@ def from_clause(sql: str, dialect: str = "sqlite") -> Optional[str]:
     if not sql0:
         return None
     tree = sqlglot.parse_one(sql0, read=dialect)
-    frm = tree.args.get("from")
+    frm = tree.args.get("from") or tree.args.get("from_")
     return frm.sql(dialect=dialect, pretty=False) if frm else None
 
 
@@ -284,68 +288,82 @@ def where_match_commutative(sql_a: str, sql_b: str, dialect: str = "sqlite") -> 
         return False, f"WHERE_FINGERPRINT_ERROR: {e}"
 
 
+def set_jaccard(a: List[str], b: List[str]) -> float:
+    sa, sb = set(a), set(b)
+    if not sa and not sb:
+        return 1.0
+    u = sa | sb
+    return (len(sa & sb) / len(u)) if u else 0.0
+
+
+def ast_relaxed_components(
+    sql_a: str,
+    sql_b: str,
+    dialect: str = "sqlite",
+) -> Tuple[Optional[Dict[str, float]], Optional[str]]:
+    """
+    Less-strict AST similarity using root-level components:
+    - projection_jaccard: SELECT projection overlap as set similarity
+    - where_jaccard: AND-flattened WHERE overlap as set similarity
+    - from_sim: 1 if FROM clause matches else 0
+    Weighted score: 0.40 * projection + 0.50 * where + 0.10 * from
+    """
+    try:
+        pa = select_projection_set(sql_a, dialect=dialect)
+        pb = select_projection_set(sql_b, dialect=dialect)
+        wa = where_clause_fingerprint(sql_a, dialect=dialect)
+        wb = where_clause_fingerprint(sql_b, dialect=dialect)
+        fa = from_clause(sql_a, dialect=dialect)
+        fb = from_clause(sql_b, dialect=dialect)
+
+        if pa is None or pb is None or wa is None or wb is None or fa is None or fb is None:
+            return None, "EMPTY_SQL"
+
+        proj_j = set_jaccard(pa, pb)
+        where_j = set_jaccard(wa, wb)
+        from_sim = 1.0 if fa == fb else 0.0
+
+        score = 0.50 * proj_j + 0.40 * where_j + 0.10 * from_sim
+        return {
+            "score": score,
+            "projection_jaccard": proj_j,
+            "where_jaccard": where_j,
+            "from_sim": from_sim,
+        }, None
+    except Exception as e:
+        return None, f"AST_RELAXED_ERROR: {e}"
+
+
 # -------------------------
-# Prompt builders
+# Prompt builders + sanitizers
 # -------------------------
 def build_sql_to_question_prompt(new_sql: str, preview_rows: List[Dict[str, Any]]) -> str:
     preview_json = json.dumps(preview_rows, ensure_ascii=False, indent=2)
-    return f"""You are given a SQL query that selects clinical trial records. Write ONE natural-language question that this SQL answers.
+    return f"""Write ONE natural-language question that the following SQL answers.
 
 Rules:
-- Return ONLY the question (one sentence).
+- Output ONLY the question text on ONE line.
+- Do NOT include prefixes like "Question:" and do NOT use quotes.
 - Do NOT mention SQL, tables, columns, databases, or "query".
-- The question should be specific enough that the same SQL would be a correct answer.
-- Use the clinical-trials framing (e.g., "Which trials...", "Show trials...", "Find studies...").
+- The question must be specific enough that this SQL would be the correct answer.
 
 SQL:
 {new_sql}
 
-Example rows returned (preview):
+Example rows:
 {preview_json}
 """
 
 
-def extract_identifiers_from_sql(sql: str) -> List[str]:
-    # Works for your quoted-column style: "Column name"
-    return sorted(set(re.findall(r'"([^"]+)"', sql or "")))
-
-
-def build_question_to_sql_prompt(
-    schema_cols: List[str],
-    question: str,
-    table: str,
-    hint_sql: str,
-    core_cols: Optional[List[str]] = None,
-) -> str:
-    """
-    Stronger + shorter schema:
-    - Allowed columns = columns used in hint_sql + core context columns.
-    - Schema is inlined to avoid huge prompts and EOS-with-empty-output issues.
-    """
-    if core_cols is None:
-        core_cols = ["NCT", "Author", "Year", "Cancer type", "Trial phase"]
-
-    used = set(extract_identifiers_from_sql(hint_sql))
-    core = set(core_cols)
-
-    allowed = [c for c in schema_cols if (c in used or c in core)]
-    if not allowed:
-        # fallback: if parsing fails, allow full schema
-        allowed = list(schema_cols)
-
-    schema_inline = ", ".join([f'"{c}"' for c in allowed])
-
-    return f"""You are a SQL generator. Write one SQLite SELECT query over "{table}".
-
-Rules:
-- Output ONLY the SQL query.
-- Use ONLY column names from this allowed list: {schema_inline}
-- SELECT: include all columns needed to answer the question, and also include these context columns if present: {", ".join([f'"{c}"' for c in core_cols])}.
-- WHERE: add filters implied by the question. Use '=' for exact matches. Do not invent columns.
-
-Question:
-{question}
-"""
+def sanitize_generated_question(q: str) -> str:
+    q = (q or "").strip()
+    q = re.sub(r'^(question\s*:)\s*', '', q, flags=re.IGNORECASE).strip()
+    q = q.strip('"').strip("'").strip()
+    if q in {"---", "-", ""}:
+        return ""
+    if q.lower().startswith("allowed column"):
+        return ""
+    return q
 
 
 def extract_first_line(text: str) -> str:
@@ -355,20 +373,269 @@ def extract_first_line(text: str) -> str:
 
 
 def extract_sql(text: str) -> str:
+    """
+    Robustly extract SQL:
+    - Strip fences
+    - If prose exists, keep from first SELECT onward
+    - If model repeats queries, keep only the first top-level SELECT block
+    - Keep first statement
+    """
     if not text:
         return ""
     t = text.strip()
 
-    # Remove opening fence like ```sql or ```sqlite or ```anything
+    # Drop opening fence like ```sql or ```sqlite or ```anything
     t = re.sub(r"^```[a-zA-Z0-9_-]*\s*", "", t).strip()
-    # Remove closing fence
+    # Drop closing fence
     t = re.sub(r"\s*```$", "", t).strip()
 
-    # If multiple statements, keep the first statement.
+    # If model included prose, keep from first SELECT onward
+    m = re.search(r"\bSELECT\b", t, flags=re.IGNORECASE)
+    if m:
+        t = t[m.start():].strip()
+
+    # If model emitted another top-level SELECT, keep only the first query block.
+    m2 = re.search(r"\n\s*SELECT\b", t, flags=re.IGNORECASE)
+    if m2:
+        t = t[:m2.start()].strip()
+
+    # Keep first statement
     if ";" in t:
         t = t.split(";", 1)[0].strip() + ";"
 
     return t.strip()
+
+
+def extract_identifiers_from_sql(sql: str) -> List[str]:
+    # Works for your quoted-column style: "Column name"
+    return sorted(set(re.findall(r'"([^"]+)"', sql or "")))
+
+
+def has_where_clause(sql: str, dialect: str = "sqlite") -> Optional[bool]:
+    sql0 = strip_trailing_semicolon(sql)
+    if not sql0:
+        return None
+    try:
+        tree = sqlglot.parse_one(sql0, read=dialect)
+    except Exception:
+        return None
+    where = tree.args.get("where")
+    return bool(where and where.this)
+
+
+def sql_has_parse_error(sql: str, dialect: str = "sqlite") -> bool:
+    sql0 = strip_trailing_semicolon(sql)
+    if not sql0:
+        return True
+    try:
+        sqlglot.parse_one(sql0, read=dialect)
+        return False
+    except Exception:
+        return True
+
+
+def should_retry_sql_prediction(
+    pred_sql: str,
+    hint_sql: str,
+    *,
+    retry_on_missing_where: bool = True,
+    retry_on_parse_error: bool = True,
+    retry_on_multi_select: bool = True,
+    dialect: str = "sqlite",
+) -> bool:
+    if not (pred_sql or "").strip():
+        return True
+
+    if retry_on_multi_select and re.search(r"\n\s*SELECT\b", pred_sql, flags=re.IGNORECASE):
+        return True
+
+    if retry_on_parse_error and sql_has_parse_error(pred_sql, dialect=dialect):
+        return True
+
+    if retry_on_missing_where:
+        hint_has_where = has_where_clause(hint_sql, dialect=dialect)
+        pred_has_where = has_where_clause(pred_sql, dialect=dialect)
+        if hint_has_where is True and pred_has_where is False:
+            return True
+
+    return False
+
+
+def auto_quote_allowed_columns(sql: str, allowed_cols: List[str]) -> str:
+    """
+    Repair missing quotes for column names, especially those with spaces (e.g. Cancer type).
+    Only attempts to quote columns in allowed_cols. Conservative replacement.
+    """
+    if not sql:
+        return sql
+    fixed = sql
+    for col in sorted(allowed_cols, key=len, reverse=True):
+        quoted = f'"{col}"'
+        if quoted in fixed:
+            continue
+        pattern = r'(?<!")\b' + re.escape(col) + r'\b(?!")'
+        fixed = re.sub(pattern, quoted, fixed)
+    return fixed
+
+
+def build_question_to_sql_prompt(
+    schema_cols: List[str],
+    question: str,
+    table: str,
+    hint_sql: str,
+    core_cols: Optional[List[str]] = None,
+) -> Tuple[str, List[str]]:
+    """
+    Stronger + shorter schema:
+    - Allowed columns = columns used in hint_sql + core context columns.
+    - Schema is inlined to avoid huge prompts and EOS-with-empty-output issues.
+    Returns: (prompt, allowed_cols)
+    """
+    if core_cols is None:
+        core_cols = ["NCT", "Author", "Year", "Cancer type", "Trial phase"]
+
+    used = set(extract_identifiers_from_sql(hint_sql))
+    core = set(core_cols)
+
+    allowed = [c for c in schema_cols if (c in used or c in core)]
+    if not allowed:
+        allowed = list(schema_cols)
+
+    schema_inline = ", ".join([f'"{c}"' for c in allowed])
+    core_inline = ", ".join([f'"{c}"' for c in core_cols])
+
+    prompt = f"""You are a SQL generator. Write one SQLite SELECT query over "{table}".
+
+Rules:
+- Output ONLY the SQL query (no prose, no code fences).
+- The query MUST start with SELECT.
+- Use ONLY column names from this allowed list: {schema_inline}
+- IMPORTANT: Put double quotes around EVERY column name exactly as shown in the allowed list.
+- Use single quotes for string literals.
+- For categorical filters, copy exact values as they appear in the data (match capitalization).
+- If the question includes any constraints (entity/value/time/phase/etc.), include ALL of them in WHERE.
+- Do NOT add filters, values, years, authors, phases, or trial names that are not explicitly in the question.
+- SELECT: include the columns needed to answer the question, plus these context columns if present: {core_inline}
+
+Question:
+{question}
+"""
+    return prompt, allowed
+
+
+def _obj_get(obj: Any, key: str, default: Any = None) -> Any:
+    if isinstance(obj, dict):
+        return obj.get(key, default)
+    return getattr(obj, key, default)
+
+
+def _litellm_content_to_text(content: Any) -> str:
+    if content is None:
+        return ""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts: List[str] = []
+        for item in content:
+            if isinstance(item, dict):
+                t = item.get("text")
+                if t is None:
+                    t = item.get("content")
+                if t is None:
+                    t = item.get("value")
+                if t is not None:
+                    parts.append(str(t))
+            else:
+                parts.append(str(item))
+        return "".join(parts)
+    return str(content)
+
+
+def generate_batch_with_backend(
+    backend: str,
+    prompts: List[str],
+    llm: Any,
+    sampling: Any,
+    *,
+    litellm_model: str,
+    temperature: float,
+    top_p: float,
+    max_tokens: Optional[int],
+    litellm_timeout: float,
+    litellm_num_retries: int,
+    vertex_project: str,
+    vertex_location: str,
+    stop: Optional[List[str]] = None,
+) -> Tuple[List[str], List[Optional[Dict[str, Any]]]]:
+    texts: List[str] = []
+    metas: List[Optional[Dict[str, Any]]] = []
+
+    if backend == "vllm":
+        outs = llm.generate(prompts, sampling)
+        for out in outs:
+            gen_text = (out.outputs[0].text or "").strip() if out.outputs else ""
+            texts.append(gen_text)
+            try:
+                meta = {
+                    "finish_reason": getattr(out.outputs[0], "finish_reason", None),
+                    "stop_reason": getattr(out.outputs[0], "stop_reason", None),
+                    "token_ids_len": len(getattr(out.outputs[0], "token_ids", []) or []),
+                } if out.outputs else None
+            except Exception:
+                meta = None
+            metas.append(meta)
+        return texts, metas
+
+    if litellm_completion is None:
+        raise RuntimeError("litellm is not installed. Install with: pip install litellm")
+
+    for prompt in prompts:
+        try:
+            req: Dict[str, Any] = {
+                "model": litellm_model,
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": temperature,
+                "top_p": top_p,
+                "num_retries": litellm_num_retries,
+            }
+            if max_tokens is not None and max_tokens > 0:
+                req["max_tokens"] = int(max_tokens)
+            if litellm_timeout and litellm_timeout > 0:
+                req["timeout"] = litellm_timeout
+            if stop:
+                req["stop"] = stop
+            if vertex_project:
+                req["vertex_project"] = vertex_project
+            if vertex_location:
+                req["vertex_location"] = vertex_location
+
+            resp = litellm_completion(**req)
+
+            choices = _obj_get(resp, "choices", []) or []
+            choice0 = choices[0] if choices else {}
+            message = _obj_get(choice0, "message", {}) or {}
+            content = _obj_get(message, "content", "")
+            gen_text = _litellm_content_to_text(content).strip()
+
+            usage = _obj_get(resp, "usage", {}) or {}
+            completion_tokens = _obj_get(usage, "completion_tokens", None)
+
+            texts.append(gen_text)
+            metas.append({
+                "finish_reason": _obj_get(choice0, "finish_reason", None),
+                "stop_reason": _obj_get(choice0, "stop_reason", None),
+                "token_ids_len": completion_tokens,
+            })
+        except Exception as e:
+            texts.append("")
+            metas.append({
+                "finish_reason": "error",
+                "stop_reason": None,
+                "token_ids_len": None,
+                "error": str(e),
+            })
+
+    return texts, metas
 
 
 # -------------------------
@@ -403,6 +670,13 @@ def main():
         help="Local HF snapshot directory for Gemma-3-27b-it",
     )
 
+    ap.add_argument("--llm_backend", choices=["vllm", "litellm"], default="vllm")
+    ap.add_argument("--litellm_model", default="vertex_ai/gemini-2.5-flash")
+    ap.add_argument("--vertex_project", default="", help="GCP project for Vertex AI (or set VERTEX_PROJECT)")
+    ap.add_argument("--vertex_location", default="", help="Vertex location (or set VERTEX_LOCATION)")
+    ap.add_argument("--litellm_timeout", type=float, default=120.0)
+    ap.add_argument("--litellm_num_retries", type=int, default=2)
+
     ap.add_argument("--gpu", default="0")
     ap.add_argument("--tensor_parallel_size", type=int, default=1)
     ap.add_argument("--gpu_memory_utilization", type=float, default=0.90)
@@ -412,7 +686,7 @@ def main():
     ap.add_argument("--limit", type=int, default=-1, help="-1 = all")
 
     # SQL -> question params
-    ap.add_argument("--q_max_tokens", type=int, default=80)
+    ap.add_argument("--q_max_tokens", type=int, default=0, help="Stage-1 question max tokens. <=0 disables cap for litellm; vllm falls back to 256.")
     ap.add_argument("--q_temperature", type=float, default=0.2)
     ap.add_argument("--q_top_p", type=float, default=0.9)
 
@@ -420,15 +694,40 @@ def main():
     ap.add_argument("--sql_max_tokens", type=int, default=512)
     ap.add_argument("--sql_temperature", type=float, default=0.0)
     ap.add_argument("--sql_top_p", type=float, default=1.0)
+    ap.add_argument("--sql_min_tokens", type=int, default=16)
+    ap.add_argument("--sql_retry_attempts", type=int, default=1)
+    ap.add_argument("--sql_retry_temperature", type=float, default=0.2)
+    ap.add_argument("--sql_retry_top_p", type=float, default=0.95)
+    ap.add_argument("--sql_use_stop_semicolon", type=int, default=0, help="1=pass stop=[';'] to API, 0=disabled")
+    ap.add_argument("--sql_retry_on_missing_where", type=int, default=1, help="Retry if gold has WHERE but prediction does not")
+    ap.add_argument("--sql_retry_on_parse_error", type=int, default=1, help="Retry when generated SQL fails parsing")
+    ap.add_argument("--sql_retry_on_multi_select", type=int, default=1, help="Retry when generation contains repeated top-level SELECT")
 
     ap.add_argument("--batch_size", type=int, default=32)
     ap.add_argument("--max_rows_compare", type=int, default=200)
     ap.add_argument("--preview_rows", type=int, default=3)
 
+    # Combined scoring controls
+    ap.add_argument("--relaxed_overall_threshold", type=float, default=0.60)
+    ap.add_argument("--relaxed_weight_ast", type=float, default=0.70)
+    ap.add_argument("--relaxed_weight_exec_loose", type=float, default=0.30)
+
     ap.add_argument("--schema_sanity_only", action="store_true")
 
     args = ap.parse_args()
-    os.environ["CUDA_VISIBLE_DEVICES"] = str(args.gpu)
+
+    if args.llm_backend == "vllm":
+        os.environ["CUDA_VISIBLE_DEVICES"] = str(args.gpu)
+
+    if args.vertex_project:
+        os.environ.setdefault("VERTEX_PROJECT", args.vertex_project)
+    else:
+        args.vertex_project = os.getenv("VERTEX_PROJECT", "")
+
+    if args.vertex_location:
+        os.environ.setdefault("VERTEX_LOCATION", args.vertex_location)
+    else:
+        args.vertex_location = os.getenv("VERTEX_LOCATION", "")
 
     # DB + schema sanity
     conn = sqlite3.connect(args.db_path)
@@ -460,25 +759,68 @@ def main():
         print("No eligible items (missing new_gt_sql).")
         return
 
-    # Prepare LLM
-    llm = LLM(
-        model=args.model_path,
-        tensor_parallel_size=args.tensor_parallel_size,
-        max_model_len=args.max_model_len,
-        gpu_memory_utilization=args.gpu_memory_utilization,
-        trust_remote_code=True,
-    )
+    # Prepare LLM backend
+    llm: Any = None
+    q_sampling: Any = None
+    sql_sampling: Any = None
+    sql_retry_sampling: Any = None
 
-    q_sampling = SamplingParams(
-        max_tokens=args.q_max_tokens,
-        temperature=args.q_temperature,
-        top_p=args.q_top_p,
-    )
-    sql_sampling = SamplingParams(
-        max_tokens=args.sql_max_tokens,
-        temperature=args.sql_temperature,
-        top_p=args.sql_top_p,
-    )
+    if args.llm_backend == "vllm":
+        if LLM is None or SamplingParams is None:
+            conn.close()
+            raise RuntimeError("vllm is not installed/importable. Install vllm or use --llm_backend litellm.")
+
+        llm = LLM(
+            model=args.model_path,
+            tensor_parallel_size=args.tensor_parallel_size,
+            max_model_len=args.max_model_len,
+            gpu_memory_utilization=args.gpu_memory_utilization,
+            trust_remote_code=True,
+        )
+
+        q_max_tokens_vllm = args.q_max_tokens if args.q_max_tokens and args.q_max_tokens > 0 else 256
+        q_sampling = SamplingParams(
+            max_tokens=q_max_tokens_vllm,
+            temperature=args.q_temperature,
+            top_p=args.q_top_p,
+        )
+        sql_sampling_kwargs = dict(
+            max_tokens=args.sql_max_tokens,
+            temperature=args.sql_temperature,
+            top_p=args.sql_top_p,
+        )
+        if args.sql_min_tokens and args.sql_min_tokens > 0:
+            sql_sampling_kwargs["min_tokens"] = args.sql_min_tokens
+        try:
+            sql_sampling = SamplingParams(**sql_sampling_kwargs)
+        except TypeError:
+            sql_sampling_kwargs.pop("min_tokens", None)
+            sql_sampling = SamplingParams(**sql_sampling_kwargs)
+
+        retry_sampling_kwargs = dict(
+            max_tokens=args.sql_max_tokens,
+            temperature=args.sql_retry_temperature,
+            top_p=args.sql_retry_top_p,
+        )
+        if args.sql_min_tokens and args.sql_min_tokens > 0:
+            retry_sampling_kwargs["min_tokens"] = args.sql_min_tokens
+        try:
+            sql_retry_sampling = SamplingParams(**retry_sampling_kwargs)
+        except TypeError:
+            retry_sampling_kwargs.pop("min_tokens", None)
+            sql_retry_sampling = SamplingParams(**retry_sampling_kwargs)
+    else:
+        if litellm_completion is None:
+            conn.close()
+            raise RuntimeError("litellm is not installed/importable. Install with: pip install litellm")
+        if args.litellm_model.startswith("vertex_ai/") and not args.vertex_project:
+            conn.close()
+            raise RuntimeError(
+                "For Vertex models set --vertex_project (or VERTEX_PROJECT). "
+                "Example: --litellm_model vertex_ai/gemini-2.5-flash --vertex_project <project-id>"
+            )
+
+    sql_stop_tokens = [";"] if bool(args.sql_use_stop_semicolon) else None
 
     # Prepare items + SQL previews
     items: List[Dict[str, Any]] = []
@@ -509,45 +851,137 @@ def main():
     generated_questions: List[str] = [""] * len(items)
     q_meta: List[Optional[Dict[str, Any]]] = [None] * len(items)
 
-    for b0 in range(0, len(items), args.batch_size):
-        outs = llm.generate(q_prompts[b0 : b0 + args.batch_size], q_sampling)
-        for i, out in enumerate(outs):
-            idx = b0 + i
-            gen_text = (out.outputs[0].text or "").strip() if out.outputs else ""
-            generated_questions[idx] = extract_first_line(gen_text)
-            try:
-                q_meta[idx] = {
-                    "finish_reason": getattr(out.outputs[0], "finish_reason", None),
-                    "stop_reason": getattr(out.outputs[0], "stop_reason", None),
-                    "token_ids_len": len(getattr(out.outputs[0], "token_ids", []) or []),
-                } if out.outputs else None
-            except Exception:
-                q_meta[idx] = None
+    q_stage1_max_tokens: Optional[int]
+    if args.q_max_tokens and args.q_max_tokens > 0:
+        q_stage1_max_tokens = int(args.q_max_tokens)
+    elif args.llm_backend == "litellm":
+        q_stage1_max_tokens = None
+    else:
+        q_stage1_max_tokens = 256
 
-    # Stage 2: question -> SQL prompts (NEW: filtered schema + stronger SELECT rule)
+    for b0 in range(0, len(items), args.batch_size):
+        batch_prompts = q_prompts[b0 : b0 + args.batch_size]
+        batch_texts, batch_meta = generate_batch_with_backend(
+            args.llm_backend,
+            batch_prompts,
+            llm,
+            q_sampling,
+            litellm_model=args.litellm_model,
+            temperature=args.q_temperature,
+            top_p=args.q_top_p,
+            max_tokens=q_stage1_max_tokens,
+            litellm_timeout=args.litellm_timeout,
+            litellm_num_retries=args.litellm_num_retries,
+            vertex_project=args.vertex_project,
+            vertex_location=args.vertex_location,
+            stop=None,
+        )
+        for i, gen_text in enumerate(batch_texts):
+            idx = b0 + i
+            q1 = sanitize_generated_question(extract_first_line(gen_text))
+            if not q1:
+                q1 = "Which clinical trials match the given criteria?"
+            generated_questions[idx] = q1
+            q_meta[idx] = batch_meta[i] if i < len(batch_meta) else None
+
+    # Stage 2: question -> SQL prompts (filtered schema + stronger SELECT/quoting rule)
     sql_prompts: List[str] = []
+    allowed_cols_per_item: List[List[str]] = []
     for it, q in zip(items, generated_questions):
-        sql_prompts.append(build_question_to_sql_prompt(schema_cols, q, args.table_name, hint_sql=it["new_sql"]))
+        p, allowed_cols = build_question_to_sql_prompt(schema_cols, q, args.table_name, hint_sql=it["new_sql"])
+        sql_prompts.append(p)
+        allowed_cols_per_item.append(allowed_cols)
 
     pred_sqls: List[str] = [""] * len(items)
     raw_sql_outputs: List[str] = [""] * len(items)
     sql_meta: List[Optional[Dict[str, Any]]] = [None] * len(items)
 
     for b0 in range(0, len(items), args.batch_size):
-        outs = llm.generate(sql_prompts[b0 : b0 + args.batch_size], sql_sampling)
-        for i, out in enumerate(outs):
+        batch_prompts = sql_prompts[b0 : b0 + args.batch_size]
+        batch_texts, batch_meta = generate_batch_with_backend(
+            args.llm_backend,
+            batch_prompts,
+            llm,
+            sql_sampling,
+            litellm_model=args.litellm_model,
+            temperature=args.sql_temperature,
+            top_p=args.sql_top_p,
+            max_tokens=args.sql_max_tokens,
+            litellm_timeout=args.litellm_timeout,
+            litellm_num_retries=args.litellm_num_retries,
+            vertex_project=args.vertex_project,
+            vertex_location=args.vertex_location,
+            stop=sql_stop_tokens,
+        )
+        for i, gen_text in enumerate(batch_texts):
             idx = b0 + i
-            gen_text = (out.outputs[0].text or "").strip() if out.outputs else ""
             raw_sql_outputs[idx] = gen_text
-            pred_sqls[idx] = extract_sql(gen_text)
-            try:
-                sql_meta[idx] = {
-                    "finish_reason": getattr(out.outputs[0], "finish_reason", None),
-                    "stop_reason": getattr(out.outputs[0], "stop_reason", None),
-                    "token_ids_len": len(getattr(out.outputs[0], "token_ids", []) or []),
-                } if out.outputs else None
-            except Exception:
-                sql_meta[idx] = None
+
+            pred = extract_sql(gen_text)
+            if not pred and gen_text and "SELECT" not in gen_text.upper():
+                pred = extract_sql("SELECT " + gen_text)
+            pred = auto_quote_allowed_columns(pred, allowed_cols_per_item[idx])
+            pred_sqls[idx] = pred
+
+            sql_meta[idx] = batch_meta[i] if i < len(batch_meta) else None
+
+    # Retry empty SQL generations with a stronger start cue.
+    for _ in range(max(0, args.sql_retry_attempts)):
+        retry_indices = [
+            i for i, p in enumerate(pred_sqls)
+            if should_retry_sql_prediction(
+                p,
+                items[i]["new_sql"],
+                retry_on_missing_where=bool(args.sql_retry_on_missing_where),
+                retry_on_parse_error=bool(args.sql_retry_on_parse_error),
+                retry_on_multi_select=bool(args.sql_retry_on_multi_select),
+                dialect="sqlite",
+            )
+        ]
+        if not retry_indices:
+            break
+
+        retry_prompts = []
+        for i in retry_indices:
+            extra = [
+                "Start directly with SELECT and output only SQL.",
+                "Do not add any filters that are not explicitly asked in the question.",
+            ]
+            if bool(args.sql_retry_on_missing_where) and has_where_clause(items[i]["new_sql"], dialect="sqlite") is True:
+                extra.append("Include a WHERE clause with every constraint from the question.")
+            retry_prompts.append(sql_prompts[i] + "\n" + "\n".join(extra) + "\nSELECT")
+
+        for b0 in range(0, len(retry_indices), args.batch_size):
+            batch_indices = retry_indices[b0 : b0 + args.batch_size]
+            batch_prompts = retry_prompts[b0 : b0 + args.batch_size]
+            batch_texts, batch_meta = generate_batch_with_backend(
+                args.llm_backend,
+                batch_prompts,
+                llm,
+                sql_retry_sampling,
+                litellm_model=args.litellm_model,
+                temperature=args.sql_retry_temperature,
+                top_p=args.sql_retry_top_p,
+                max_tokens=args.sql_max_tokens,
+                litellm_timeout=args.litellm_timeout,
+                litellm_num_retries=args.litellm_num_retries,
+                vertex_project=args.vertex_project,
+                vertex_location=args.vertex_location,
+                stop=sql_stop_tokens,
+            )
+
+            for j, gen_text in enumerate(batch_texts):
+                idx = batch_indices[j]
+
+                pred = extract_sql(gen_text)
+                if not pred and gen_text and "SELECT" not in gen_text.upper():
+                    pred = extract_sql("SELECT " + gen_text)
+                pred = auto_quote_allowed_columns(pred, allowed_cols_per_item[idx])
+
+                if pred:
+                    pred_sqls[idx] = pred
+                    raw_sql_outputs[idx] = gen_text
+                    sql_meta[idx] = batch_meta[j] if j < len(batch_meta) else None
 
     # Evaluation + output rows
     out_rows: List[Dict[str, Any]] = []
@@ -565,6 +999,15 @@ def main():
     empty_pred_cnt = 0
     exec_err_cnt = 0
     ast_err_cnt = 0
+    gt_self_ast_yes = 0
+    gt_self_ast_err_cnt = 0
+
+    overall_strict_yes = 0
+    relaxed_overall_sum = 0.0
+    relaxed_overall_yes = 0
+
+    ast_relaxed_sum = 0.0
+    ast_relaxed_err_cnt = 0
 
     for i, it in enumerate(items):
         total += 1
@@ -589,8 +1032,27 @@ def main():
         frm_ok = False
         frm_err = None
 
+        ast_relaxed_score = 0.0
+        ast_relaxed_projection_jaccard = 0.0
+        ast_relaxed_where_jaccard = 0.0
+        ast_relaxed_from_sim = 0.0
+        ast_relaxed_err = None
+        gt_self_ast_ok = False
+        gt_self_ast_err = None
+
+        strict_overall_match = False
+        relaxed_overall_score = 0.0
+        relaxed_overall_match = False
+
         if not pred_sql:
             empty_pred_cnt += 1
+
+        if new_sql:
+            gt_self_ast_ok, gt_self_ast_err = ast_match_sql(new_sql, new_sql, dialect="sqlite")
+            if gt_self_ast_ok:
+                gt_self_ast_yes += 1
+            elif gt_self_ast_err:
+                gt_self_ast_err_cnt += 1
 
         if pred_sql and new_sql:
             exact = normalize_sql(pred_sql) == normalize_sql(new_sql)
@@ -602,6 +1064,16 @@ def main():
             where_ok, where_err = where_match_commutative(pred_sql, new_sql, dialect="sqlite")
             proj_ok, proj_err = projection_match_set(pred_sql, new_sql, dialect="sqlite")
             frm_ok, frm_err = from_match(pred_sql, new_sql, dialect="sqlite")
+
+            ast_relaxed, ast_relaxed_err = ast_relaxed_components(pred_sql, new_sql, dialect="sqlite")
+            if ast_relaxed is None:
+                ast_relaxed_err_cnt += 1
+            else:
+                ast_relaxed_score = ast_relaxed.get("score", 0.0)
+                ast_relaxed_projection_jaccard = ast_relaxed.get("projection_jaccard", 0.0)
+                ast_relaxed_where_jaccard = ast_relaxed.get("where_jaccard", 0.0)
+                ast_relaxed_from_sim = ast_relaxed.get("from_sim", 0.0)
+                ast_relaxed_sum += ast_relaxed_score
 
             exec_ok_strict, exec_err_strict = results_match_strict(conn, pred_sql, new_sql, max_rows=args.max_rows_compare)
             if exec_err_strict and exec_err_strict.startswith("EXEC_ERROR"):
@@ -624,6 +1096,24 @@ def main():
         if frm_ok:
             from_yes += 1
 
+        strict_overall_match = bool(exact or ast_ok or exec_ok_strict)
+        w_ast = max(0.0, float(args.relaxed_weight_ast))
+        w_exec = max(0.0, float(args.relaxed_weight_exec_loose))
+        w_sum = w_ast + w_exec
+        if w_sum > 0:
+            relaxed_overall_score = (
+                (w_ast * ast_relaxed_score) + (w_exec * (1.0 if exec_ok_loose else 0.0))
+            ) / w_sum
+        else:
+            relaxed_overall_score = 0.0
+        relaxed_overall_match = relaxed_overall_score >= float(args.relaxed_overall_threshold)
+
+        if strict_overall_match:
+            overall_strict_yes += 1
+        relaxed_overall_sum += relaxed_overall_score
+        if relaxed_overall_match:
+            relaxed_overall_yes += 1
+
         out_rows.append({
             "item_id": it["item_id"],
             "original_question": it["original_question"],
@@ -642,6 +1132,8 @@ def main():
 
             "ast_match": bool(ast_ok),
             "ast_error": ast_err,
+            "new_sql_ast_self_match": bool(gt_self_ast_ok),
+            "new_sql_ast_self_error": gt_self_ast_err,
 
             "from_match": bool(frm_ok),
             "from_error": frm_err,
@@ -656,6 +1148,19 @@ def main():
             "execution_error_strict": exec_err_strict,
             "execution_match_loose": bool(exec_ok_loose),
             "execution_error_loose": exec_err_loose,
+
+            "ast_relaxed_score": round(ast_relaxed_score, 4),
+            "ast_relaxed_projection_jaccard": round(ast_relaxed_projection_jaccard, 4),
+            "ast_relaxed_where_jaccard": round(ast_relaxed_where_jaccard, 4),
+            "ast_relaxed_from_sim": round(ast_relaxed_from_sim, 4),
+            "ast_relaxed_error": ast_relaxed_err,
+
+            "overall_strict_match": bool(strict_overall_match),
+            "overall_relaxed_score": round(relaxed_overall_score, 4),
+            "overall_relaxed_match": bool(relaxed_overall_match),
+
+            # Debugging: what columns we allowed for this item
+            "allowed_columns_used_for_prompt": allowed_cols_per_item[i],
         })
 
     conn.close()
@@ -672,14 +1177,28 @@ def main():
     print(f"Processed: {total}")
     print(f"normalized_exact_match:     {exact_yes}/{total} ({pct(exact_yes, total):.2f}%)")
     print(f"ast_match (full query):     {ast_yes}/{total} ({pct(ast_yes, total):.2f}%)")
+    print(f"new_sql_ast_self_match:     {gt_self_ast_yes}/{total} ({pct(gt_self_ast_yes, total):.2f}%)")
     print(f"from_match:                 {from_yes}/{total} ({pct(from_yes, total):.2f}%)")
     print(f"projection_match_set:       {proj_yes}/{total} ({pct(proj_yes, total):.2f}%)")
     print(f"where_match_commutative:    {where_yes}/{total} ({pct(where_yes, total):.2f}%)")
     print(f"execution_match_strict:     {exec_strict_yes}/{total} ({pct(exec_strict_yes, total):.2f}%)")
     print(f"execution_match_loose:      {exec_loose_yes}/{total} ({pct(exec_loose_yes, total):.2f}%)")
+
+    print(f"overall_strict_match:       {overall_strict_yes}/{total} ({pct(overall_strict_yes, total):.2f}%)")
+    print(f"ast_relaxed_avg_score:      {(ast_relaxed_sum / total) if total else 0.0:.4f}")
+    print(f"overall_relaxed_avg_score:  {(relaxed_overall_sum / total) if total else 0.0:.4f}")
+    print(
+        f"overall_relaxed_match@{args.relaxed_overall_threshold:.2f}: "
+        f"{relaxed_overall_yes}/{total} ({pct(relaxed_overall_yes, total):.2f}%)"
+    )
+
     print(f"Empty pred_sql:             {empty_pred_cnt}")
     print(f"AST errors:                 {ast_err_cnt}")
+    print(f"new_sql_ast_self_errors:    {gt_self_ast_err_cnt}")
+    print(f"AST relaxed errors:         {ast_relaxed_err_cnt}")
     print(f"Execution errors (real):    {exec_err_cnt}")
+    if gt_self_ast_yes != total:
+        print("WARNING: new_sql AST self-check is below 100%; inspect new_sql_ast_self_error in output rows.")
     print("==============================================\n")
 
 

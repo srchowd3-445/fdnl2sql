@@ -1,0 +1,35 @@
+Question: Show bladder PD-L1 trials conducted in 2018 or later.
+SQL: SELECT "NCT", "Author", "Year", "Originial publication or Follow-up", "Class of ICI", "Cancer type", "Trial phase" FROM clinical_trials WHERE "Cancer type" = 'Bladder' AND "Class of ICI" = 'PD-L1' AND "Year" >= 2018;
+
+Question: Find renal cell trials of nivolumab given in combination therapy.
+SQL: SELECT "NCT", "Author", "Year", "Originial publication or Follow-up", "Name of ICI", "Monotherapy/combination", "Cancer type", "Type of combination", "Trial phase" FROM clinical_trials WHERE "Cancer type" = 'Renal cell' AND "Name of ICI" = 'Nivolumab' AND "Monotherapy/combination" = 'Combination';
+
+Question: Which melanoma trials used vaccine as the control arm?
+SQL: SELECT "NCT", "Author", "Year", "Originial publication or Follow-up", "Control arm", "Cancer type", "Control regimen", "Trial phase" FROM clinical_trials WHERE "Cancer type" = 'Melanoma' AND "Control arm" = 'Vaccine';
+
+Question: List head and neck trials requiring a biomarker other than PD-L1 for inclusion.
+SQL: SELECT "NCT", "Author", "Year", "Originial publication or Follow-up", "Is any other biomarker used for inclusion", "Cancer type", "Primary endpoint" FROM clinical_trials WHERE "Cancer type" = 'Head and Neck' AND "Is any other biomarker used for inclusion" = 'Yes';
+
+Question: Show gastric/GEJ trials using PD1 where PD-L1 positivity was an inclusion criterion.
+SQL: SELECT "NCT", "Author", "Year", "Originial publication or Follow-up", "Is PD-L1 positivity inclusion criteria", "Class of ICI", "Cancer type", "Name of ICI", "Trial phase" FROM clinical_trials WHERE "Cancer type" = 'Gastric/GEJ' AND "Class of ICI" = 'PD1' AND "Is PD-L1 positivity inclusion criteria" = 'Yes';
+
+Question: Which NSCLC studies tested ICI+Chemo combinations, and what were the primary endpoints?
+SQL: SELECT "NCT", "Author", "Year", "Originial publication or Follow-up", "Type of combination", "Cancer type", "Treatment regimen", "Primary endpoint" FROM clinical_trials WHERE "Cancer type" = 'NSCLC' AND "Type of combination" = 'ICI+Chemo';
+
+Question: Find esophageal/GEJ trials with median follow-up and show months by arm.
+SQL: SELECT "NCT", "Author", "Year", "Originial publication or Follow-up", "Type of follow-up given", "Cancer type", "Follow-up duration for primary endpoint(s) in months | Rx", "Follow-up duration for primary endpoint(s) in months | Control" FROM clinical_trials WHERE "Cancer type" = 'Esophageal/GEJ' AND "Type of follow-up given" = 'Median';
+
+Question: List bladder pembrolizumab trials where overall follow-up exceeded 21 months.
+SQL: SELECT "NCT", "Author", "Year", "Originial publication or Follow-up", "Name of ICI", "Follow-up duration for primary endpoint(s) in months | Overall", "Cancer type", "Trial phase" FROM clinical_trials WHERE "Cancer type" = 'Bladder' AND "Name of ICI" = 'Pembrolizumab' AND "Follow-up duration for primary endpoint(s) in months | Overall" > 21;
+
+Question: Show phase 3 CTLA-4 combination trials in non-small cell lung cancer and their regimens.
+SQL: SELECT "NCT", "Author", "Year", "Originial publication or Follow-up", "Trial phase", "Class of ICI", "Monotherapy/combination", "Cancer type", "Name of ICI", "Treatment regimen" FROM clinical_trials WHERE "Class of ICI" = 'CTLA-4' AND "Cancer type" = 'Non-Small Cell Lung' AND "Trial phase" = 'Phase 3' AND "Monotherapy/combination" = 'Combination';
+
+Question: Which colorectal trials had at least 3 arms and used multikinase inhibitor as control?
+SQL: SELECT "NCT", "Author", "Year", "Originial publication or Follow-up", "Number of arms", "Control arm", "Cancer type", "Trial phase" FROM clinical_trials WHERE "Cancer type" = 'Colorectal' AND "Number of arms" >= 3 AND "Control arm" = 'Multikinase inhibitor';
+
+Question: Find phase 2 pembrolizumab trials in melanoma that were original publications.
+SQL: SELECT "NCT", "Author", "Year", "Originial publication or Follow-up", "Name of ICI", "Trial phase", "Cancer type" FROM clinical_trials WHERE "Name of ICI" = 'Pembrolizumab' AND "Cancer type" = 'Melanoma' AND "Trial phase" = 'Phase 2' AND "Originial publication or Follow-up" = 'Original publication';
+
+Question: Show mesothelioma studies included in the meta-analysis that used PD1 agents.
+SQL: SELECT "NCT", "Author", "Year", "Originial publication or Follow-up", "Included in MA", "Class of ICI", "Cancer type", "Name of ICI" FROM clinical_trials WHERE "Cancer type" = 'Mesothelioma' AND "Class of ICI" = 'PD1' AND "Included in MA" = 'Yes';
