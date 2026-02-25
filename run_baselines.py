@@ -162,30 +162,121 @@ def _strip_prefix(text: str, prefix: str) -> str:
     return t
 
 
+# def parse_few_shot_examples(few_shot_text: str) -> List[Tuple[str, str]]:
+#     text = (few_shot_text or "").strip()
+#     if not text:
+#         return []
+
+#     # Normalize optional XML-like wrappers used in the first example.
+#     text = re.sub(r"</?\s*user\s*>", "", text, flags=re.IGNORECASE)
+#     text = re.sub(r"</?\s*assistant\s*>", "", text, flags=re.IGNORECASE)
+
+#     lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+#     examples: List[Tuple[str, str]] = []
+#     i = 0
+#     while i < len(lines):
+#         if lines[i].lower().startswith("question:"):
+#             q = _strip_prefix(lines[i], "Question:")
+#             if i + 1 < len(lines) and lines[i + 1].lower().startswith("sql:"):
+#                 s = _strip_prefix(lines[i + 1], "SQL:")
+#                 if q and s:
+#                     examples.append((q, s))
+#                 i += 2
+#                 continue
+#         i += 1
+#     return examples
+
+
 def parse_few_shot_examples(few_shot_text: str) -> List[Tuple[str, str]]:
     text = (few_shot_text or "").strip()
     if not text:
         return []
 
-    # Normalize optional XML-like wrappers used in the first example.
+    # remove wrappers like <USER>...</USER>, <ASSISTANT>...</ASSISTANT>
     text = re.sub(r"</?\s*user\s*>", "", text, flags=re.IGNORECASE)
     text = re.sub(r"</?\s*assistant\s*>", "", text, flags=re.IGNORECASE)
 
+    # Normalize bracketed tags
+    text = text.replace("[RESPONSE]", "RESPONSE:")
+
     lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
     examples: List[Tuple[str, str]] = []
-    i = 0
-    while i < len(lines):
-        if lines[i].lower().startswith("question:"):
-            q = _strip_prefix(lines[i], "Question:")
-            if i + 1 < len(lines) and lines[i + 1].lower().startswith("sql:"):
-                s = _strip_prefix(lines[i + 1], "SQL:")
-                if q and s:
-                    examples.append((q, s))
-                i += 2
-                continue
-        i += 1
+
+    q: Optional[str] = None
+    sql_lines: List[str] = []
+    mode: Optional[str] = None  # "q" or "sql"
+
+    def flush():
+        nonlocal q, sql_lines
+        if q and sql_lines:
+            s = " ".join(sql_lines).strip()
+            if s:
+                examples.append((q.strip(), s))
+        q = None
+        sql_lines = []
+
+    for ln in lines:
+        low = ln.lower()
+
+        if low.startswith("question:"):
+            flush()
+            q = _strip_prefix(ln, "Question:")
+            mode = "q"
+            continue
+
+        # Accept "SQL:" or "RESPONSE:" as SQL header
+        if low.startswith("sql:") or low.startswith("response:"):
+            sql_lines = [_strip_prefix(ln, "SQL:") if low.startswith("sql:") else _strip_prefix(ln, "RESPONSE:")]
+            mode = "sql"
+            continue
+
+        # If we're currently collecting SQL, allow multi-line continuation
+        if mode == "sql":
+            # stop if a new question begins
+            if low.startswith("question:"):
+                flush()
+                q = _strip_prefix(ln, "Question:")
+                mode = "q"
+            else:
+                sql_lines.append(ln)
+            continue
+
+    flush()
     return examples
 
+# def build_messages_for_row(
+#     *,
+#     prompt_style: str,
+#     question: str,
+#     prompt: str,
+#     zs_template: str,
+#     schema_cols: List[str],
+#     schema_hints_text: str,
+#     few_shot_examples: List[Tuple[str, str]],
+# ) -> List[Dict[str, str]]:
+#     if prompt_style != "few_shot" or not few_shot_examples:
+#         return build_messages(prompt)
+
+#     # Keep few-shot aligned with chat roles:
+#     # Question -> user, SQL -> assistant, then final user question.
+#     base_zero_prompt = build_prompt(
+#         question="",
+#         prompt_style="zero_shot",
+#         zs_template=zs_template,
+#         few_shot_text="",
+#         schema_cols=schema_cols,
+#         schema_hints_text=schema_hints_text,
+#         cot_suffix="",
+#     )
+#     cut = base_zero_prompt.rfind("Question:")
+#     system_prompt = base_zero_prompt[:cut].strip() if cut >= 0 else base_zero_prompt.strip()
+
+#     messages: List[Dict[str, str]] = [{"role": "system", "content": system_prompt}]
+#     for ex_q, ex_sql in few_shot_examples:
+#         messages.append({"role": "user", "content": f"Question: {ex_q}\nGenerate SQL:"})
+#         messages.append({"role": "assistant", "content": f"SQL: {ex_sql}"})
+#     messages.append({"role": "user", "content": f"Question: {question}\nGenerate SQL:"})
+#     return messages
 
 def build_messages_for_row(
     *,
@@ -196,12 +287,11 @@ def build_messages_for_row(
     schema_cols: List[str],
     schema_hints_text: str,
     few_shot_examples: List[Tuple[str, str]],
+    use_pydantic_schema: bool,
 ) -> List[Dict[str, str]]:
     if prompt_style != "few_shot" or not few_shot_examples:
         return build_messages(prompt)
 
-    # Keep few-shot aligned with chat roles:
-    # Question -> user, SQL -> assistant, then final user question.
     base_zero_prompt = build_prompt(
         question="",
         prompt_style="zero_shot",
@@ -215,10 +305,15 @@ def build_messages_for_row(
     system_prompt = base_zero_prompt[:cut].strip() if cut >= 0 else base_zero_prompt.strip()
 
     messages: List[Dict[str, str]] = [{"role": "system", "content": system_prompt}]
+
     for ex_q, ex_sql in few_shot_examples:
-        messages.append({"role": "user", "content": f"Question: {ex_q}\nGenerate SQL:"})
-        messages.append({"role": "assistant", "content": f"SQL: {ex_sql}"})
-    messages.append({"role": "user", "content": f"Question: {question}\nGenerate SQL:"})
+        messages.append({"role": "user", "content": ex_q})
+        if use_pydantic_schema:
+            messages.append({"role": "assistant", "content": json.dumps({"sql": ex_sql})})
+        else:
+            messages.append({"role": "assistant", "content": ex_sql})
+
+    messages.append({"role": "user", "content": question})
     return messages
 
 
@@ -372,6 +467,16 @@ def run() -> None:
             schema_hints_text=schema_hints_text,
             cot_suffix=args.cot_suffix,
         )
+        # messages = build_messages_for_row(
+        #     prompt_style=args.prompt_style,
+        #     question=question,
+        #     prompt=prompt,
+        #     zs_template=zs_template,
+        #     schema_cols=schema_cols,
+        #     schema_hints_text=schema_hints_text,
+        #     few_shot_examples=few_shot_examples,
+        # )
+
         messages = build_messages_for_row(
             prompt_style=args.prompt_style,
             question=question,
@@ -380,7 +485,8 @@ def run() -> None:
             schema_cols=schema_cols,
             schema_hints_text=schema_hints_text,
             few_shot_examples=few_shot_examples,
-        )
+            use_pydantic_schema=bool(args.use_pydantic_schema),
+            )
         pending.append((item_id, row, messages))
 
     run_start = time.time()
