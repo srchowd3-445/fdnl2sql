@@ -256,36 +256,13 @@ def execute_sql_fetch(conn: sqlite3.Connection, sql: str, max_rows: int) -> Tupl
     return cols, rows
 
 
-# def ast_similarity_sqlglot(pred_sql: str, gt_sql: str) -> Tuple[Optional[float], Optional[str]]:
-#     if not pred_sql or not gt_sql:
-#         return None, "missing_sql"
-#     if sqlglot is None:
-#         return None, "sqlglot_not_installed"
-#     try:
-#         p = sqlglot.parse_one(pred_sql, read="sqlite")
-#         g = sqlglot.parse_one(gt_sql, read="sqlite")
-#     except Exception as e:
-#         return None, f"parse_error:{e}"
-
-#     def flatten_ast(expr: Any) -> List[str]:
-#         toks: List[str] = []
-#         for node in expr.walk():
-#             cls = node.__class__.__name__
-#             toks.append(f"node:{cls}")
-#             for k, v in node.args.items():
-#                 if isinstance(v, (str, int, float)):
-#                     toks.append(f"{k}:{str(v).lower()}")
-#         return toks
-
-#     tp = flatten_ast(p)
-#     tg = flatten_ast(g)
-#     cp = Counter(tp)
-#     cg = Counter(tg)
-#     overlap = sum((cp & cg).values())
-#     return safe_div(2 * overlap, len(tp) + len(tg)), None
-
-
-def ast_similarity_sqlglot(pred_sql: str, gt_sql: str) -> Tuple[Optional[float], Optional[str]]:
+def ast_similarity_sqlglot(
+    pred_sql: str,
+    gt_sql: str,
+    w_select: float = 0.5,
+    w_where: float = 0.4,
+    w_from: float = 0.1,
+) -> Tuple[Optional[float], Optional[str]]:
     if not pred_sql or not gt_sql:
         return None, "missing_sql"
     if sqlglot is None:
@@ -304,9 +281,8 @@ def ast_similarity_sqlglot(pred_sql: str, gt_sql: str) -> Tuple[Optional[float],
             for x in expr:
                 toks.extend(flatten_ast(x))
             return toks
-
         for node in expr.walk():
-            cls = node._class_._name_
+            cls = node.__class__.__name__
             toks.append(f"node:{cls}")
             for k, v in node.args.items():
                 if isinstance(v, (str, int, float)):
@@ -323,8 +299,7 @@ def ast_similarity_sqlglot(pred_sql: str, gt_sql: str) -> Tuple[Optional[float],
         overlap = sum((ca & cb).values())
         return safe_div(2 * overlap, len(a) + len(b))
 
-    # Clause-level AST similarity with explicit weights.
-    # Requested weights: SELECT=0.5, FROM=0.1, WHERE=0.4
+    # Clause-level AST similarity.
     select_p = flatten_ast(p.args.get("expressions"))
     select_g = flatten_ast(g.args.get("expressions"))
 
@@ -334,15 +309,11 @@ def ast_similarity_sqlglot(pred_sql: str, gt_sql: str) -> Tuple[Optional[float],
     where_p = flatten_ast(p.args.get("where"))
     where_g = flatten_ast(g.args.get("where"))
 
-    w_select = 0.5
-    w_from = 0.0
-    w_where = 0.5
-
     s_select = token_f1(select_p, select_g)
     s_from = token_f1(from_p, from_g)
     s_where = token_f1(where_p, where_g)
 
-    weighted = (w_select * s_select) + (w_from * s_from) + (w_where * s_where)
+    weighted = (w_select * s_select) + (w_where * s_where) + (w_from * s_from)
     return weighted, None
 
 
@@ -618,11 +589,27 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--confidence_key", default="confidence_overall")
     ap.add_argument("--max_rows", type=int, default=10000)
     ap.add_argument("--compute_bertscore", type=int, default=0)
+    ap.add_argument("--ast_weight_select", type=float, default=0.5)
+    ap.add_argument("--ast_weight_where", type=float, default=0.4)
+    ap.add_argument("--ast_weight_from", type=float, default=0.1)
     return ap.parse_args()
 
 
 def main() -> None:
     args = parse_args()
+
+    ast_w_select = float(args.ast_weight_select)
+    ast_w_where = float(args.ast_weight_where)
+    ast_w_from = float(args.ast_weight_from)
+    if ast_w_select < 0 or ast_w_where < 0 or ast_w_from < 0:
+        raise ValueError("AST weights must be non-negative")
+    ast_w_sum = ast_w_select + ast_w_where + ast_w_from
+    if ast_w_sum <= 0:
+        raise ValueError("At least one AST weight must be > 0")
+    ast_w_select /= ast_w_sum
+    ast_w_where /= ast_w_sum
+    ast_w_from /= ast_w_sum
+
     pred_rows = load_data(args.pred_path, args.pred_format)
     gt_rows = load_data(args.gt_path, args.gt_format)
 
@@ -639,7 +626,13 @@ def main() -> None:
         pred_sql = (pred.get(args.pred_sql_key) or "").strip()
         gt_sql = (gt.get(args.gt_sql_key) or "").strip()
 
-        ast_sim, ast_err = ast_similarity_sqlglot(pred_sql, gt_sql)
+        ast_sim, ast_err = ast_similarity_sqlglot(
+            pred_sql,
+            gt_sql,
+            w_select=ast_w_select,
+            w_where=ast_w_where,
+            w_from=ast_w_from,
+        )
         exec_eval = (
             evaluate_execution(
                 conn=conn,
@@ -731,6 +724,9 @@ def main() -> None:
             "db_path": args.db_path,
             "max_rows": args.max_rows,
             "compute_bertscore": bool(args.compute_bertscore),
+            "ast_weight_select": ast_w_select,
+            "ast_weight_where": ast_w_where,
+            "ast_weight_from": ast_w_from,
         },
         "summary": summary,
         "per_item": per_item,
