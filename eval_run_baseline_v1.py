@@ -256,6 +256,35 @@ def execute_sql_fetch(conn: sqlite3.Connection, sql: str, max_rows: int) -> Tupl
     return cols, rows
 
 
+# def ast_similarity_sqlglot(pred_sql: str, gt_sql: str) -> Tuple[Optional[float], Optional[str]]:
+#     if not pred_sql or not gt_sql:
+#         return None, "missing_sql"
+#     if sqlglot is None:
+#         return None, "sqlglot_not_installed"
+#     try:
+#         p = sqlglot.parse_one(pred_sql, read="sqlite")
+#         g = sqlglot.parse_one(gt_sql, read="sqlite")
+#     except Exception as e:
+#         return None, f"parse_error:{e}"
+
+#     def flatten_ast(expr: Any) -> List[str]:
+#         toks: List[str] = []
+#         for node in expr.walk():
+#             cls = node.__class__.__name__
+#             toks.append(f"node:{cls}")
+#             for k, v in node.args.items():
+#                 if isinstance(v, (str, int, float)):
+#                     toks.append(f"{k}:{str(v).lower()}")
+#         return toks
+
+#     tp = flatten_ast(p)
+#     tg = flatten_ast(g)
+#     cp = Counter(tp)
+#     cg = Counter(tg)
+#     overlap = sum((cp & cg).values())
+#     return safe_div(2 * overlap, len(tp) + len(tg)), None
+
+
 def ast_similarity_sqlglot(pred_sql: str, gt_sql: str) -> Tuple[Optional[float], Optional[str]]:
     if not pred_sql or not gt_sql:
         return None, "missing_sql"
@@ -269,20 +298,52 @@ def ast_similarity_sqlglot(pred_sql: str, gt_sql: str) -> Tuple[Optional[float],
 
     def flatten_ast(expr: Any) -> List[str]:
         toks: List[str] = []
+        if expr is None:
+            return toks
+        if isinstance(expr, list):
+            for x in expr:
+                toks.extend(flatten_ast(x))
+            return toks
+
         for node in expr.walk():
-            cls = node.__class__.__name__
+            cls = node._class_._name_
             toks.append(f"node:{cls}")
             for k, v in node.args.items():
                 if isinstance(v, (str, int, float)):
                     toks.append(f"{k}:{str(v).lower()}")
         return toks
 
-    tp = flatten_ast(p)
-    tg = flatten_ast(g)
-    cp = Counter(tp)
-    cg = Counter(tg)
-    overlap = sum((cp & cg).values())
-    return safe_div(2 * overlap, len(tp) + len(tg)), None
+    def token_f1(a: List[str], b: List[str]) -> float:
+        if not a and not b:
+            return 1.0
+        if not a or not b:
+            return 0.0
+        ca = Counter(a)
+        cb = Counter(b)
+        overlap = sum((ca & cb).values())
+        return safe_div(2 * overlap, len(a) + len(b))
+
+    # Clause-level AST similarity with explicit weights.
+    # Requested weights: SELECT=0.5, FROM=0.1, WHERE=0.4
+    select_p = flatten_ast(p.args.get("expressions"))
+    select_g = flatten_ast(g.args.get("expressions"))
+
+    from_p = flatten_ast(p.args.get("from"))
+    from_g = flatten_ast(g.args.get("from"))
+
+    where_p = flatten_ast(p.args.get("where"))
+    where_g = flatten_ast(g.args.get("where"))
+
+    w_select = 0.5
+    w_from = 0.0
+    w_where = 0.5
+
+    s_select = token_f1(select_p, select_g)
+    s_from = token_f1(from_p, from_g)
+    s_where = token_f1(where_p, where_g)
+
+    weighted = (w_select * s_select) + (w_from * s_from) + (w_where * s_where)
+    return weighted, None
 
 
 def col_name_similarity(a: str, b: str) -> float:

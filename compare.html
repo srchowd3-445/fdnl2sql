@@ -2,371 +2,475 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>GT vs. Pred SQL comparison</title>
+  <title>SQL Eval Compare Viewer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      color: #111;
-      background: #f6f7fb;
-      line-height: 1.5;
+      font-family: ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color: #0f172a;
+      background: #f8fafc;
+      line-height: 1.45;
     }
     body {
       margin: 0;
-      padding: 1.5rem;
+      padding: 1rem;
     }
     h1 {
-      margin: 0 0 1rem;
-      font-size: 1.8rem;
+      margin: 0 0 0.8rem 0;
+      font-size: 1.5rem;
     }
     .layout {
       display: grid;
-      grid-template-columns: minmax(240px, 320px) 1fr;
-      gap: 1rem;
+      grid-template-columns: minmax(280px, 360px) 1fr;
+      gap: 0.9rem;
+    }
+    .panel, .detail {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(2, 6, 23, 0.04);
     }
     .panel {
-      background: #fff;
-      border-radius: 0.5rem;
+      padding: 0.9rem;
+    }
+    .detail {
       padding: 1rem;
-      box-shadow: 0 2px 10px rgba(15, 15, 15, 0.08);
+      min-height: 70vh;
+    }
+    .row {
+      margin-bottom: 0.8rem;
     }
     label {
-      font-weight: 600;
       display: block;
-      margin-bottom: 0.25rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+      font-size: 0.9rem;
     }
-    input,
-    select {
+    input, select, button {
       width: 100%;
-      border-radius: 0.35rem;
-      border: 1px solid #cdd4e0;
-      padding: 0.4rem 0.6rem;
-      font-size: 0.95rem;
-      font-family: inherit;
+      box-sizing: border-box;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 0.45rem 0.55rem;
+      font: inherit;
       background: #fff;
     }
     button {
-      border: none;
-      border-radius: 0.35rem;
+      cursor: pointer;
       background: #2563eb;
+      border: none;
       color: #fff;
       font-weight: 600;
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-    button:disabled {
-      background: #9ca1b3;
-      cursor: not-allowed;
-      box-shadow: none;
+    button.secondary {
+      background: #e2e8f0;
+      color: #0f172a;
+      margin-top: 0.35rem;
     }
-    button:not(:disabled):hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
-    }
-    .selection-row {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 0.65rem;
-    }
-    #record-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      max-height: 60vh;
+    .list {
+      max-height: 48vh;
       overflow: auto;
+      border-top: 1px solid #e2e8f0;
+      margin-top: 0.6rem;
+      padding-top: 0.6rem;
     }
-    #record-list li {
-      border-bottom: 1px solid #eceff4;
-      padding: 0.65rem 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    #record-list li:last-child {
-      border-bottom: none;
-    }
-    .list-metadata {
-      flex: 1;
-      font-size: 0.9rem;
-    }
-    .list-metadata strong {
-      font-size: 0.95rem;
-      display: block;
-      margin-bottom: 0.2rem;
-    }
-    .nav-button {
-      padding: 0.4rem 0.8rem;
-      background: #e5e7eb;
-      color: #111;
-      font-weight: 600;
-      border-radius: 0.35rem;
-    }
-    .detail-panel {
-      background: #fff;
-      border-radius: 0.75rem;
-      padding: 1rem 1.25rem;
-      box-shadow: 0 2px 16px rgba(11, 34, 76, 0.08);
-      min-height: 30vh;
-    }
-    .detail-header h2 {
-      margin: 0;
-      font-size: 1.4rem;
-    }
-    .detail-header p {
-      margin: 0.25rem 0 0;
-      font-size: 0.95rem;
-      color: #333;
-    }
-    .detail-grid {
-      margin-top: 1rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
-    }
-    .detail-card {
-      background: #f8fafc;
-      border-radius: 0.6rem;
-      padding: 0.85rem;
+    .item {
       border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 0.55rem;
+      margin-bottom: 0.55rem;
+      cursor: pointer;
+      background: #f8fafc;
     }
-    .detail-card h3 {
-      margin-top: 0;
-      margin-bottom: 0.35rem;
-      font-size: 1rem;
+    .item:hover {
+      border-color: #93c5fd;
+    }
+    .item.active {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+    .item h4 {
+      margin: 0 0 0.25rem;
+      font-size: 0.92rem;
+    }
+    .item p {
+      margin: 0;
+      font-size: 0.82rem;
+      color: #334155;
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.45rem;
+      margin-bottom: 1rem;
+    }
+    .metric {
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      padding: 0.45rem 0.55rem;
+      background: #f8fafc;
+    }
+    .metric .k {
+      font-size: 0.75rem;
+      color: #475569;
+    }
+    .metric .v {
+      font-size: 0.94rem;
+      font-weight: 700;
+    }
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+    }
+    .card {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 0.55rem;
+      background: #f8fafc;
+    }
+    .card h3 {
+      margin: 0 0 0.4rem;
+      font-size: 0.9rem;
     }
     pre {
       margin: 0;
-      font-size: 0.85rem;
       white-space: pre-wrap;
       word-break: break-word;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.8rem;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 0.5rem;
+      max-height: 260px;
+      overflow: auto;
     }
-    .inline-row {
+    .badges {
       display: flex;
-      gap: 0.6rem;
+      gap: 0.4rem;
       flex-wrap: wrap;
+      margin: 0.35rem 0 0.55rem;
     }
-    .inline-block {
-      flex: 1;
-      min-width: 120px;
+    .badge {
+      font-size: 0.75rem;
+      border-radius: 999px;
+      padding: 0.18rem 0.52rem;
+      border: 1px solid transparent;
+      font-weight: 600;
     }
-    .inline-block strong {
-      font-size: 0.85rem;
-      display: block;
-      margin-bottom: 0.15rem;
-      color: #555;
+    .b-good { background: #dcfce7; color: #166534; border-color: #86efac; }
+    .b-mid { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+    .b-bad { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+    .b-na { background: #e2e8f0; color: #334155; border-color: #cbd5e1; }
+    .error {
+      border: 1px solid #fecaca;
+      background: #fff1f2;
+      color: #9f1239;
+      border-radius: 8px;
+      padding: 0.55rem;
+      margin-bottom: 0.7rem;
+      font-size: 0.84rem;
     }
-    .placeholder {
-      color: #5f6a7d;
-    }
-    .summary-note {
-      margin-top: 0.6rem;
-      font-size: 0.85rem;
-      color: #4b5563;
+    .small {
+      font-size: 0.8rem;
+      color: #475569;
     }
   </style>
 </head>
 <body>
-  <h1>GT vs. Pred SQL comparison</h1>
+  <h1>SQL Eval Compare Viewer</h1>
   <div class="layout">
     <div class="panel">
-      <div>
-        <label for="question-filter">Search questions</label>
-        <input id="question-filter" placeholder="Filter by question text" />
+      <div class="row">
+        <label for="json-url">JSON path (default)</label>
+        <input id="json-url" value="results/eval_zero_shot.json" />
+        <button id="load-url" class="secondary">Load From Path</button>
       </div>
-      <div style="margin-top: 1rem">
-        <label for="record-select">Choose index to visualize</label>
-        <div class="selection-row">
-          <select id="record-select"></select>
-          <button id="record-select-btn" disabled>Visualize</button>
-        </div>
-        <p class="summary-note">Use the dropdown + button to render the selected index below.</p>
+      <div class="row">
+        <label for="json-file">Or upload JSON</label>
+        <input id="json-file" type="file" accept=".json,application/json" />
       </div>
-      <div style="margin-top: 1rem">
-        <strong>Entries matching filter</strong>
-        <ul id="record-list"></ul>
+      <div class="row">
+        <label for="q-search">Search question</label>
+        <input id="q-search" placeholder="type to filter question text" />
       </div>
+      <div class="row">
+        <label for="status-filter">Status filter</label>
+        <select id="status-filter">
+          <option value="all">All</option>
+          <option value="error">Only errors</option>
+          <option value="ok">Only exec-ok</option>
+          <option value="exact">Only exact exec match</option>
+        </select>
+      </div>
+      <div class="row">
+        <label for="sort-by">Sort by</label>
+        <select id="sort-by">
+          <option value="index">Index</option>
+          <option value="f1_desc">F1 desc</option>
+          <option value="f1_asc">F1 asc</option>
+          <option value="conf_desc">Confidence desc</option>
+          <option value="conf_asc">Confidence asc</option>
+          <option value="ast_desc">AST similarity desc</option>
+          <option value="ast_asc">AST similarity asc</option>
+        </select>
+      </div>
+      <div class="small" id="count-note">No file loaded</div>
+      <div class="list" id="item-list"></div>
     </div>
-    <div id="detail" class="detail-panel">
-      <p class="placeholder">Select or search for a row to see GT and prediction details.</p>
+    <div class="detail" id="detail">
+      <div class="small">Load an eval JSON and click an entry.</div>
     </div>
   </div>
+
   <script>
-    const dataUrl = './results/generated_sql.jsonl';
-    const questionFilterEl = document.getElementById('question-filter');
-    const recordListEl = document.getElementById('record-list');
-    const detailEl = document.getElementById('detail');
-    const selectEl = document.getElementById('record-select');
-    const selectBtn = document.getElementById('record-select-btn');
-    let records = [];
-
-    const escapeHtml = (str) =>
-      str
-        ?.toString()
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;') ?? '';
-
-    const formatValue = (value) => {
-      if (value === null || value === undefined) {
-        return '<span class="placeholder">( not provided )</span>';
-      }
-      if (Array.isArray(value)) {
-        return `<pre>${escapeHtml(value.join(', '))}</pre>`;
-      }
-      if (typeof value === 'object') {
-        return `<pre>${escapeHtml(JSON.stringify(value, null, 2))}</pre>`;
-      }
-      return `<pre>${escapeHtml(value)}</pre>`;
+    const state = {
+      data: null,
+      rows: [],
+      filtered: [],
+      selected: null,
     };
 
-    const renderDetail = (record) => {
-      if (!record) {
-        detailEl.innerHTML = '<p class="placeholder">Select a row to visualize the SQL comparison.</p>';
+    const listEl = document.getElementById("item-list");
+    const detailEl = document.getElementById("detail");
+    const countNoteEl = document.getElementById("count-note");
+
+    const qSearchEl = document.getElementById("q-search");
+    const statusFilterEl = document.getElementById("status-filter");
+    const sortByEl = document.getElementById("sort-by");
+    const jsonFileEl = document.getElementById("json-file");
+    const jsonUrlEl = document.getElementById("json-url");
+    const loadUrlBtn = document.getElementById("load-url");
+
+    const esc = (v) => (v == null ? "" : String(v))
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+
+    const toNum = (x) => (typeof x === "number" && Number.isFinite(x) ? x : null);
+
+    function badgeClass(v) {
+      if (v == null) return "b-na";
+      if (v >= 0.8) return "b-good";
+      if (v >= 0.5) return "b-mid";
+      return "b-bad";
+    }
+
+    function metricBadge(label, value, pct = false) {
+      let txt = "NA";
+      if (value != null && Number.isFinite(value)) {
+        txt = pct ? `${(value * 100).toFixed(1)}%` : value.toFixed(4);
+      }
+      return `<span class="badge ${badgeClass(value)}">${esc(label)}: ${esc(txt)}</span>`;
+    }
+
+    function rowStatus(row) {
+      if (row.error) return "error";
+      if (row.exact_exec_match) return "exact";
+      if (row.pred_exec_ok && row.gt_exec_ok) return "ok";
+      return "other";
+    }
+
+    function renderSummary(summary = {}) {
+      const keys = [
+        "evaluated_items",
+        "pred_with_sql",
+        "exec_eval_ok",
+        "exec_exact_match",
+        "avg_sql_ast_similarity",
+        "avg_f1",
+        "avg_row_jaccard",
+        "avg_pred_confidence",
+      ];
+      const blocks = keys.map((k) => {
+        const v = summary[k];
+        const val = typeof v === "number" ? v : (v ?? "NA");
+        return `<div class="metric"><div class="k">${esc(k)}</div><div class="v">${esc(val)}</div></div>`;
+      }).join("");
+      return `<div class="summary">${blocks}</div>`;
+    }
+
+    function renderDetail(row) {
+      if (!row) {
+        detailEl.innerHTML = '<div class="small">Load an eval JSON and click an entry.</div>';
         return;
       }
-      const {
-        question,
-        gt_sql: gtSql,
-        pred_sql: predSql,
-        gt_filters: gtFilters,
-        pred_filters: predFilters,
-        gt_columns: gtColumns,
-        pred_columns: predColumns,
-      } = record;
+
+      const badges = [
+        metricBadge("AST", toNum(row.sql_ast_similarity), true),
+        metricBadge("F1", toNum(row.f1), true),
+        metricBadge("Jaccard", toNum(row.row_jaccard), true),
+        metricBadge("Norm", toNum(row.normalization_factor), true),
+        metricBadge("ColAlign", toNum(row.column_alignment_score), true),
+        metricBadge("Confidence", toNum(row.pred_confidence), true),
+      ].join("");
+
+      const err = row.error ? `<div class="error"><strong>Error:</strong> ${esc(row.error)}</div>` : "";
+      const summaryHtml = renderSummary(state.data?.summary || {});
 
       detailEl.innerHTML = `
-        <div class="detail-header">
-          <h2>Index ${record.index}</h2>
-          <p>Question: ${escapeHtml(question)}</p>
-        </div>
-        <div class="detail-grid">
-          <div class="detail-card">
-            <h3>SQL</h3>
-            <div class="inline-row">
-              <div class="inline-block">
-                <strong>Ground truth</strong>
-                ${formatValue(gtSql)}
-              </div>
-              <div class="inline-block">
-                <strong>Prediction</strong>
-                ${formatValue(predSql)}
-              </div>
-            </div>
+        ${summaryHtml}
+        <h2 style="margin:0 0 0.3rem 0; font-size:1.1rem;">${esc(row.item_id || "n/a")}</h2>
+        <div class="small" style="margin-bottom:0.5rem;">${esc(row.question || "")}</div>
+        <div class="badges">${badges}</div>
+        ${err}
+        <div class="grid2">
+          <div class="card">
+            <h3>Pred SQL</h3>
+            <pre>${esc(row.pred_sql || "")}</pre>
           </div>
-          <div class="detail-card">
-            <h3>Filters</h3>
-            <div class="inline-row">
-              <div class="inline-block">
-                <strong>Ground truth</strong>
-                ${formatValue(gtFilters)}
-              </div>
-              <div class="inline-block">
-                <strong>Prediction</strong>
-                ${formatValue(predFilters)}
-              </div>
-            </div>
+          <div class="card">
+            <h3>GT SQL</h3>
+            <pre>${esc(row.gt_sql || "")}</pre>
           </div>
-          <div class="detail-card">
-            <h3>Columns</h3>
-            <div class="inline-row">
-              <div class="inline-block">
-                <strong>Ground truth</strong>
-                ${formatValue(gtColumns)}
-              </div>
-              <div class="inline-block">
-                <strong>Prediction</strong>
-                ${formatValue(predColumns)}
-              </div>
-            </div>
+          <div class="card">
+            <h3>Execution / Match</h3>
+            <pre>${esc(JSON.stringify({
+              pred_exec_ok: row.pred_exec_ok,
+              gt_exec_ok: row.gt_exec_ok,
+              exact_exec_match: row.exact_exec_match,
+              precision: row.precision,
+              recall: row.recall,
+              f1: row.f1,
+              row_jaccard: row.row_jaccard,
+              normalization_factor: row.normalization_factor,
+              pred_row_count: row.pred_row_count,
+              gt_row_count: row.gt_row_count,
+              pred_col_count: row.pred_col_count,
+              gt_col_count: row.gt_col_count,
+              column_alignment_score: row.column_alignment_score
+            }, null, 2))}</pre>
+          </div>
+          <div class="card">
+            <h3>Text Metrics</h3>
+            <pre>${esc(JSON.stringify({
+              chrf: row.chrf,
+              rouge_l_f1: row.rouge_l_f1,
+              bertscore_f1: row.bertscore_f1
+            }, null, 2))}</pre>
           </div>
         </div>
       `;
-    };
+    }
 
-    const renderList = (filteredRecords) => {
-      recordListEl.innerHTML = '';
-      if (!filteredRecords.length) {
-        recordListEl.innerHTML = '<li class="placeholder">No entries match the current filter.</li>';
+    function applyFilters() {
+      const q = qSearchEl.value.trim().toLowerCase();
+      const s = statusFilterEl.value;
+      const sortBy = sortByEl.value;
+
+      let rows = [...state.rows];
+      if (q) rows = rows.filter((r) => (r.question || "").toLowerCase().includes(q));
+      if (s !== "all") {
+        rows = rows.filter((r) => {
+          const st = rowStatus(r);
+          return st === s;
+        });
+      }
+
+      if (sortBy === "f1_desc") rows.sort((a, b) => (toNum(b.f1) ?? -1) - (toNum(a.f1) ?? -1));
+      if (sortBy === "f1_asc") rows.sort((a, b) => (toNum(a.f1) ?? 2) - (toNum(b.f1) ?? 2));
+      if (sortBy === "conf_desc") rows.sort((a, b) => (toNum(b.pred_confidence) ?? -1) - (toNum(a.pred_confidence) ?? -1));
+      if (sortBy === "conf_asc") rows.sort((a, b) => (toNum(a.pred_confidence) ?? 2) - (toNum(b.pred_confidence) ?? 2));
+      if (sortBy === "ast_desc") rows.sort((a, b) => (toNum(b.sql_ast_similarity) ?? -1) - (toNum(a.sql_ast_similarity) ?? -1));
+      if (sortBy === "ast_asc") rows.sort((a, b) => (toNum(a.sql_ast_similarity) ?? 2) - (toNum(b.sql_ast_similarity) ?? 2));
+
+      state.filtered = rows;
+      countNoteEl.textContent = `${rows.length} / ${state.rows.length} rows`;
+      renderList();
+
+      if (!rows.length) return renderDetail(null);
+      if (!state.selected || !rows.includes(state.selected)) state.selected = rows[0];
+      renderDetail(state.selected);
+    }
+
+    function renderList() {
+      listEl.innerHTML = "";
+      if (!state.filtered.length) {
+        listEl.innerHTML = '<div class="small">No rows match current filters.</div>';
         return;
       }
-      filteredRecords.forEach((record) => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <span class="list-metadata">
-            <strong>Index ${record.index}</strong>
-            ${escapeHtml(record.question)}
-          </span>
-          <button class="nav-button" data-index="${record.index}">View</button>
+      state.filtered.forEach((row) => {
+        const active = row === state.selected ? " active" : "";
+        const tag = rowStatus(row);
+        const f1 = toNum(row.f1);
+        const conf = toNum(row.pred_confidence);
+        const el = document.createElement("div");
+        el.className = `item${active}`;
+        el.innerHTML = `
+          <h4>${esc(row.item_id || "")}</h4>
+          <p>${esc((row.question || "").slice(0, 90))}${(row.question || "").length > 90 ? "..." : ""}</p>
+          <div class="badges" style="margin-top:0.35rem;">
+            <span class="badge ${tag === "error" ? "b-bad" : tag === "exact" ? "b-good" : "b-mid"}">${esc(tag)}</span>
+            ${metricBadge("F1", f1, true)}
+            ${metricBadge("Conf", conf, true)}
+          </div>
         `;
-        li.querySelector('button').addEventListener('click', () => {
-          renderDetail(record);
-        });
-        recordListEl.appendChild(li);
+        el.onclick = () => {
+          state.selected = row;
+          renderList();
+          renderDetail(row);
+        };
+        listEl.appendChild(el);
       });
-    };
+    }
 
-    const populateSelect = (filteredRecords) => {
-      selectEl.innerHTML = '';
-      filteredRecords.forEach((record) => {
-        const option = document.createElement('option');
-        option.value = record.index;
-        option.textContent = `#${record.index} — ${record.question.slice(0, 45)}${record.question.length > 45 ? '…' : ''}`;
-        selectEl.appendChild(option);
-      });
-      selectBtn.disabled = filteredRecords.length === 0;
-    };
-
-    const applyFilter = () => {
-      const search = questionFilterEl.value.trim().toLowerCase();
-      const filtered = search
-        ? records.filter((record) => record.question.toLowerCase().includes(search))
-        : records;
-      renderList(filtered);
-      populateSelect(filtered);
-      if (!filtered.length) {
-        renderDetail(null);
+    function parseInputObject(obj) {
+      // Expected eval format: { summary, per_item: [...] }
+      if (obj && Array.isArray(obj.per_item)) {
+        state.data = obj;
+        state.rows = obj.per_item;
+        state.selected = state.rows[0] || null;
+        applyFilters();
+        return;
       }
-    };
+      throw new Error("Unsupported JSON format. Expected object with per_item array.");
+    }
 
-    selectBtn.addEventListener('click', () => {
-      const idx = Number(selectEl.value);
-      const record = records.find((row) => row.index === idx);
-      renderDetail(record);
-    });
+    async function loadFromPath(path) {
+      const res = await fetch(path);
+      if (!res.ok) throw new Error(`HTTP ${res.status} while loading ${path}`);
+      const obj = await res.json();
+      parseInputObject(obj);
+    }
 
-    questionFilterEl.addEventListener('input', applyFilter);
-
-    const loadData = async () => {
+    async function bootstrap() {
+      const fromQuery = new URLSearchParams(window.location.search).get("file");
+      if (fromQuery) jsonUrlEl.value = fromQuery;
       try {
-        const response = await fetch(dataUrl);
-        const text = await response.text();
-        records = text
-          .split('\n')
-          .filter(Boolean)
-          .map((line, idx) => {
-            try {
-              const parsed = JSON.parse(line);
-              return { ...parsed, index: idx };
-            } catch (error) {
-              console.error('failed to parse line', idx, error);
-              return null;
-            }
-          })
-          .filter(Boolean);
-        applyFilter();
-        if (records.length) {
-          renderDetail(records[0]);
-        }
-      } catch (error) {
-        detailEl.innerHTML = `<p class="placeholder">Unable to load data: ${escapeHtml(error.message)}</p>`;
+        await loadFromPath(jsonUrlEl.value.trim());
+      } catch (e) {
+        detailEl.innerHTML = `<div class="error">Failed to load default file: ${esc(e.message)}</div>`;
+      }
+    }
+
+    loadUrlBtn.onclick = async () => {
+      try {
+        await loadFromPath(jsonUrlEl.value.trim());
+      } catch (e) {
+        detailEl.innerHTML = `<div class="error">Load failed: ${esc(e.message)}</div>`;
       }
     };
 
-    loadData();
+    jsonFileEl.onchange = async (ev) => {
+      const f = ev.target.files?.[0];
+      if (!f) return;
+      try {
+        const txt = await f.text();
+        const obj = JSON.parse(txt);
+        parseInputObject(obj);
+      } catch (e) {
+        detailEl.innerHTML = `<div class="error">Invalid file: ${esc(e.message)}</div>`;
+      }
+    };
+
+    qSearchEl.oninput = applyFilters;
+    statusFilterEl.onchange = applyFilters;
+    sortByEl.onchange = applyFilters;
+
+    bootstrap();
   </script>
 </body>
 </html>
