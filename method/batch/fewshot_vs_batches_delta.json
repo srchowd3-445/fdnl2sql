@@ -1,0 +1,248 @@
+{
+  "fewshot_eval": "/mnt/data1/srchowd3/MAYO_AIM2/results/eval_baselines_v3/20260226_062742/eval_gemma27b_few_shot.json",
+  "batch_evals": [
+    "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/batch_1/batch_1.eval.json",
+    "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/batch_2/batch_2.eval.json",
+    "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/batch_3/batch_3.eval.json"
+  ],
+  "id_source": "pred_nonempty",
+  "results": [
+    {
+      "batch": "batch_1.eval",
+      "question_set_source": "pred_nonempty",
+      "counts": {
+        "batch_scope_ids": 500,
+        "common_ids": 500,
+        "missing_in_fewshot": 0
+      },
+      "exact_head_to_head": {
+        "both_true": 120,
+        "batch_only_true": 94,
+        "fewshot_only_true": 79,
+        "both_false": 207
+      },
+      "metrics": {
+        "exact_exec_match": {
+          "batch": 0.428,
+          "fewshot": 0.398,
+          "delta_batch_minus_fewshot": 0.02999999999999997
+        },
+        "pred_exec_ok": {
+          "batch": 1.0,
+          "fewshot": 1.0,
+          "delta_batch_minus_fewshot": 0.0
+        },
+        "sql_ast_similarity": {
+          "batch": 0.903905314344619,
+          "fewshot": 0.9070977487320486,
+          "delta_batch_minus_fewshot": -0.0031924343874296657
+        },
+        "precision": {
+          "batch": 0.5303023221957781,
+          "fewshot": 0.56180588366198,
+          "delta_batch_minus_fewshot": -0.031503561466201924
+        },
+        "recall": {
+          "batch": 0.5567122863247863,
+          "fewshot": 0.5864650374922696,
+          "delta_batch_minus_fewshot": -0.029752751167483327
+        },
+        "f1": {
+          "batch": 0.533145208591007,
+          "fewshot": 0.5528019035662494,
+          "delta_batch_minus_fewshot": -0.01965669497524236
+        },
+        "row_jaccard": {
+          "batch": 0.5143705021095465,
+          "fewshot": 0.5220449870527204,
+          "delta_batch_minus_fewshot": -0.007674484943173909
+        },
+        "column_alignment_score": {
+          "batch": 0.8383401676332926,
+          "fewshot": 0.8322163535587799,
+          "delta_batch_minus_fewshot": 0.006123814074512679
+        },
+        "chrf": {
+          "batch": 94.8249467088503,
+          "fewshot": 94.01545655894624,
+          "delta_batch_minus_fewshot": 0.8094901499040645
+        },
+        "rouge_l_f1": {
+          "batch": 0.9394695103728521,
+          "fewshot": 0.9406170539644314,
+          "delta_batch_minus_fewshot": -0.0011475435915793142
+        }
+      },
+      "sample_common_ids": [
+        "line_1",
+        "line_2",
+        "line_3",
+        "line_4",
+        "line_5",
+        "line_6",
+        "line_7",
+        "line_8",
+        "line_9",
+        "line_10"
+      ]
+    },
+    {
+      "batch": "batch_2.eval",
+      "question_set_source": "pred_nonempty",
+      "counts": {
+        "batch_scope_ids": 500,
+        "common_ids": 500,
+        "missing_in_fewshot": 0
+      },
+      "exact_head_to_head": {
+        "both_true": 55,
+        "batch_only_true": 67,
+        "fewshot_only_true": 61,
+        "both_false": 317
+      },
+      "metrics": {
+        "exact_exec_match": {
+          "batch": 0.244,
+          "fewshot": 0.232,
+          "delta_batch_minus_fewshot": 0.011999999999999983
+        },
+        "pred_exec_ok": {
+          "batch": 1.0,
+          "fewshot": 0.994,
+          "delta_batch_minus_fewshot": 0.006000000000000005
+        },
+        "sql_ast_similarity": {
+          "batch": 0.8424229927296307,
+          "fewshot": 0.8291045292351944,
+          "delta_batch_minus_fewshot": 0.013318463494436328
+        },
+        "precision": {
+          "batch": 0.4040541766283378,
+          "fewshot": 0.4360863230406832,
+          "delta_batch_minus_fewshot": -0.032032146412345364
+        },
+        "recall": {
+          "batch": 0.37487549439953466,
+          "fewshot": 0.38977125124925843,
+          "delta_batch_minus_fewshot": -0.014895756849723774
+        },
+        "f1": {
+          "batch": 0.3689052184424939,
+          "fewshot": 0.374111554194281,
+          "delta_batch_minus_fewshot": -0.005206335751787083
+        },
+        "row_jaccard": {
+          "batch": 0.3429618190820164,
+          "fewshot": 0.34187889950193007,
+          "delta_batch_minus_fewshot": 0.0010829195800863278
+        },
+        "column_alignment_score": {
+          "batch": 0.7738559527189216,
+          "fewshot": 0.7621842615339149,
+          "delta_batch_minus_fewshot": 0.01167169118500666
+        },
+        "chrf": {
+          "batch": 90.47015655859981,
+          "fewshot": 88.7362882465417,
+          "delta_batch_minus_fewshot": 1.7338683120581067
+        },
+        "rouge_l_f1": {
+          "batch": 0.9011051596568145,
+          "fewshot": 0.8919774505199871,
+          "delta_batch_minus_fewshot": 0.009127709136827367
+        }
+      },
+      "sample_common_ids": [
+        "line_100_var_drop_select_column_192",
+        "line_100_var_drop_where_condition_32",
+        "line_100_var_keep_one_where_condition_80",
+        "line_101_var_drop_where_condition_156",
+        "line_102_var_drop_select_column_32",
+        "line_102_var_keep_two_select_columns_163",
+        "line_103_var_drop_select_column_204",
+        "line_103_var_drop_select_column_64",
+        "line_103_var_keep_one_where_condition_63",
+        "line_103_var_keep_two_select_columns_161"
+      ]
+    },
+    {
+      "batch": "batch_3.eval",
+      "question_set_source": "pred_nonempty",
+      "counts": {
+        "batch_scope_ids": 500,
+        "common_ids": 500,
+        "missing_in_fewshot": 0
+      },
+      "exact_head_to_head": {
+        "both_true": 98,
+        "batch_only_true": 55,
+        "fewshot_only_true": 48,
+        "both_false": 299
+      },
+      "metrics": {
+        "exact_exec_match": {
+          "batch": 0.306,
+          "fewshot": 0.292,
+          "delta_batch_minus_fewshot": 0.014000000000000012
+        },
+        "pred_exec_ok": {
+          "batch": 1.0,
+          "fewshot": 0.994,
+          "delta_batch_minus_fewshot": 0.006000000000000005
+        },
+        "sql_ast_similarity": {
+          "batch": 0.8400549710484819,
+          "fewshot": 0.8268504628471907,
+          "delta_batch_minus_fewshot": 0.013204508201291265
+        },
+        "precision": {
+          "batch": 0.48915972910713107,
+          "fewshot": 0.4954493615047036,
+          "delta_batch_minus_fewshot": -0.00628963239757252
+        },
+        "recall": {
+          "batch": 0.4341645612109767,
+          "fewshot": 0.4543670116710526,
+          "delta_batch_minus_fewshot": -0.020202450460075905
+        },
+        "f1": {
+          "batch": 0.43240878400489074,
+          "fewshot": 0.4449093966614694,
+          "delta_batch_minus_fewshot": -0.012500612656578647
+        },
+        "row_jaccard": {
+          "batch": 0.4061315042798422,
+          "fewshot": 0.4126684759945723,
+          "delta_batch_minus_fewshot": -0.006536971714730111
+        },
+        "column_alignment_score": {
+          "batch": 0.7973009657532153,
+          "fewshot": 0.7738680739634208,
+          "delta_batch_minus_fewshot": 0.023432891789794463
+        },
+        "chrf": {
+          "batch": 92.03379100729217,
+          "fewshot": 90.62915941724623,
+          "delta_batch_minus_fewshot": 1.4046315900459376
+        },
+        "rouge_l_f1": {
+          "batch": 0.9251490569978164,
+          "fewshot": 0.8991812853674933,
+          "delta_batch_minus_fewshot": 0.025967771630323044
+        }
+      },
+      "sample_common_ids": [
+        "line_330_var_drop_select_column_60",
+        "line_330_var_keep_two_select_columns_170",
+        "line_332_var_drop_select_column_166",
+        "line_332_var_drop_select_column_207",
+        "line_332_var_keep_one_where_condition_95",
+        "line_333_var_drop_select_column_91",
+        "line_333_var_drop_where_condition_84",
+        "line_333_var_keep_one_where_condition_115",
+        "line_333_var_keep_two_select_columns_44",
+        "line_334_var_drop_select_column_40"
+      ]
+    }
+  ]
+}

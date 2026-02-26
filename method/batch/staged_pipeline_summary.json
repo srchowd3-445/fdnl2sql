@@ -1,0 +1,57 @@
+{
+  "mode": "staged_batch_mode",
+  "stage_count": 3,
+  "stage_size": 500,
+  "initial_seed": "/mnt/data1/srchowd3/MAYO_AIM2/data/seed_questions.json",
+  "final_seed": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/seeds/seed_after_batch_3.json",
+  "stages": [
+    {
+      "stage": 1,
+      "start_index": 0,
+      "limit": 500,
+      "end_index": 499,
+      "output_dir": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/batch_1",
+      "decompose_json": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/batch_1/batch_1.decompose_retrieve.json",
+      "synth_json": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/batch_1/batch_1.synth.json",
+      "eval_output_json": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/batch_1/batch_1.eval.json",
+      "acceptance_output_json": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/batch_1/batch_1.acceptance.json",
+      "seed_in": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/seeds/seed_working.json",
+      "seed_out": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/seeds/seed_after_batch_1.json",
+      "accepted_rows": 254,
+      "seed_rows_added": 229,
+      "seed_rows_skipped_existing": 25
+    },
+    {
+      "stage": 2,
+      "start_index": 500,
+      "limit": 500,
+      "end_index": 999,
+      "output_dir": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/batch_2",
+      "decompose_json": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/batch_2/batch_2.decompose_retrieve.json",
+      "synth_json": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/batch_2/batch_2.synth.json",
+      "eval_output_json": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/batch_2/batch_2.eval.json",
+      "acceptance_output_json": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/batch_2/batch_2.acceptance.json",
+      "seed_in": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/seeds/seed_after_batch_1.json",
+      "seed_out": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/seeds/seed_after_batch_2.json",
+      "accepted_rows": 168,
+      "seed_rows_added": 151,
+      "seed_rows_skipped_existing": 17
+    },
+    {
+      "stage": 3,
+      "start_index": 1000,
+      "limit": 500,
+      "end_index": 1499,
+      "output_dir": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/batch_3",
+      "decompose_json": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/batch_3/batch_3.decompose_retrieve.json",
+      "synth_json": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/batch_3/batch_3.synth.json",
+      "eval_output_json": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/batch_3/batch_3.eval.json",
+      "acceptance_output_json": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/batch_3/batch_3.acceptance.json",
+      "seed_in": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/seeds/seed_after_batch_2.json",
+      "seed_out": "/mnt/data1/srchowd3/MAYO_AIM2/method/batch/seeds/seed_after_batch_3.json",
+      "accepted_rows": 213,
+      "seed_rows_added": 198,
+      "seed_rows_skipped_existing": 15
+    }
+  ]
+}
