@@ -1,0 +1,35 @@
+2026-02-26 01:13:08,264 | INFO | Log file: results/logs/generated_sql_few_shot_20260226_011308.log
+2026-02-26 01:13:08,291 | INFO | =========== RUN START ===========
+2026-02-26 01:13:08,291 | INFO | Input: /mnt/data1/tanvekar/MAYO_AIM2/data/natural_question_1500.json
+2026-02-26 01:13:08,291 | INFO | Input format used: json
+2026-02-26 01:13:08,291 | INFO | Output: /mnt/data1/tanvekar/MAYO_AIM2/logs/Qwen3/30B-A3B/sql_with_conf_FS/generated_sql_few_shot.jsonl
+2026-02-26 01:13:08,291 | INFO | Error log: /mnt/data1/tanvekar/MAYO_AIM2/logs/Qwen3/30B-A3B/sql_with_conf_FS/error_few_shot.jsonl
+2026-02-26 01:13:08,291 | INFO | Checkpoint: /mnt/data1/tanvekar/MAYO_AIM2/logs/Qwen3/30B-A3B/sql_with_conf_FS/checkpoint_few_shot.json
+2026-02-26 01:13:08,291 | INFO | Rows selected: 1500
+2026-02-26 01:13:08,291 | INFO | Resuming: True
+2026-02-26 01:13:08,291 | INFO | Already completed: 0
+2026-02-26 01:13:08,291 | INFO | Prompt style: few_shot
+2026-02-26 01:13:08,291 | INFO | Backend: openai_compat
+2026-02-26 01:13:08,291 | INFO | Model: Qwen/Qwen3-30B-A3B-Instruct-2507
+2026-02-26 01:13:08,291 | INFO | Logprob mode: structured
+2026-02-26 01:13:08,291 | INFO | Batch size: 256
+2026-02-26 01:13:08,291 | INFO | Batch concurrency: 64
+2026-02-26 01:13:08,291 | INFO | Use pydantic response schema: True
+2026-02-26 01:13:08,291 | INFO | Schema columns: 32
+2026-02-26 01:13:08,292 | INFO | Schema hints columns: 32
+2026-02-26 01:13:10,316 | INFO | Batch 1/6 processed=256 elapsed=1.94s throughput=131.93 rec/s completed=256/1500 success=0 error=256
+2026-02-26 01:13:12,295 | INFO | Batch 2/6 processed=256 elapsed=1.88s throughput=136.51 rec/s completed=512/1500 success=0 error=512
+2026-02-26 01:13:14,641 | INFO | Batch 3/6 processed=256 elapsed=2.24s throughput=114.31 rec/s completed=768/1500 success=0 error=768
+2026-02-26 01:13:16,820 | INFO | Batch 4/6 processed=256 elapsed=2.09s throughput=122.56 rec/s completed=1024/1500 success=0 error=1024
+2026-02-26 01:13:19,117 | INFO | Batch 5/6 processed=256 elapsed=2.19s throughput=116.93 rec/s completed=1280/1500 success=0 error=1280
+2026-02-26 01:13:21,113 | INFO | Batch 6/6 processed=220 elapsed=1.88s throughput=116.79 rec/s completed=1500/1500 success=0 error=1500
+2026-02-26 01:13:21,318 | INFO | =========== RUN SUMMARY ===========
+2026-02-26 01:13:21,318 | INFO | Rows selected: 1500
+2026-02-26 01:13:21,318 | INFO | Rows completed in checkpoint: 1500
+2026-02-26 01:13:21,318 | INFO | Processed this run: 1500
+2026-02-26 01:13:21,318 | INFO | Non-empty predicted SQL: 0
+2026-02-26 01:13:21,318 | INFO | Success count (this run): 0
+2026-02-26 01:13:21,318 | INFO | Error count (this run): 1500
+2026-02-26 01:13:21,318 | INFO | Avg confidence_overall (this run): NA
+2026-02-26 01:13:21,318 | INFO | Total runtime: 12.94s
+2026-02-26 01:13:21,318 | INFO | ===================================

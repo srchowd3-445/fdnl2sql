@@ -1,0 +1,22 @@
+2026-02-26 01:56:43,973 | INFO | Log file: results/logs/generated_sql_cot_20260226_015643.log
+2026-02-26 01:56:44,002 | INFO | =========== RUN START ===========
+2026-02-26 01:56:44,002 | INFO | Input: /mnt/data1/tanvekar/MAYO_AIM2/data/natural_question_1500.json
+2026-02-26 01:56:44,002 | INFO | Input format used: json
+2026-02-26 01:56:44,002 | INFO | Output: /mnt/data1/tanvekar/MAYO_AIM2/logs/Qwen3/30B-A3B/sql_with_conf_CoT/generated_sql_cot.jsonl
+2026-02-26 01:56:44,002 | INFO | Error log: /mnt/data1/tanvekar/MAYO_AIM2/logs/Qwen3/30B-A3B/sql_with_conf_CoT/error_cot.jsonl
+2026-02-26 01:56:44,002 | INFO | Checkpoint: /mnt/data1/tanvekar/MAYO_AIM2/logs/Qwen3/30B-A3B/sql_with_conf_CoT/checkpoint_cot.json
+2026-02-26 01:56:44,002 | INFO | Rows selected: 1500
+2026-02-26 01:56:44,002 | INFO | Resuming: True
+2026-02-26 01:56:44,002 | INFO | Already completed: 0
+2026-02-26 01:56:44,002 | INFO | Prompt style: cot
+2026-02-26 01:56:44,002 | INFO | Backend: openai_compat
+2026-02-26 01:56:44,002 | INFO | Model: Qwen/Qwen3-30B-A3B-Instruct-2507
+2026-02-26 01:56:44,002 | INFO | Logprob mode: structured
+2026-02-26 01:56:44,002 | INFO | Batch size: 256
+2026-02-26 01:56:44,002 | INFO | Batch concurrency: 64
+2026-02-26 01:56:44,002 | INFO | Use pydantic response schema: False
+2026-02-26 01:56:44,002 | INFO | Use pydantic CoT tag validation: False
+2026-02-26 01:56:44,002 | INFO | Schema columns: 32
+2026-02-26 01:56:44,002 | INFO | Schema hints columns: 32
+2026-02-26 01:56:53,799 | INFO | Batch 1/6 processed=256 elapsed=9.76s throughput=26.23 rec/s completed=256/1500 success=256 error=0
+2026-02-26 01:57:02,683 | INFO | Batch 2/6 processed=256 elapsed=8.78s throughput=29.15 rec/s completed=512/1500 success=512 error=0
