@@ -1,0 +1,243 @@
+{
+  "meta": {
+    "backend": "openai_compat",
+    "question": null,
+    "question_json": "/mnt/data1/srchowd3/MAYO_AIM2/data/natural_question_1500.json",
+    "question_index": 0,
+    "batch_mode": 0,
+    "start_index": 0,
+    "limit": 1,
+    "prompt_file": "/mnt/data1/srchowd3/MAYO_AIM2/method/prompt/decompose_prompt.txt",
+    "schema_json": "/mnt/data1/srchowd3/MAYO_AIM2/data/schema.json",
+    "decompose_examples_file": "/mnt/data1/srchowd3/MAYO_AIM2/method/prompt/decompose_examples.txt",
+    "seed_json": "/mnt/data1/srchowd3/MAYO_AIM2/data/seed_questions.json",
+    "candidate_json": null,
+    "candidate_sqlite": null,
+    "candidate_table": "query_library",
+    "top_k": 3,
+    "retrieval_per_decomp": 3,
+    "max_decomposed_queries": 5,
+    "sbert": {
+      "model": "/mnt/shared/shared_hf_home/hub/models--sentence-transformers--all-MiniLM-L6-v2/snapshots/c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+      "device": null,
+      "batch_size": 64
+    },
+    "api_base": "http://127.0.0.1:8000/v1",
+    "model_name": "gemma-3-27b-local",
+    "model_path": null,
+    "gen_batch_size": 32,
+    "batch_concurrency": 8,
+    "pipeline_stage": "decompose_then_retrieve"
+  },
+  "counts": {
+    "total_tasks": 1,
+    "error_tasks": 0,
+    "with_decomposition": 1,
+    "with_retrieval": 1
+  },
+  "results": [
+    {
+      "task_index": 0,
+      "question_index": 0,
+      "item_id": "line_1",
+      "input_question": "Which Colorectal trials had 3 or more arms and used a multikinase inhibitor as a control?",
+      "error": null,
+      "decomposition": {
+        "raw_text": "{\"decomposed_queries\": [\n  \"Which trials have Cancer type = 'Colorectal'?\",\n  \"Which trials have Number of arms >= 3?\",\n  \"Which trials have Control arm = 'Multikinase inhibitor'?\"\n]}",
+        "decomposed_queries": [
+          "Which trials have Cancer type = 'Colorectal'?",
+          "Which trials have Number of arms >= 3?",
+          "Which trials have Control arm = 'Multikinase inhibitor'?"
+        ],
+        "model_meta": {
+          "provider_call_ok": true,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids_len": 54,
+          "backend": "openai_compat"
+        },
+        "error": null
+      },
+      "retrieval_trace": [
+        {
+          "decomposed_query": "Which trials have Cancer type = 'Colorectal'?",
+          "top1_candidate_id": "seed[9].query_2",
+          "top1_score": 0.9914021492004395
+        },
+        {
+          "decomposed_query": "Which trials have Number of arms >= 3?",
+          "top1_candidate_id": "seed[180].query_2",
+          "top1_score": 0.9709845185279846
+        },
+        {
+          "decomposed_query": "Which trials have Control arm = 'Multikinase inhibitor'?",
+          "top1_candidate_id": "seed[9].query_3",
+          "top1_score": 0.9931322038173676
+        }
+      ],
+      "retrieval_by_decomposition": [
+        {
+          "decomposed_query": "Which trials have Cancer type = 'Colorectal'?",
+          "ranked_results": [
+            {
+              "rank": 1,
+              "total_score": 0.9914021492004395,
+              "sbert_score": 0.9914021492004395,
+              "candidate": {
+                "candidate_id": "seed[9].query_2",
+                "question": "Which trials have Cancer type equal to Colorectal?",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Trial name\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal';",
+                "parent_question": "Which trials of Atezolizumab for Colorectal cancer used a multikinase inhibitor as the control?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 2,
+              "total_score": 0.9758086800575256,
+              "sbert_score": 0.9758086800575256,
+              "candidate": {
+                "candidate_id": "seed[95].query_1",
+                "question": "Trials with Cancer type = 'Colorectal'?",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Number of arms\", \"Control arm\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal';",
+                "parent_question": "Find Colorectal cancer trials with at least 4 arms where the control treatment was Chemo/Anti-EGFR?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 3,
+              "total_score": 0.9620954990386963,
+              "sbert_score": 0.9620954990386963,
+              "candidate": {
+                "candidate_id": "seed[196].query_2",
+                "question": "Trials where Cancer type is Colorectal",
+                "sql": "SELECT \"NCT\", \"Author\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Follow-up duration for primary endpoint(s) in months | Overall\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal';",
+                "parent_question": "List trials of Atezolizumab for Multiple Myeloma with overall follow-up longer than 21 months?",
+                "source": "seed_json/decomposed"
+              }
+            }
+          ]
+        },
+        {
+          "decomposed_query": "Which trials have Number of arms >= 3?",
+          "ranked_results": [
+            {
+              "rank": 1,
+              "total_score": 0.9709845185279846,
+              "sbert_score": 0.9709845185279846,
+              "candidate": {
+                "candidate_id": "seed[180].query_2",
+                "question": "What trials have Number of arms >= 2?",
+                "sql": "SELECT \"Author\", \"Cancer type\" FROM clinical_trials WHERE \"Number of arms\" >= 2;",
+                "parent_question": "Which trials for esophageal or gastroesophageal junction cancer had at least 2 arms and used chemotherapy as a control?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 2,
+              "total_score": 0.9682703614234924,
+              "sbert_score": 0.9682703614234924,
+              "candidate": {
+                "candidate_id": "seed[134].query_2",
+                "question": "What trials have Number of arms >= 1?",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Number of arms\", \"Control arm\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Number of arms\" >= 1;",
+                "parent_question": "Which renal cell cancer trials had at least 1 treatment arm and used an mTOR inhibitor as a control?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 3,
+              "total_score": 0.9550133943557739,
+              "sbert_score": 0.9550133943557739,
+              "candidate": {
+                "candidate_id": "seed[35].query_2",
+                "question": "Which trials have Number of arms greater than or equal to 4?",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Number of arms\" FROM clinical_trials WHERE \"Number of arms\" >= 4;",
+                "parent_question": "Which trials for bladder cancer had at least 4 arms and used chemotherapy as a control?",
+                "source": "seed_json/decomposed"
+              }
+            }
+          ]
+        },
+        {
+          "decomposed_query": "Which trials have Control arm = 'Multikinase inhibitor'?",
+          "ranked_results": [
+            {
+              "rank": 1,
+              "total_score": 0.9931322038173676,
+              "sbert_score": 0.9931322038173676,
+              "candidate": {
+                "candidate_id": "seed[9].query_3",
+                "question": "Which trials have Control arm equal to Multikinase inhibitor?",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Trial name\" FROM clinical_trials WHERE \"Control arm\" = 'Multikinase inhibitor';",
+                "parent_question": "Which trials of Atezolizumab for Colorectal cancer used a multikinase inhibitor as the control?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 2,
+              "total_score": 0.8939809501171112,
+              "sbert_score": 0.8939809501171112,
+              "candidate": {
+                "candidate_id": "seed[157].query_2",
+                "question": "Which trials have Control arm = 'mTOR inhibitor'?",
+                "sql": "SELECT \"NCT\", \"Author\", \"Originial publication or Follow-up\", \"Control arm\", \"Cancer type\" FROM clinical_trials WHERE \"Control arm\" = 'mTOR inhibitor';",
+                "parent_question": "Which trials for Renal cell cancer used an mTOR inhibitor as the control arm?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 3,
+              "total_score": 0.8939809501171112,
+              "sbert_score": 0.8939809501171112,
+              "candidate": {
+                "candidate_id": "seed[167].query_2",
+                "question": "Which trials have Control arm = 'mTOR inhibitor'?",
+                "sql": "SELECT \"NCT\", \"Trial name\", \"Cancer type\", \"Control arm\" FROM clinical_trials WHERE \"Control arm\" = 'mTOR inhibitor';",
+                "parent_question": "Which trials for Renal cell cancer used an mTOR inhibitor as the control treatment?",
+                "source": "seed_json/decomposed"
+              }
+            }
+          ]
+        }
+      ],
+      "ranked_results": [
+        {
+          "rank": 1,
+          "total_score": 0.9931322038173676,
+          "sbert_score": 0.9931322038173676,
+          "candidate": {
+            "candidate_id": "seed[9].query_3",
+            "question": "Which trials have Control arm equal to Multikinase inhibitor?",
+            "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Trial name\" FROM clinical_trials WHERE \"Control arm\" = 'Multikinase inhibitor';",
+            "parent_question": "Which trials of Atezolizumab for Colorectal cancer used a multikinase inhibitor as the control?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 2,
+          "total_score": 0.9914021492004395,
+          "sbert_score": 0.9914021492004395,
+          "candidate": {
+            "candidate_id": "seed[9].query_2",
+            "question": "Which trials have Cancer type equal to Colorectal?",
+            "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Trial name\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal';",
+            "parent_question": "Which trials of Atezolizumab for Colorectal cancer used a multikinase inhibitor as the control?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 3,
+          "total_score": 0.9758086800575256,
+          "sbert_score": 0.9758086800575256,
+          "candidate": {
+            "candidate_id": "seed[95].query_1",
+            "question": "Trials with Cancer type = 'Colorectal'?",
+            "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Number of arms\", \"Control arm\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal';",
+            "parent_question": "Find Colorectal cancer trials with at least 4 arms where the control treatment was Chemo/Anti-EGFR?",
+            "source": "seed_json/decomposed"
+          }
+        }
+      ]
+    }
+  ]
+}
