@@ -1,0 +1,30 @@
+2026-02-26 02:05:27,003 | INFO | Log file: results/logs/generated_sql_cot_20260226_020527.log
+2026-02-26 02:05:27,038 | INFO | =========== RUN START ===========
+2026-02-26 02:05:27,038 | INFO | Input: /mnt/data1/tanvekar/MAYO_AIM2/data/natural_question_1500.json
+2026-02-26 02:05:27,038 | INFO | Input format used: json
+2026-02-26 02:05:27,038 | INFO | Output: /mnt/data1/tanvekar/MAYO_AIM2/logs/Qwen3/30B-A3B/sql_with_conf_CoT/generated_sql_cot.jsonl
+2026-02-26 02:05:27,038 | INFO | Error log: /mnt/data1/tanvekar/MAYO_AIM2/logs/Qwen3/30B-A3B/sql_with_conf_CoT/error_cot.jsonl
+2026-02-26 02:05:27,038 | INFO | Checkpoint: /mnt/data1/tanvekar/MAYO_AIM2/logs/Qwen3/30B-A3B/sql_with_conf_CoT/checkpoint_cot.json
+2026-02-26 02:05:27,039 | INFO | Rows selected: 1500
+2026-02-26 02:05:27,039 | INFO | Resuming: True
+2026-02-26 02:05:27,039 | INFO | Already completed: 1500
+2026-02-26 02:05:27,039 | INFO | Prompt style: cot
+2026-02-26 02:05:27,039 | INFO | Backend: openai_compat
+2026-02-26 02:05:27,039 | INFO | Model: Qwen/Qwen3-30B-A3B-Instruct-2507
+2026-02-26 02:05:27,039 | INFO | Logprob mode: structured
+2026-02-26 02:05:27,039 | INFO | Batch size: 256
+2026-02-26 02:05:27,039 | INFO | Batch concurrency: 64
+2026-02-26 02:05:27,039 | INFO | Use pydantic response schema: False
+2026-02-26 02:05:27,039 | INFO | Use pydantic CoT tag validation: True
+2026-02-26 02:05:27,039 | INFO | Schema columns: 32
+2026-02-26 02:05:27,039 | INFO | Schema hints columns: 32
+2026-02-26 02:05:27,151 | INFO | =========== RUN SUMMARY ===========
+2026-02-26 02:05:27,151 | INFO | Rows selected: 1500
+2026-02-26 02:05:27,151 | INFO | Rows completed in checkpoint: 1500
+2026-02-26 02:05:27,151 | INFO | Processed this run: 0
+2026-02-26 02:05:27,151 | INFO | Non-empty predicted SQL: 0
+2026-02-26 02:05:27,151 | INFO | Success count (this run): 0
+2026-02-26 02:05:27,152 | INFO | Error count (this run): 0
+2026-02-26 02:05:27,152 | INFO | Avg confidence_overall (this run): NA
+2026-02-26 02:05:27,152 | INFO | Total runtime: 0.09s
+2026-02-26 02:05:27,152 | INFO | ===================================
