@@ -1,0 +1,12 @@
+[
+  {
+    "task_index": 0,
+    "question_index": null,
+    "item_id": null,
+    "question": "List original publications by Powels et Al",
+    "natural_question": "List original publications by Powels et Al",
+    "pred_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Cancer type\" FROM clinical_trials WHERE \"Author\" = 'Powels et Al' AND \"Originial publication or Follow-up\" = 'Original publication'",
+    "confidence_overall": null,
+    "error": null
+  }
+]

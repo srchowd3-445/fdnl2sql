@@ -1,0 +1,104 @@
+[
+  {
+    "idx": 1,
+    "item_id": "extra_100_217_keep_two_select_columns_29",
+    "original_question": "What are the years and names of trials that studied Pembrolizumab for Melanoma in phase 3?",
+    "gt_sql": "SELECT \"Year\", \"Name of ICI\" FROM clinical_trials WHERE \"Name of ICI\" = 'Pembrolizumab' AND \"Cancer type\" = 'Melanoma' AND \"Trial phase\" = 'Phase 3';",
+    "decomposed_query": {
+      "query_1": {
+        "question": "Trials with Name of ICI = 'Pembrolizumab",
+        "sql": "SELECT \"Year\", \"Name of ICI\" FROM clinical_trials WHERE \"Name of ICI\" = 'Pembrolizumab';"
+      },
+      "query_2": {
+        "question": "From Pembrolizumab trials, which have Cancer type = 'Melanoma' ?",
+        "sql": "SELECT \"Year\", \"Name of ICI\" FROM clinical_trials WHERE \"Name of ICI\" = 'Pembrolizumab' AND \"Cancer type\" = 'Melanoma';"
+      },
+      "query_3": {
+        "question": "From Pembrolizumab trials in Melanoma, which have Trial phase = 'Phase 3' ?",
+        "sql": "SELECT \"Year\", \"Name of ICI\" FROM clinical_trials WHERE \"Name of ICI\" = 'Pembrolizumab' AND \"Cancer type\" = 'Melanoma' AND \"Trial phase\" = 'Phase 3';"
+      }
+    },
+    "status": "ok",
+    "error": null,
+    "source_question_key": "natural_question",
+    "source_sql_key": "gt_sql",
+    "model": "gpt-5-nano",
+    "custom_id": null,
+    "decomposed_query_validation": {
+      "query_1": {
+        "question": "Trials with Name of ICI = 'Pembrolizumab",
+        "sql": "SELECT \"Year\", \"Name of ICI\" FROM clinical_trials WHERE \"Name of ICI\" = 'Pembrolizumab';",
+        "runnable": true,
+        "error": null,
+        "columns": [
+          "Year",
+          "Name of ICI"
+        ],
+        "preview_rows": [
+          [
+            2017,
+            "Pembrolizumab"
+          ],
+          [
+            2019,
+            "Pembrolizumab"
+          ],
+          [
+            2018,
+            "Pembrolizumab"
+          ]
+        ]
+      },
+      "query_2": {
+        "question": "From Pembrolizumab trials, which have Cancer type = 'Melanoma' ?",
+        "sql": "SELECT \"Year\", \"Name of ICI\" FROM clinical_trials WHERE \"Name of ICI\" = 'Pembrolizumab' AND \"Cancer type\" = 'Melanoma';",
+        "runnable": true,
+        "error": null,
+        "columns": [
+          "Year",
+          "Name of ICI"
+        ],
+        "preview_rows": [
+          [
+            2018,
+            "Pembrolizumab"
+          ],
+          [
+            2015,
+            "Pembrolizumab"
+          ],
+          [
+            2015,
+            "Pembrolizumab"
+          ]
+        ]
+      },
+      "query_3": {
+        "question": "From Pembrolizumab trials in Melanoma, which have Trial phase = 'Phase 3' ?",
+        "sql": "SELECT \"Year\", \"Name of ICI\" FROM clinical_trials WHERE \"Name of ICI\" = 'Pembrolizumab' AND \"Cancer type\" = 'Melanoma' AND \"Trial phase\" = 'Phase 3';",
+        "runnable": true,
+        "error": null,
+        "columns": [
+          "Year",
+          "Name of ICI"
+        ],
+        "preview_rows": [
+          [
+            2018,
+            "Pembrolizumab"
+          ],
+          [
+            2020,
+            "Pembrolizumab"
+          ]
+        ]
+      }
+    },
+    "decomposed_query_validation_summary": {
+      "total_queries": 3,
+      "runnable_queries": 3,
+      "failed_queries": 0
+    },
+    "decomposed_query_all_runnable": true
+  }
+]

@@ -1,0 +1,202 @@
+{
+  "status": "ok",
+  "item_id": null,
+  "question": "Give me studies from 2018 onwards",
+  "final_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Originial publication or Follow-up\" FROM clinical_trials WHERE \"Year\" >= 2018",
+  "confidence_overall": null,
+  "error": null,
+  "decomposed_queries": [
+    "Which trials have Year >= 2018?"
+  ],
+  "retrieval_top": [
+    {
+      "rank": 1,
+      "score": 0.9380241632461548,
+      "candidate_id": "seed[47].query_3",
+      "candidate_question": "What is the Year of these trials?",
+      "candidate_sql": "SELECT \"Year\" FROM clinical_trials WHERE \"Cancer type\" = 'Urothelial' AND \"Name of ICI\" = 'Avelumab' AND \"Monotherapy/combination\" = 'combination';"
+    },
+    {
+      "rank": 2,
+      "score": 0.9333760738372803,
+      "candidate_id": "seed[74].query_3",
+      "candidate_question": "What is the year for those trials?",
+      "candidate_sql": "SELECT \"Year\" FROM clinical_trials WHERE \"Cancer type\" = 'Renal cell' AND \"Name of ICI\" = 'Nivolumab, Ipilimumab' AND \"Follow-up duration for primary endpoint(s) in months | Overall\" > 21;"
+    },
+    {
+      "rank": 3,
+      "score": 0.9212979674339294,
+      "candidate_id": "seed[164].query_3",
+      "candidate_question": "What are the Years for those trials?",
+      "candidate_sql": "SELECT \"Year\" FROM clinical_trials WHERE \"Class of ICI\" = 'PD1' AND \"Cancer type\" = 'Non-Small Cell Lung' AND \"Trial phase\" = 'Phase 3' AND \"Monotherapy/combination\" = 'Combination';"
+    }
+  ],
+  "execution_preview": {
+    "error": null,
+    "columns": [
+      "NCT",
+      "Trial name",
+      "Author",
+      "Year",
+      "Originial publication or Follow-up"
+    ],
+    "rows": [
+      [
+        "NCT02302807",
+        "IMvigor211",
+        "Powles T et al",
+        2018,
+        "Original publication"
+      ],
+      [
+        "NCT02256436",
+        "Keynote-045",
+        "Fradet Y et al",
+        2019,
+        "Follow-up"
+      ],
+      [
+        "NCT02425891",
+        "IMpassion130",
+        "Schmid P et al",
+        2018,
+        "Original publication"
+      ],
+      [
+        "NCT02685059",
+        "GeparNuevo",
+        "Loibl S et al",
+        2019,
+        "Original publication"
+      ],
+      [
+        "NCT02788279",
+        "IMblaze130",
+        "Eng C et al",
+        2019,
+        "Original publication"
+      ],
+      [
+        "NCT02788279",
+        "IMblaze130",
+        "Eng C et al (1)",
+        2019,
+        "Original publication"
+      ],
+      [
+        "NCT02625623",
+        "JAVELIN Gastric 300",
+        "Bang YJ et al",
+        2018,
+        "Original publication"
+      ],
+      [
+        "NCT02370498",
+        "Keynote-061",
+        "Shitara K et al",
+        2018,
+        "Original publication"
+      ],
+      [
+        "NCT02252042",
+        "KEYNOTE-040",
+        "Cohen EEW et al",
+        2018,
+        "Original publication"
+      ],
+      [
+        "NCT02105636",
+        "CheckMate 141",
+        "Ferris RL et al",
+        2018,
+        "Follow-up"
+      ],
+      [
+        "NCT01984242",
+        "IMmotion150",
+        "McDermott DF et al",
+        2018,
+        "Original publication"
+      ],
+      [
+        "NCT01984242",
+        "IMmotion150",
+        "McDermott DF et al (1)",
+        2018,
+        "Original publication"
+      ],
+      [
+        "NCT02231749",
+        "CheckMate 214",
+        "Motzer RJ et al",
+        2018,
+        "Original publication"
+      ],
+      [
+        "NCT02231749",
+        "CheckMate 214",
+        "Motzer RJ et al",
+        2019,
+        "Follow-up"
+      ],
+      [
+        "NCT02684006",
+        "JAVELIN Renal 101",
+        "Motzer RJ et al",
+        2019,
+        "Original publication"
+      ],
+      [
+        "NCT02853331",
+        "KEYNOTE-426",
+        "Rini BI et al",
+        2019,
+        "Original publication"
+      ],
+      [
+        "NCT02420821",
+        "IMmotion151",
+        "Rini BI et al",
+        2019,
+        "Original publication"
+      ],
+      [
+        "NCT02125461",
+        "PACIFIC",
+        "Antonia SJ et al",
+        2018,
+        "Follow-up"
+      ],
+      [
+        "NCT02395172",
+        "JAVELIN Lung 200",
+        "Barlesi F et al",
+        2018,
+        "Original publication"
+      ],
+      [
+        "NCT02039674",
+        "Keynote-021",
+        "Borghaei  H et al",
+        2018,
+        "Follow-up"
+      ]
+    ]
+  },
+  "artifacts": {
+    "decompose_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260227_212133_765fc6ee/decompose_retrieve.json",
+    "synth_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260227_212133_765fc6ee/synth.json",
+    "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260227_212133_765fc6ee/eval_ready.json",
+    "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260227_212133_765fc6ee/eval_ready.jsonl",
+    "eval_output_json": null
+  },
+  "meta": {
+    "backend": "openai_compat",
+    "model_name": "gemini-2.5-flash",
+    "use_pydantic_schema": true,
+    "logprob_mode": "none",
+    "run_eval": 0,
+    "skip_exec": 0,
+    "run_tag": "20260227_212133_765fc6ee"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "status": "ok",
+  "item_id": null,
+  "question": "list studies with ferris RL et al in the year 2016",
+  "final_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\" FROM clinical_trials WHERE \"Author\" LIKE '%ferris RL et al%' AND \"Year\" = 2016",
+  "confidence_overall": null,
+  "error": null,
+  "decomposed_queries": [
+    "Which studies have Author LIKE '%ferris RL et al%'?",
+    "Which studies have Year = 2016?"
+  ],
+  "retrieval_top": [
+    {
+      "rank": 1,
+      "score": 0.818753182888031,
+      "candidate_id": "seed[156].query_2",
+      "candidate_question": "List years of publication or follow-up for these studies.",
+      "candidate_sql": "SELECT \"Year\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal' AND \"Type of combination\" = 'ICI+MEKi';"
+    },
+    {
+      "rank": 2,
+      "score": 0.7939093112945557,
+      "candidate_id": "seed[156].query_3",
+      "candidate_question": "What is the Originial publication or Follow-up for these studies?",
+      "candidate_sql": "SELECT \"Originial publication or Follow-up\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal' AND \"Type of combination\" = 'ICI+MEKi';"
+    },
+    {
+      "rank": 3,
+      "score": 0.7585934698581696,
+      "candidate_id": "seed[202].query_1",
+      "candidate_question": "List Eng C et al 1 and their studies",
+      "candidate_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Cancer type\" FROM clinical_trials WHERE \"Author\" = 'Eng C et al'"
+    }
+  ],
+  "execution_preview": {
+    "error": null,
+    "columns": [
+      "NCT",
+      "Trial name",
+      "Author",
+      "Year"
+    ],
+    "rows": [
+      [
+        "NCT02105636",
+        "CheckMate 141",
+        "Ferris RL et al",
+        2016
+      ]
+    ]
+  },
+  "artifacts": {
+    "decompose_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_011915_973eb4b7/decompose_retrieve.json",
+    "synth_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_011915_973eb4b7/synth.json",
+    "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_011915_973eb4b7/eval_ready.json",
+    "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_011915_973eb4b7/eval_ready.jsonl",
+    "eval_output_json": null
+  },
+  "meta": {
+    "backend": "openai_compat",
+    "model_name": "gemini-2.5-flash",
+    "use_pydantic_schema": true,
+    "logprob_mode": "none",
+    "run_eval": 0,
+    "skip_exec": 0,
+    "run_tag": "20260228_011915_973eb4b7"
+  }
+}

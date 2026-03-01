@@ -1,0 +1,12 @@
+[
+  {
+    "task_index": 0,
+    "question_index": null,
+    "item_id": null,
+    "question": "Give me IMpassion130 trials",
+    "natural_question": "Give me IMpassion130 trials",
+    "pred_sql": "",
+    "confidence_overall": null,
+    "error": "Connection error."
+  }
+]

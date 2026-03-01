@@ -1,0 +1,12 @@
+[
+  {
+    "task_index": 0,
+    "question_index": null,
+    "item_id": null,
+    "question": "List tang et al publications",
+    "natural_question": "List tang et al publications",
+    "pred_sql": "SELECT \"Trial name\", \"Author\", \"Year\", \"PubMed ID\" FROM clinical_trials WHERE \"Author\" LIKE '%tang et al%'",
+    "confidence_overall": null,
+    "error": null
+  }
+]

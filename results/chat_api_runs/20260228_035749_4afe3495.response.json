@@ -1,0 +1,61 @@
+{
+  "status": "ok",
+  "item_id": null,
+  "question": "please retrieve authors of imvigor211",
+  "final_sql": "SELECT \"Author\" FROM clinical_trials WHERE \"Trial name\" = 'IMvigor211';",
+  "confidence_overall": null,
+  "error": null,
+  "decomposed_queries": [
+    "Which trials have Trial name = 'IMvigor211'?"
+  ],
+  "retrieval_top": [
+    {
+      "rank": 1,
+      "score": 0.8679015636444092,
+      "candidate_id": "seed[204].query_1",
+      "candidate_question": "Find me studies from the imvigor211 trials",
+      "candidate_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Cancer type\" FROM clinical_trials WHERE \"Trial name\" LIKE '%imvigor211%';"
+    },
+    {
+      "rank": 2,
+      "score": 0.8453315198421478,
+      "candidate_id": "seed[109].query_5",
+      "candidate_question": "What is the 'Name of ICI' for those trials?",
+      "candidate_sql": "SELECT \"Name of ICI\" FROM clinical_trials WHERE \"Name of ICI\" = 'Nivolumab' AND \"Cancer type\" = 'Renal cell' AND \"Trial phase\" = 'Phase 3' AND \"Originial publication or Follow-up\" = 'Follow-up';"
+    },
+    {
+      "rank": 3,
+      "score": 0.8439655303955078,
+      "candidate_id": "seed[38].query_6",
+      "candidate_question": "What is the Trial phase for those trials?",
+      "candidate_sql": "SELECT \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Esophageal/GEJ' AND \"Class of ICI\" = 'PD1' AND \"Year\" >= 2018;"
+    }
+  ],
+  "execution_preview": {
+    "error": null,
+    "columns": [
+      "Author"
+    ],
+    "rows": [
+      [
+        "Powles T et al"
+      ]
+    ]
+  },
+  "artifacts": {
+    "decompose_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_035749_4afe3495/decompose_retrieve.json",
+    "synth_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_035749_4afe3495/synth.json",
+    "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_035749_4afe3495/eval_ready.json",
+    "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_035749_4afe3495/eval_ready.jsonl",
+    "eval_output_json": null
+  },
+  "meta": {
+    "backend": "openai_compat",
+    "model_name": "gpt-5-nano",
+    "use_pydantic_schema": true,
+    "logprob_mode": "none",
+    "run_eval": 0,
+    "skip_exec": 0,
+    "run_tag": "20260228_035749_4afe3495"
+  }
+}

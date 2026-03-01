@@ -1,0 +1,90 @@
+{
+  "status": "ok",
+  "item_id": null,
+  "question": "Can you retrieve information about IMvigor and their authors?",
+  "final_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Originial publication or Follow-up\" FROM clinical_trials WHERE \"Trial name\" LIKE '%IMvigor%';",
+  "confidence_overall": null,
+  "error": null,
+  "decomposed_queries": [
+    "Can you retrieve information about IMvigor and their authors?"
+  ],
+  "retrieval_top": [
+    {
+      "rank": 1,
+      "score": 0.7890610098838806,
+      "candidate_id": "seed[200].query_1",
+      "candidate_question": "List IMblaze130 authors",
+      "candidate_sql": "SELECT \"Author\" FROM clinical_trials WHERE \"Trial name\" = 'IMblaze130'"
+    },
+    {
+      "rank": 2,
+      "score": 0.689061626791954,
+      "candidate_id": "seed[204].query_1",
+      "candidate_question": "Find me studies from the imvigor211 trials",
+      "candidate_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Cancer type\" FROM clinical_trials WHERE \"Trial name\" LIKE '%imvigor211%';"
+    },
+    {
+      "rank": 3,
+      "score": 0.6829393655061722,
+      "candidate_id": "seed[201].query_1",
+      "candidate_question": "List Powels T et al's original publications",
+      "candidate_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Cancer type\", \"Trial phase\"\nFROM clinical_trials\nWHERE LOWER(\"Author\") LIKE LOWER('%Powles T et al%')\n  AND \"Originial publication or Follow-up\" = 'Original publication';"
+    }
+  ],
+  "execution_preview": {
+    "error": null,
+    "columns": [
+      "NCT",
+      "Trial name",
+      "Author",
+      "Year",
+      "Originial publication or Follow-up"
+    ],
+    "rows": [
+      [
+        "NCT02302807",
+        "IMvigor211",
+        "Powles T et al",
+        2018,
+        "Original publication"
+      ],
+      [
+        "NCT02807636",
+        "IMvigor130",
+        "Galsky MD et al",
+        2020,
+        "Original publication"
+      ],
+      [
+        "NCT02807636",
+        "IMvigor130",
+        "Galsky MD et al (1)",
+        2020,
+        "Original publication"
+      ],
+      [
+        "NCT02450331",
+        "Imvigor010",
+        "Bellmunt J et al",
+        2021,
+        "Original publication"
+      ]
+    ]
+  },
+  "artifacts": {
+    "decompose_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_035317_c766ea2c/decompose_retrieve.json",
+    "synth_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_035317_c766ea2c/synth.json",
+    "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_035317_c766ea2c/eval_ready.json",
+    "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_035317_c766ea2c/eval_ready.jsonl",
+    "eval_output_json": null
+  },
+  "meta": {
+    "backend": "openai_compat",
+    "model_name": "gpt-5-nano",
+    "use_pydantic_schema": true,
+    "logprob_mode": "none",
+    "run_eval": 0,
+    "skip_exec": 0,
+    "run_tag": "20260228_035317_c766ea2c"
+  }
+}

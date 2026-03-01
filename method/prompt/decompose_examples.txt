@@ -1,0 +1,13 @@
+Good decomposition example:
+Original question: Which melanoma phase 3 trials used Pembrolizumab?
+Decomposed queries:
+- Which trials have Cancer type = Melanoma?
+- Which trials have Trial phase = Phase 3?
+- Which trials have Name of ICI = Pembrolizumab?
+
+Bad decomposition example:
+Original question: Which colorectal trials had 3 or more arms and used multikinase inhibitor as control?
+Bad decomposed queries (too vague / not retrieval-friendly):
+- Find trials from the table.
+- Write SQL for this question.
+- Show me the answer.

@@ -1,0 +1,12 @@
+[
+  {
+    "task_index": 0,
+    "question_index": null,
+    "item_id": null,
+    "question": "Find me studies from the imvigor211 trials",
+    "natural_question": "Find me studies from the imvigor211 trials",
+    "pred_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Cancer type\" FROM clinical_trials WHERE \"Trial name\" LIKE '%imvigor211%';",
+    "confidence_overall": null,
+    "error": null
+  }
+]

@@ -1,0 +1,310 @@
+{
+  "created_at": "2026-02-24 20:05:59",
+  "mode": "batch_run",
+  "input_json": "/mnt/data1/srchowd3/MAYO_AIM2/data/natural_question_additional_200_naturalized.json",
+  "schema_json": "/mnt/data1/srchowd3/MAYO_AIM2/data/schema.json",
+  "table_name": "clinical_trials",
+  "model": "gpt-5-nano",
+  "start": 0,
+  "limit": 32,
+  "rows_in_input": 200,
+  "rows_in_slice": 32,
+  "request_count": 32,
+  "batch_jsonl_path": "/mnt/data1/srchowd3/MAYO_AIM2/data/decompose_batch_input_32.jsonl",
+  "requests": [
+    {
+      "custom_id": "decomp-1",
+      "idx": 1,
+      "item_id": "extra_100_217_keep_two_select_columns_29",
+      "original_question": "What are the years and names of trials that studied Pembrolizumab for Melanoma in phase 3?",
+      "gt_sql": "SELECT \"Year\", \"Name of ICI\" FROM clinical_trials WHERE \"Name of ICI\" = 'Pembrolizumab' AND \"Cancer type\" = 'Melanoma' AND \"Trial phase\" = 'Phase 3';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-2",
+      "idx": 2,
+      "item_id": "extra_101_34_keep_two_select_columns_30",
+      "original_question": "List the names of ipilimumab trials for melanoma where the overall follow-up duration was greater than 21 months?",
+      "gt_sql": "SELECT \"Name of ICI\", \"Follow-up duration for primary endpoint(s) in months | Overall\" FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma' AND \"Name of ICI\" = 'Ipilimumab' AND \"Follow-up duration for primary endpoint(s) in months | Overall\" > 21;",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-3",
+      "idx": 3,
+      "item_id": "extra_102_69_drop_select_column_29",
+      "original_question": "What are the study details, including the primary endpoint, for Urothelial cancer trials testing immune checkpoint inhibitors plus chemotherapy?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Originial publication or Follow-up\", \"Type of combination\", \"Cancer type\", \"Treatment regimen\", \"Primary endpoint\" FROM clinical_trials WHERE \"Cancer type\" = 'Urothelial' AND \"Type of combination\" = 'ICI+Chemo';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-4",
+      "idx": 4,
+      "item_id": "extra_103_35_drop_two_where_conditions_11",
+      "original_question": "Find Phase 3 Durvalumab trials for Small Cell Lung Cancer that are follow-up publications?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Name of ICI\" = 'Durvalumab' AND \"Trial phase\" = 'Phase 3';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-5",
+      "idx": 5,
+      "item_id": "extra_104_345_keep_two_select_columns_31",
+      "original_question": "Show trials for Melanoma using PD1 that did not require PD-L1 positivity for inclusion?",
+      "gt_sql": "SELECT \"Originial publication or Follow-up\", \"Class of ICI\" FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma' AND \"Class of ICI\" = 'PD1' AND \"Is PD-L1 positivity inclusion criteria\" = 'No';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-6",
+      "idx": 6,
+      "item_id": "extra_105_368_drop_where_condition_18",
+      "original_question": "Find Small Cell Lung cancer trials that do not require PD-L1 positivity for inclusion?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Is PD-L1 positivity inclusion criteria\", \"Class of ICI\", \"Cancer type\", \"Name of ICI\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Small Cell Lung' AND \"Is PD-L1 positivity inclusion criteria\" = 'No';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-7",
+      "idx": 7,
+      "item_id": "extra_106_68_keep_two_select_columns_32",
+      "original_question": "For Melanoma trials, what is the minimum follow-up time by treatment arm?",
+      "gt_sql": "SELECT \"Author\", \"Type of follow-up given\" FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma' AND \"Type of follow-up given\" = 'Minimum';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-8",
+      "idx": 8,
+      "item_id": "extra_107_157_keep_two_select_columns_33",
+      "original_question": "Find the trial identifiers and names of immune checkpoint inhibitors for Small Cell Lung cancer in Phase 3 trials that are original publications?",
+      "gt_sql": "SELECT \"NCT\", \"Name of ICI\" FROM clinical_trials WHERE \"Name of ICI\" = 'Nivolumab, Ipilimumab' AND \"Cancer type\" = 'Small Cell Lung' AND \"Trial phase\" = 'Phase 3' AND \"Originial publication or Follow-up\" = 'Original publication';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-9",
+      "idx": 9,
+      "item_id": "extra_108_243_drop_select_column_30",
+      "original_question": "Find Phase 3 Durvalumab trials for non-small cell lung cancer that were follow-up publications?",
+      "gt_sql": "SELECT \"NCT\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Name of ICI\" = 'Durvalumab' AND \"Cancer type\" = 'Non-Small Cell Lung' AND \"Trial phase\" = 'Phase 3' AND \"Originial publication or Follow-up\" = 'Follow-up';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-10",
+      "idx": 10,
+      "item_id": "extra_109_422_drop_select_column_31",
+      "original_question": "Which trials of Atezolizumab for Colorectal cancer used a multikinase inhibitor as the control?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Trial name\" FROM clinical_trials WHERE \"Name of ICI\" = 'Atezolizumab' AND \"Cancer type\" = 'Colorectal' AND \"Control arm\" = 'Multikinase inhibitor';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-11",
+      "idx": 11,
+      "item_id": "extra_10_222_drop_where_condition_2",
+      "original_question": "Find Durvalumab trials for Urothelial cancer that are original publications in Phase 2?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Name of ICI\" = 'Durvalumab' AND \"Cancer type\" = 'Urothelial' AND \"Originial publication or Follow-up\" = 'Original publication';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-12",
+      "idx": 12,
+      "item_id": "extra_110_188_swap_text_equality_value_3",
+      "original_question": "Find Breast cancer trials with at least 2 prior lines of therapy that used monotherapy?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Lines of treatment\", \"Monotherapy/combination\", \"Cancer type\", \"Type of combination\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Breast' AND \"Lines of treatment\" >= 2 AND \"Monotherapy/combination\" = 'Monotherapy';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-13",
+      "idx": 13,
+      "item_id": "extra_111_37_keep_two_select_columns_34",
+      "original_question": "Which trials for pancreatic cancer evaluated Ipilimumab in phase 2, and what are the trial names and original publications?",
+      "gt_sql": "SELECT \"Originial publication or Follow-up\", \"Trial name\" FROM clinical_trials WHERE \"Name of ICI\" = 'Ipilimumab' AND \"Cancer type\" = 'Pancreatic' AND \"Trial phase\" = 'Phase 2';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-14",
+      "idx": 14,
+      "item_id": "extra_112_18_drop_where_condition_19",
+      "original_question": "Which trials used an antibody-drug conjugate as a control arm?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Control arm\", \"Cancer type\", \"Control regimen\", \"Trial phase\" FROM clinical_trials WHERE \"Control arm\" = 'Antibody-drug conjugate';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-15",
+      "idx": 15,
+      "item_id": "extra_113_354_drop_where_condition_20",
+      "original_question": "Which trials studied Durvalumab and Tremelimumab for Small Cell Lung Cancer?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\", \"Trial name\", \"Treatment regimen\" FROM clinical_trials WHERE \"Name of ICI\" = 'Durvalumab, Tremelimumab' AND \"Cancer type\" = 'Small Cell Lung';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-16",
+      "idx": 16,
+      "item_id": "extra_114_360_drop_where_condition_21",
+      "original_question": "Which trials studied Ipilimumab for Non-Small Cell Lung cancer?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\", \"Trial name\", \"Treatment regimen\" FROM clinical_trials WHERE \"Name of ICI\" = 'Ipilimumab' AND \"Cancer type\" = 'Non-Small Cell Lung';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-17",
+      "idx": 17,
+      "item_id": "extra_115_498_keep_one_where_condition_13",
+      "original_question": "Find Hodgkin Lymphoma trials?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Cancer type\" = 'Hodgkin Lymphoma';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-18",
+      "idx": 18,
+      "item_id": "extra_116_486_drop_where_condition_22",
+      "original_question": "Find Small Cell Lung cancer trials and show the follow-up duration in months for each treatment arm?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Type of follow-up given\", \"Cancer type\", \"Follow-up duration for primary endpoint(s) in months | Rx\", \"Follow-up duration for primary endpoint(s) in months | Control\" FROM clinical_trials WHERE \"Cancer type\" = 'Small Cell Lung';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-19",
+      "idx": 19,
+      "item_id": "extra_117_99_swap_text_equality_value_4",
+      "original_question": "Find Renal cell cancer trials with 2 or more prior therapies that used a single agent?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Lines of treatment\", \"Monotherapy/combination\", \"Cancer type\", \"Type of combination\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Renal cell' AND \"Lines of treatment\" >= 2 AND \"Monotherapy/combination\" = 'Monotherapy';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-20",
+      "idx": 20,
+      "item_id": "extra_118_323_keep_two_select_columns_35",
+      "original_question": "Find the identifiers and publication status of Phase 3 Atezolizumab trials for Non-Small Cell Lung Cancer that are follow-up publications?",
+      "gt_sql": "SELECT \"NCT\", \"Originial publication or Follow-up\" FROM clinical_trials WHERE \"Name of ICI\" = 'Atezolizumab' AND \"Cancer type\" = 'Non-Small Cell Lung' AND \"Trial phase\" = 'Phase 3' AND \"Originial publication or Follow-up\" = 'Follow-up';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-21",
+      "idx": 21,
+      "item_id": "extra_119_264_keep_two_select_columns_36",
+      "original_question": "Which trials for Mesothelioma used a placebo as the control arm and what phase were they in?",
+      "gt_sql": "SELECT \"Control arm\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Mesothelioma' AND \"Control arm\" = 'Placebo';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-22",
+      "idx": 22,
+      "item_id": "extra_11_433_keep_one_where_condition_3",
+      "original_question": "Find Phase 3 chemotherapy trials for head and neck cancer that are follow-up publications?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Cancer type\" = 'Head and Neck';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-23",
+      "idx": 23,
+      "item_id": "extra_120_371_drop_two_where_conditions_12",
+      "original_question": "Find Phase 3 trials of Durvalumab or Tremelimumab for gastric or gastroesophageal junction cancer that are follow-up publications?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Trial phase\" = 'Phase 3' AND \"Originial publication or Follow-up\" = 'Follow-up';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-24",
+      "idx": 24,
+      "item_id": "extra_121_67_drop_select_column_32",
+      "original_question": "Find Phase 2 clinical trials for colorectal cancer using Durvalumab and Tremelimumab that were originally published?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Name of ICI\" = 'Durvalumab, Tremelimumab' AND \"Cancer type\" = 'Colorectal' AND \"Trial phase\" = 'Phase 2' AND \"Originial publication or Follow-up\" = 'Original publication';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-25",
+      "idx": 25,
+      "item_id": "extra_122_438_keep_two_select_columns_37",
+      "original_question": "Find the author and control arm follow-up duration in months for Urothelial cancer trials reporting median follow-up?",
+      "gt_sql": "SELECT \"Author\", \"Follow-up duration for primary endpoint(s) in months | Control\" FROM clinical_trials WHERE \"Cancer type\" = 'Urothelial' AND \"Type of follow-up given\" = 'Median';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-26",
+      "idx": 26,
+      "item_id": "extra_123_263_drop_where_condition_23",
+      "original_question": "List trials for esophageal or gastroesophageal junction cancer where the overall follow-up period was more than 10.6 months?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Follow-up duration for primary endpoint(s) in months | Overall\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Urothelial' AND \"Follow-up duration for primary endpoint(s) in months | Overall\" > 10.6;",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-27",
+      "idx": 27,
+      "item_id": "extra_124_222_drop_select_column_33",
+      "original_question": "Find trials of Durvalumab for Urothelial cancer that are Phase 3 and are original publications?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Cancer type\" FROM clinical_trials WHERE \"Name of ICI\" = 'Durvalumab' AND \"Cancer type\" = 'Urothelial' AND \"Trial phase\" = 'Phase 3' AND \"Originial publication or Follow-up\" = 'Original publication';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-28",
+      "idx": 28,
+      "item_id": "extra_125_382_keep_two_select_columns_38",
+      "original_question": "List the author and immunotherapy drug for non-small cell lung cancer trials using durvalumab with overall follow-up longer than 21 months?",
+      "gt_sql": "SELECT \"Author\", \"Name of ICI\" FROM clinical_trials WHERE \"Cancer type\" = 'Non-Small Cell Lung' AND \"Name of ICI\" = 'Durvalumab' AND \"Follow-up duration for primary endpoint(s) in months | Overall\" > 21;",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-29",
+      "idx": 29,
+      "item_id": "extra_126_314_relax_numeric_3",
+      "original_question": "Show trials for hepatocellular cancer that used combination treatment and included patients with at least 1 prior line of therapy?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Lines of treatment\", \"Monotherapy/combination\", \"Cancer type\", \"Type of combination\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Hepatocellular' AND \"Lines of treatment\" >= 1 AND \"Monotherapy/combination\" = 'Combination';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-30",
+      "idx": 30,
+      "item_id": "extra_127_16_keep_two_select_columns_39",
+      "original_question": "List the year and cancer type for breast cancer trials using chemotherapy where overall follow-up was more than 21 months?",
+      "gt_sql": "SELECT \"Year\", \"Cancer type\" FROM clinical_trials WHERE \"Cancer type\" = 'Breast' AND \"Name of ICI\" = 'Chemotherapy' AND \"Follow-up duration for primary endpoint(s) in months | Overall\" > 21;",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-31",
+      "idx": 31,
+      "item_id": "extra_128_41_keep_two_select_columns_40",
+      "original_question": "Show the author and year for Non-Small Cell Lung cancer trials testing CTLA-4 that began in 2018 or later?",
+      "gt_sql": "SELECT \"Author\", \"Year\" FROM clinical_trials WHERE \"Cancer type\" = 'Non-Small Cell Lung' AND \"Class of ICI\" = 'CTLA-4' AND \"Year\" >= 2018;",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-32",
+      "idx": 32,
+      "item_id": "extra_129_213_keep_two_select_columns_41",
+      "original_question": "Show the author and year for melanoma trials that used immune checkpoint inhibitors plus a vaccine?",
+      "gt_sql": "SELECT \"Author\", \"Year\" FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma' AND \"Type of combination\" = 'ICI+Vaccine';",
+      "source_question_key": "natural_question",
+      "source_sql_key": "gt_sql"
+    }
+  ],
+  "skipped_rows": [],
+  "batch_id": "batch_699e6717a3f8819084591dc383be344b",
+  "batch_input_file_id": "file-Esmb4MBaRW6JYydqetH8iY",
+  "batch_terminal_status": "completed",
+  "batch_output_file_id": "file-M74UWFfaUwKbMiAzrDSah7",
+  "batch_error_file_id": null
+}

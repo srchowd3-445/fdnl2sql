@@ -1,0 +1,12 @@
+[
+  {
+    "task_index": 0,
+    "question_index": null,
+    "item_id": null,
+    "question": "List keynote 130 trials",
+    "natural_question": "List keynote 130 trials",
+    "pred_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Trial name\" LIKE '%keynote 130%'",
+    "confidence_overall": null,
+    "error": null
+  }
+]

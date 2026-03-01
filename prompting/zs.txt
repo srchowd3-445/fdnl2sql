@@ -1,0 +1,48 @@
+You are an expert for Natural Language Question to SQL generation task. Write one SQLite SELECT query over "clinical_trials".
+
+Rules:
+- ⁠Output ONLY the SQL query (no prose, no markdown, no code fences).
+- ⁠The SQL MUST start with SELECT.
+- ⁠Use only columns from this table schema: {SCHEMA}
+- ⁠Put double quotes around EVERY column name exactly as in the schema.
+- ⁠Use single quotes for string literals.
+- ⁠Include all constraints from the question.
+
+
+Observed unique row values for schema:
+- ⁠"NCT": 'NCT02477826', 'NCT00094653', 'NCT00527735', 'NCT01704287', 'NCT03043872', 'NCT01721772', 'NCT02008227', 'NCT02231749', 'NCT02352948', 'NCT00861614', 'NCT01274338', 'NCT01668784' (showing 12/105)
+- ⁠"PubMed ID": '31562796', '32201234', '20525992', '22547592', '22858559', '23942774', '26115796', '26712084', '28961465', '29658845', '29863955', '29867230' (showing 12/131)
+- ⁠"Trial name": 'Checkmate 227', 'CASPIAN', 'KEYNOTE-002', 'MDX010-20', 'ARCTIC', 'CheckMate 066', 'CheckMate 214', 'OAK', 'ATTRACTION-2', 'CA184-043', 'CheckMate 025', 'CheckMate 037' (showing 12/95)
+- ⁠"Author": 'Motzer RJ et al', 'Eggermont AMM et al', 'Reck M et al', 'Ferris RL et al', 'Paz-Ares L et al', 'Powles T et al', 'Robert C et al', 'Schmid P et al', 'Antonia SJ et al', 'Ascierto PA et al', 'Bang YJ et al', 'Bellmunt J et al' (showing 12/122)
+- ⁠"Year": 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021
+- ⁠"Trial phase": 'Phase 2', 'Phase 3'
+- ⁠"Number of arms": 2, 3, 4
+- ⁠"Total sample size": 1739.0, 305.0, 540.0, 676.0, 805.0, 418.0, 595.0, 1096.0, 1225.0, 120.0, 123.0, 130.0 (showing 12/103)
+- ⁠"Originial publication or Follow-up": 'Follow-up', 'Original publication'
+- ⁠"Cancer type": 'Bladder', 'Breast', 'Colorectal', 'Esophageal/GEJ', 'Gastric/GEJ', 'Head and Neck', 'Head and Neck ', 'Hepatocellular', 'Hodgkin Lymphoma', 'Melanoma', 'Mesothelioma', 'Multiple Myeloma', 'NSCLC', 'Non-Small Cell Lung', 'Pancreatic', 'Prostate', 'Renal cell', 'Small Cell Lung', 'Urothelial'
+- ⁠"Treatment regimen": 'Nivolumab', 'Pembrolizumab', 'Atezolizumab', 'Ipilimumab', 'Nivolumab+Ipilimumab', 'Durvalumab', 'Durvalumab+Tremelimumab', 'Atezolizumab+Bevacizumab', 'Tremelimumab', 'Atezolizumab+Carboplatin+Nab-paclitaxel', 'Atezolizumab+Carboplatin+Paclitaxel', 'Atezolizumab+Nab-paclitaxel' (showing 12/60)
+- ⁠"Name of ICI": 'Atezolizumab', 'Atezolizumab+Trastuzumab emtansine+Placebo', 'Avelumab', 'Brentuximab-vedotin', 'Cemiplimab', 'Chemotherapy', 'Durvalumab', 'Durvalumab, Tremelimumab', 'Ipilimumab', 'Nivolumab', 'Nivolumab, Ipilimumab', 'Pembrolizumab', 'Tremelimumab'
+- ⁠"Class of ICI": 'CTLA-4', 'PD-L1', 'PD-L1, CTLA-4', 'PD1', 'PD1, CTLA-4'
+- ⁠"Monotherapy/combination": 'Combination', 'Monotherapy'
+- ⁠"Type of combination": 'ICI+Anti-VEGF', 'ICI+BRAFi+MEKi', 'ICI+Chemo', 'ICI+Chemo+Anti-VEGF', 'ICI+Chemoradiotherapy', 'ICI+HER2i', 'ICI+ICI', 'ICI+ICI+Chemo', 'ICI+MEKi', 'ICI+RadiatICIn', 'ICI+TKI', 'ICI+Vaccine'
+- ⁠"Control regimen": 'Placebo', 'Sunitinib', 'Docetaxel', 'Chemotherapy', 'Investigator''s choice chemotherapy', 'Placebo+Paclitaxel+Carboplatin', 'Dacarbazine', 'Gp100 vaccine', 'Platinum+Etoposide', 'Carboplatin+Nab-paclitaxel', 'Erlotinib/gemcitabine/vinorelbine', 'Methotrexate/Docetaxel/Cetuximab' (showing 12/67)
+- ⁠"Type of control": 'Anti-VEGF', 'Antibody-drug conjugate', 'BRAFi+MEKi', 'Best supportive care', 'Bimodulatory', 'Chemo', 'Chemo+Anti-EGFR', 'Chemo+Anti-VEGF', 'Chemo/Anti-EGFR', 'Chemo/Anti-EGFR+Radiotherapy', 'Chemo/TKI', 'Chemoradio', 'HER2i', 'Interferon', 'Multikinase inhibitor', 'Observation', 'Placebo', 'Placebo  ', 'Radiation', 'TKI', 'Vaccine', 'mTOR inhibitor'
+- ⁠"Lines of treatment": '1st and later line of treatment for metastatic disease', 'Only 1st line of treatment for metastatic disease', 'Only 2nd or later line', 'Only 2nd or later line of treatment for metastatic disease'
+- ⁠"Clincal setting in relation to surgery": 'Adjuvant', 'Maintenance', 'Metastatic+recurrent (unresectable)', 'Neoadjuvant', 'Relapsed/refractory'
+- ⁠"Primary endpoint": 'DFS', 'ORR', 'OS', 'OS+ORR', 'OS+PFS', 'OS+PFS+ORR', 'OS+RFS', 'PFS', 'PFS+OS', 'Path CR', 'Path CR in ITT+Path CR in PD-L1+', 'Path CR+EFS', 'RFS', 'Safety'
+- ⁠"Priamry Multiple, composite, or co-primary endpoints?": 'Co-primary', 'Dual, unspecified', 'Multiple'
+- ⁠"Secondary endpoint": 'Investigator-assessed PFS and objective response; tumor PD-L1 expression as a pr...', 'OS rate at 12 months; proportion of patients alive and progression-free at 6 and...', 'PFS, ORR', 'PFS, ORR, DOR', 'PFS; OS with nivolumab+chemotherapy VS chemotherapy alone in patients with PD-L1...', 'investigator-assessed RECIST v1.1 ORR, PFS, DoR', 'Comparison of OS between ipilimumab-alone and gp100-alone groups and between the...', 'DOS, responses, and safety among patients with ≥2 years’ survival.', 'Immune-related PFS; modified WHO criteria PFS; OS; modified WHO criteria best ov...', 'Investigator-assessed PFS; ORR; 
+DOR; OS; patient-reported outcomes; safety.', 'Modified WHO criteria PFS; OS; immune-related best overall response rate; modifi...', 'OR, PFS, PRO' (showing 12/106)
+- ⁠"Is PD-L1 positivity inclusion criteria": 'No', 'Yes'
+- ⁠"Is any other biomarker used for inclusion": 'No', 'Yes'
+- ⁠"Type of follow-up given": 'Median', 'Minimum', 'Upto'
+- ⁠"Follow-up duration for primary endpoint(s) in months | Overall": '25.2', '29.3', '9.1', '10', '10.5', '10.6', '11.1', '11.2', '12.8', '14.2', '20.7', '25.1' (showing 12/74)
+- ⁠"Follow-up duration for primary endpoint(s) in months | Rx": '10.5', '13', '18.5', '24', '9.9', '10.3', '10.4(Pembrolizumab 2mg/kg)', '10.8', '11.5', '11.6, 9.9', '12.2', '12.5' (showing 12/49)
+- ⁠"Follow-up duration for primary endpoint(s) in months | Control": '24', '10.7', '10.9', '17.2', '24.8, 16.1', '6', '8.3', '8.5', '9.1', '9.4', '10.2', '10.6' (showing 12/43)
+- ⁠"Type of therapy": 'Combination', 'Monotherapy'
+- ⁠"Control arm": 'Anti-VEGF', 'Antibody-drug conjugate', 'BRAFi+MEKi', 'Best supportive care', 'Bimodulatory', 'Chemo', 'Chemo+Anti-EGFR', 'Chemo+Anti-VEGF', 'Chemo/Anti-EGFR', 'Chemo/Anti-EGFR+Radiotherapy', 'Chemo/TKI', 'Chemoradio', 'HER2i', 'Interferon', 'Multikinase inhibitor', 'Observation', 'Placebo', 'Placebo  ', 'Radiation', 'TKI', 'Vaccine', 'mTOR inhibitor'
+- ⁠"Clinical setting": 'Adjuvant', 'Maintenance', 'Metastatic+recurrent (unresectable)', 'Neoadjuvant', 'Relapsed/refractory'
+- ⁠"Included in MA": 'No', 'Yes'
+
+Question: {Question}
+Generate SQL:

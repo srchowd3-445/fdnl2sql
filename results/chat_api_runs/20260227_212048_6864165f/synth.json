@@ -1,0 +1,275 @@
+{
+  "meta": {
+    "pipeline_stage": "synthesis_from_decomposition_retrieval",
+    "retrieval_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260227_212048_6864165f/decompose_retrieve.json",
+    "retrieval_meta": {
+      "backend": "openai_compat",
+      "question": "hello",
+      "question_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/natural_question_1500.json",
+      "question_index": 0,
+      "batch_mode": 0,
+      "start_index": 0,
+      "limit": 1,
+      "prompt_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_prompt.txt",
+      "schema_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/schema.json",
+      "decompose_examples_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_examples.txt",
+      "seed_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/seed_questions.json",
+      "candidate_json": null,
+      "candidate_sqlite": null,
+      "candidate_table": "query_library",
+      "top_k": 3,
+      "retrieval_per_decomp": 3,
+      "max_decomposed_queries": 5,
+      "sbert": {
+        "model": "/mnt/shared/shared_hf_home/hub/models--sentence-transformers--all-MiniLM-L6-v2/snapshots/c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+        "device": null,
+        "batch_size": 64
+      },
+      "api_base": "https://generativelanguage.googleapis.com/v1beta/openai/",
+      "model_name": "gemini-2.5-flash",
+      "model_path": null,
+      "gen_batch_size": 1,
+      "batch_concurrency": 1,
+      "pipeline_stage": "decompose_then_retrieve"
+    },
+    "retrieval_contract": "expects per-decomposed top-k in retrieval_by_decomposition when available",
+    "backend": "openai_compat",
+    "prompt_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/synthesis_prompt.txt",
+    "schema_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/schema.json",
+    "api_base": "https://generativelanguage.googleapis.com/v1beta/openai/",
+    "model_name": "gemini-2.5-flash",
+    "model_path": null,
+    "db_path": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/database.db",
+    "skip_exec": 0,
+    "logprobs": 0,
+    "logprob_mode": "none",
+    "use_pydantic_schema": true,
+    "synth_evidence_per_decomp": 2,
+    "synth_include_global_merged": false,
+    "synth_where_only_evidence": true,
+    "gen_batch_size": 1,
+    "batch_concurrency": 1,
+    "eval": {
+      "run_eval": 0,
+      "gt_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/natural_question_1500.json",
+      "eval_script": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/eval_run_baselines_v2.py",
+      "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260227_212048_6864165f/eval_ready.json",
+      "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260227_212048_6864165f/eval_ready.jsonl",
+      "eval_output_json": null,
+      "eval_ran": false
+    },
+    "acceptance": {
+      "config_path": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/decompose_method/seed_acceptance_rules.config",
+      "config_format": "seed_acceptance_rules.config",
+      "acceptance_output_json": null
+    }
+  },
+  "counts": {
+    "total_tasks": 1,
+    "error_tasks": 0,
+    "generated_nonempty_sql": 1,
+    "exec_ok": 1,
+    "with_confidence": 0
+  },
+  "eval_summary": {},
+  "acceptance_summary": {
+    "evaluated": 0,
+    "accepted": 0,
+    "accepted_main_metric": 0,
+    "accepted_non_main": 0,
+    "rejected": 0
+  },
+  "results": [
+    {
+      "task_index": 0,
+      "question_index": null,
+      "item_id": null,
+      "input_question": "hello",
+      "error": null,
+      "decomposition": {
+        "raw_text": "{\"decomposed_queries\": []}",
+        "decomposed_queries": [
+          "hello"
+        ],
+        "model_meta": {
+          "provider_call_ok": true,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids_len": 8,
+          "backend": "openai_compat"
+        },
+        "error": "FAILED_TO_PARSE_DECOMPOSITION"
+      },
+      "retrieval_trace": [
+        {
+          "decomposed_query": "hello",
+          "top1_candidate_id": "seed[174].query_3",
+          "top1_score": 0.5897990167140961
+        }
+      ],
+      "retrieval_by_decomposition": [
+        {
+          "decomposed_query": "hello",
+          "ranked_results": [
+            {
+              "rank": 1,
+              "total_score": 0.5897990167140961,
+              "sbert_score": 0.5897990167140961,
+              "candidate": {
+                "candidate_id": "seed[174].query_3",
+                "question": "Name of ICI equals Tremelimumab.",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Name of ICI\" = 'Tremelimumab';",
+                "parent_question": "Find Phase 2 Tremelimumab trials in Mesothelioma that were original publications?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 2,
+              "total_score": 0.585951067507267,
+              "sbert_score": 0.585951067507267,
+              "candidate": {
+                "candidate_id": "seed[117].query_2",
+                "question": "What trials have Name of ICI = 'Nivolumab, Ipilimumab' ?",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Name of ICI\" = 'Nivolumab, Ipilimumab';",
+                "parent_question": "List trials of Nivolumab and Ipilimumab for Renal cell cancer with overall follow-up longer than 21 months?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 3,
+              "total_score": 0.5832537859678268,
+              "sbert_score": 0.5832537859678268,
+              "candidate": {
+                "candidate_id": "seed[7].query_1",
+                "question": "What are the NCT and Name of ICI for trials where \"Name of ICI\" equals 'Nivolumab, Ipilimumab'?",
+                "sql": "SELECT \"NCT\", \"Name of ICI\" FROM clinical_trials WHERE \"Name of ICI\" = 'Nivolumab, Ipilimumab';",
+                "parent_question": "Find the trial identifiers and names of immune checkpoint inhibitors for Small Cell Lung cancer in Phase 3 trials that are original publications?",
+                "source": "seed_json/decomposed"
+              }
+            }
+          ]
+        }
+      ],
+      "ranked_results": [
+        {
+          "rank": 1,
+          "total_score": 0.5897990167140961,
+          "sbert_score": 0.5897990167140961,
+          "candidate": {
+            "candidate_id": "seed[174].query_3",
+            "question": "Name of ICI equals Tremelimumab.",
+            "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Name of ICI\" = 'Tremelimumab';",
+            "parent_question": "Find Phase 2 Tremelimumab trials in Mesothelioma that were original publications?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 2,
+          "total_score": 0.585951067507267,
+          "sbert_score": 0.585951067507267,
+          "candidate": {
+            "candidate_id": "seed[117].query_2",
+            "question": "What trials have Name of ICI = 'Nivolumab, Ipilimumab' ?",
+            "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Name of ICI\" = 'Nivolumab, Ipilimumab';",
+            "parent_question": "List trials of Nivolumab and Ipilimumab for Renal cell cancer with overall follow-up longer than 21 months?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 3,
+          "total_score": 0.5832537859678268,
+          "sbert_score": 0.5832537859678268,
+          "candidate": {
+            "candidate_id": "seed[7].query_1",
+            "question": "What are the NCT and Name of ICI for trials where \"Name of ICI\" equals 'Nivolumab, Ipilimumab'?",
+            "sql": "SELECT \"NCT\", \"Name of ICI\" FROM clinical_trials WHERE \"Name of ICI\" = 'Nivolumab, Ipilimumab';",
+            "parent_question": "Find the trial identifiers and names of immune checkpoint inhibitors for Small Cell Lung cancer in Phase 3 trials that are original publications?",
+            "source": "seed_json/decomposed"
+          }
+        }
+      ],
+      "synthesized": {
+        "raw_text": "{\"sql\": \"SELECT 1 FROM clinical_trials\"}",
+        "final_sql": "SELECT 1 FROM clinical_trials",
+        "field_logprobs": {},
+        "field_confidence": {},
+        "confidence_overall": null,
+        "model_meta": {
+          "provider_call_ok": true,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids_len": 12,
+          "backend": "openai_compat"
+        }
+      },
+      "execution_preview": {
+        "columns": [
+          "1"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ]
+        ],
+        "error": null
+      }
+    }
+  ]
+}

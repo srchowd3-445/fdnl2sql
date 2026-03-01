@@ -1,0 +1,12 @@
+<USER>QUESTION: Show bladder PD-L1 trials conducted in 2018 or later.</USER>
+<ASSISTANT> RESPONSE: SELECT "NCT", "Author", "Year", "Originial publication or Follow-up", "Class of ICI", "Cancer type", "Trial phase" FROM clinical_trials WHERE "Cancer type" = 'Bladder' AND "Class of ICI" = 'PD-L1' AND "Year" >= 2018;</ASSISTANT>
+
+<USER> QUESTION: Find renal cell trials of nivolumab given in combination therapy.</USER>
+<ASSISTANT> RESPONSE SELECT "NCT", "Author", "Year", "Originial publication or Follow-up", "Name of ICI", "Monotherapy/combination", "Cancer type", "Type of combination", "Trial phase" FROM clinical_trials WHERE "Cancer type" = 'Renal cell' AND "Name of ICI" = 'Nivolumab' AND "Monotherapy/combination" = 'Combination';</ASSISTANT>
+
+<USER> QUESTION: Which melanoma trials used vaccine as the control arm?</USER>
+<ASSISTANT> RESPONSE: SELECT "NCT", "Author", "Year", "Originial publication or Follow-up", "Control arm", "Cancer type", "Control regimen", "Trial phase" FROM clinical_trials WHERE "Cancer type" = 'Melanoma' AND "Control arm" = 'Vaccine';</ASSISTANT>
+
+<USER> QUESTION: List head and neck trials requiring a biomarker other than PD-L1 for inclusion.</USER>
+<ASSISTANT> RESPONSE: SELECT "NCT", "Author", "Year", "Originial publication or Follow-up", "Is any other biomarker used for inclusion", "Cancer type", "Primary endpoint" FROM clinical_trials WHERE "Cancer type" = 'Head and Neck' AND "Is any other biomarker used for inclusion" = 'Yes';</ASSISTANT>
+

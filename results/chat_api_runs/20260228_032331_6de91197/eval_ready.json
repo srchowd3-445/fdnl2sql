@@ -1,0 +1,12 @@
+[
+  {
+    "task_index": 0,
+    "question_index": null,
+    "item_id": null,
+    "question": "List the names of ipilimumab trials for melanoma where the overall follow-up duration was greater than 21 months?",
+    "natural_question": "List the names of ipilimumab trials for melanoma where the overall follow-up duration was greater than 21 months?",
+    "pred_sql": "",
+    "confidence_overall": null,
+    "error": "Error code: 400 - {'error': {'message': \"Unsupported parameter: 'max_tokens' is not supported with this model. Use 'max_completion_tokens' instead.\", 'type': 'invalid_request_error', 'param': 'max_tokens', 'code': 'unsupported_parameter'}}"
+  }
+]

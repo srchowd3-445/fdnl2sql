@@ -1,0 +1,243 @@
+{
+  "meta": {
+    "backend": "openai_compat",
+    "question": "List the original publications with hed and nc",
+    "question_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/natural_question_1500.json",
+    "question_index": 0,
+    "batch_mode": 0,
+    "start_index": 0,
+    "limit": 1,
+    "prompt_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_prompt.txt",
+    "schema_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/schema.json",
+    "decompose_examples_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_examples.txt",
+    "seed_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/seed_questions.json",
+    "candidate_json": null,
+    "candidate_sqlite": null,
+    "candidate_table": "query_library",
+    "top_k": 3,
+    "retrieval_per_decomp": 3,
+    "max_decomposed_queries": 5,
+    "sbert": {
+      "model": "/mnt/shared/shared_hf_home/hub/models--sentence-transformers--all-MiniLM-L6-v2/snapshots/c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+      "device": null,
+      "batch_size": 64
+    },
+    "api_base": "https://generativelanguage.googleapis.com/v1beta/openai/",
+    "model_name": "gemini-2.5-flash",
+    "model_path": null,
+    "gen_batch_size": 1,
+    "batch_concurrency": 1,
+    "pipeline_stage": "decompose_then_retrieve"
+  },
+  "counts": {
+    "total_tasks": 1,
+    "error_tasks": 0,
+    "with_decomposition": 1,
+    "with_retrieval": 1
+  },
+  "results": [
+    {
+      "task_index": 0,
+      "question_index": null,
+      "item_id": null,
+      "input_question": "List the original publications with hed and nc",
+      "error": null,
+      "decomposition": {
+        "raw_text": "{\"decomposed_queries\": [\n  \"Which trials are 'Original Publication' in the 'Originial publication or Follow-up' column?\",\n  \"Which trials have 'Cancer type' = 'Head and Neck'?\",\n  \"Which trials have 'Cancer type' = 'Non-small cell lung cancer'?\"\n]}",
+        "decomposed_queries": [
+          "Which trials are 'Original Publication' in the 'Originial publication or Follow-up' column?",
+          "Which trials have 'Cancer type' = 'Head and Neck'?",
+          "Which trials have 'Cancer type' = 'Non-small cell lung cancer'?"
+        ],
+        "model_meta": {
+          "provider_call_ok": true,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids_len": 69,
+          "backend": "openai_compat"
+        },
+        "error": null
+      },
+      "retrieval_trace": [
+        {
+          "decomposed_query": "Which trials are 'Original Publication' in the 'Originial publication or Follow-up' column?",
+          "top1_candidate_id": "seed[10].query_3",
+          "top1_score": 0.9737221002578735
+        },
+        {
+          "decomposed_query": "Which trials have 'Cancer type' = 'Head and Neck'?",
+          "top1_candidate_id": "seed[67].query_1",
+          "top1_score": 0.9936933517456055
+        },
+        {
+          "decomposed_query": "Which trials have 'Cancer type' = 'Non-small cell lung cancer'?",
+          "top1_candidate_id": "seed[148].query_1",
+          "top1_score": 0.9815032780170441
+        }
+      ],
+      "retrieval_by_decomposition": [
+        {
+          "decomposed_query": "Which trials are 'Original Publication' in the 'Originial publication or Follow-up' column?",
+          "ranked_results": [
+            {
+              "rank": 1,
+              "total_score": 0.9737221002578735,
+              "sbert_score": 0.9737221002578735,
+              "candidate": {
+                "candidate_id": "seed[10].query_3",
+                "question": "Which trials have Originial publication or Follow-up = 'Original publication'?",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Originial publication or Follow-up\" = 'Original publication';",
+                "parent_question": "Find Durvalumab trials for Urothelial cancer that are original publications in Phase 2?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 2,
+              "total_score": 0.936874270439148,
+              "sbert_score": 0.936874270439148,
+              "candidate": {
+                "candidate_id": "seed[68].query_4",
+                "question": "Trials with Originial publication or Follow-up Original publication",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Originial publication or Follow-up\" = 'Original publication';",
+                "parent_question": "Find trials of Cemiplimab for pancreatic cancer that are in Phase 2 and were first published as original research?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 3,
+              "total_score": 0.9353306889533997,
+              "sbert_score": 0.9353306889533997,
+              "candidate": {
+                "candidate_id": "seed[52].query_4",
+                "question": "What trials have Originial publication or Follow-up equal to 'Follow-up'?",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Originial publication or Follow-up\" = 'Follow-up';",
+                "parent_question": "Find Phase 3 Ipilimumab trials in Melanoma that were follow-up publications?",
+                "source": "seed_json/decomposed"
+              }
+            }
+          ]
+        },
+        {
+          "decomposed_query": "Which trials have 'Cancer type' = 'Head and Neck'?",
+          "ranked_results": [
+            {
+              "rank": 1,
+              "total_score": 0.9936933517456055,
+              "sbert_score": 0.9936933517456055,
+              "candidate": {
+                "candidate_id": "seed[67].query_1",
+                "question": "What trials have Cancer type = 'Head and Neck' ?",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\" FROM clinical_trials WHERE \"Cancer type\" = 'Head and Neck';",
+                "parent_question": "Which trials for Head and Neck cancer used chemo or anti-EGFR therapy as the control arm?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 2,
+              "total_score": 0.9925434589385986,
+              "sbert_score": 0.9925434589385986,
+              "candidate": {
+                "candidate_id": "seed[99].query_2",
+                "question": "Which trials have Cancer type = 'Head and Neck cancer'?",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Trial name\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Head and Neck cancer';",
+                "parent_question": "Which trials studied Avelumab for Head and Neck cancer?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 3,
+              "total_score": 0.9459791481494904,
+              "sbert_score": 0.9459791481494904,
+              "candidate": {
+                "candidate_id": "seed[175].query_2",
+                "question": "Trials with Cancer type Head and Neck",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Trial name\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Head and Neck';",
+                "parent_question": "Which trials studied Pembrolizumab for Head and Neck cancer?",
+                "source": "seed_json/decomposed"
+              }
+            }
+          ]
+        },
+        {
+          "decomposed_query": "Which trials have 'Cancer type' = 'Non-small cell lung cancer'?",
+          "ranked_results": [
+            {
+              "rank": 1,
+              "total_score": 0.9815032780170441,
+              "sbert_score": 0.9815032780170441,
+              "candidate": {
+                "candidate_id": "seed[148].query_1",
+                "question": "What trials have Cancer type equal to 'Non-Small Cell Lung'?",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Non-Small Cell Lung';",
+                "parent_question": "Find Non-Small Cell Lung trials using CTLA-4 where PD‑L1 positivity was not an inclusion criterion?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 2,
+              "total_score": 0.970963716506958,
+              "sbert_score": 0.970963716506958,
+              "candidate": {
+                "candidate_id": "seed[107].query_1",
+                "question": "What trials have Cancer type equal to 'Small Cell Lung'?$",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\", \"Trial name\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Small Cell Lung';",
+                "parent_question": "Which trials for Small Cell Lung cancer were in phase 3?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 3,
+              "total_score": 0.9635282754898071,
+              "sbert_score": 0.9635282754898071,
+              "candidate": {
+                "candidate_id": "seed[137].query_1",
+                "question": "List trials with Cancer type = 'Small Cell Lung'.",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Number of arms\", \"Control arm\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Small Cell Lung';",
+                "parent_question": "Which Small Cell Lung trials had 3 or more arms and used chemotherapy as a control?",
+                "source": "seed_json/decomposed"
+              }
+            }
+          ]
+        }
+      ],
+      "ranked_results": [
+        {
+          "rank": 1,
+          "total_score": 0.9936933517456055,
+          "sbert_score": 0.9936933517456055,
+          "candidate": {
+            "candidate_id": "seed[67].query_1",
+            "question": "What trials have Cancer type = 'Head and Neck' ?",
+            "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\" FROM clinical_trials WHERE \"Cancer type\" = 'Head and Neck';",
+            "parent_question": "Which trials for Head and Neck cancer used chemo or anti-EGFR therapy as the control arm?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 2,
+          "total_score": 0.9925434589385986,
+          "sbert_score": 0.9925434589385986,
+          "candidate": {
+            "candidate_id": "seed[99].query_2",
+            "question": "Which trials have Cancer type = 'Head and Neck cancer'?",
+            "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Trial name\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Head and Neck cancer';",
+            "parent_question": "Which trials studied Avelumab for Head and Neck cancer?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 3,
+          "total_score": 0.9815032780170441,
+          "sbert_score": 0.9815032780170441,
+          "candidate": {
+            "candidate_id": "seed[148].query_1",
+            "question": "What trials have Cancer type equal to 'Non-Small Cell Lung'?",
+            "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Non-Small Cell Lung';",
+            "parent_question": "Find Non-Small Cell Lung trials using CTLA-4 where PD‑L1 positivity was not an inclusion criterion?",
+            "source": "seed_json/decomposed"
+          }
+        }
+      ]
+    }
+  ]
+}

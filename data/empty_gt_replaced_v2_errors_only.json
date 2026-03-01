@@ -1,0 +1,152 @@
+[
+  {
+    "line_number": 13,
+    "question": "Which Pembrolizumab trials in Head and Neck used Observation as the control?",
+    "empty_gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Trial name\", \"Treatment regimen\"\nFROM clinical_trials\nWHERE \"Name of ICI\" = 'Pembrolizumab' AND \"Cancer type\" = 'Head and Neck' AND \"Control arm\" = 'Observation';",
+    "new_gt_sql": null,
+    "difference": {
+      "replaced": null,
+      "error": "unrecognized token: \"'Head) LIMIT 5000;\""
+    }
+  },
+  {
+    "line_number": 90,
+    "question": "Show Head and Neck trials using PD-L1, CTLA-4 where PD‑L1 positivity was an inclusion criterion.",
+    "empty_gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Is PD-L1 positivity inclusion criteria\", \"Class of ICI\", \"Cancer type\", \"Name of ICI\", \"Trial phase\"\nFROM clinical_trials\nWHERE \"Cancer type\" = 'Head and Neck' AND \"Class of ICI\" = 'PD-L1, CTLA-4' AND \"Is PD-L1 positivity inclusion criteria\" = 'No';",
+    "new_gt_sql": null,
+    "difference": {
+      "replaced": null,
+      "error": "near \"' AND \"Class of ICI\" = '\": syntax error"
+    }
+  },
+  {
+    "line_number": 102,
+    "question": "Which Head and Neck trials specified neoadjuvant ICI use?",
+    "empty_gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Cancer type\", \"Monotherapy/combination\", \"Trial phase\", \"Name of ICI\"\nFROM clinical_trials\nWHERE \"Cancer type\" = 'Head and Neck' AND \"Clinical setting in relation to surgery\" = 'Neoadjuvant';",
+    "new_gt_sql": null,
+    "difference": {
+      "replaced": null,
+      "error": "unrecognized token: \"'Head) LIMIT 5000;\""
+    }
+  },
+  {
+    "line_number": 108,
+    "question": "Which Head and Neck trials used Placebo as the control arm?",
+    "empty_gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Control arm\", \"Cancer type\", \"Control regimen\", \"Trial phase\"\nFROM clinical_trials\nWHERE \"Cancer type\" = 'Head and Neck' AND \"Control arm\" = 'Placebo';",
+    "new_gt_sql": null,
+    "difference": {
+      "replaced": null,
+      "error": "unrecognized token: \"') LIMIT 5000;\""
+    }
+  },
+  {
+    "line_number": 127,
+    "question": "Which Chemotherapy trials in Head and Neck used Chemo/Anti-EGFR+Radiotherapy as the control?",
+    "empty_gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Trial name\", \"Treatment regimen\"\nFROM clinical_trials\nWHERE \"Name of ICI\" = 'Chemotherapy' AND \"Cancer type\" = 'Head and Neck' AND \"Control arm\" = 'Chemo/Anti-EGFR+Radiotherapy';",
+    "new_gt_sql": null,
+    "difference": {
+      "replaced": null,
+      "error": "near \"' AND \"Cancer type\" = '\": syntax error"
+    }
+  },
+  {
+    "line_number": 131,
+    "question": "Show Head and Neck CTLA-4 trials conducted in 2018 or later.",
+    "empty_gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Class of ICI\", \"Cancer type\", \"Trial phase\"\nFROM clinical_trials\nWHERE \"Cancer type\" = 'Head and Neck' AND \"Class of ICI\" = 'CTLA-4' AND \"Year\" >= 2018;",
+    "new_gt_sql": null,
+    "difference": {
+      "replaced": null,
+      "error": "unrecognized token: \"'Head) LIMIT 5000;\""
+    }
+  },
+  {
+    "line_number": 208,
+    "question": "List Head and Neck Atezolizumab trials where overall follow‑up exceeded 21 months.",
+    "empty_gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Follow-up duration for primary endpoint(s) in months | Overall\", \"Cancer type\", \"Trial phase\"\nFROM clinical_trials\nWHERE \"Cancer type\" = 'Head and Neck' AND \"Name of ICI\" = 'Atezolizumab' AND \"Follow-up duration for primary endpoint(s) in months | Overall\" > 21;",
+    "new_gt_sql": null,
+    "difference": {
+      "replaced": null,
+      "error": "near \"Atezolizumab\": syntax error"
+    }
+  },
+  {
+    "line_number": 234,
+    "question": "Find Head and Neck trials of Tremelimumab given in combination therapy.",
+    "empty_gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Monotherapy/combination\", \"Cancer type\", \"Type of combination\", \"Trial phase\"\nFROM clinical_trials\nWHERE \"Cancer type\" = 'Head and Neck' AND \"Name of ICI\" = 'Tremelimumab' AND \"Monotherapy/combination\" = 'Combination';",
+    "new_gt_sql": null,
+    "difference": {
+      "replaced": null,
+      "error": "near \"' AND \"Name of ICI\" = '\": syntax error"
+    }
+  },
+  {
+    "line_number": 282,
+    "question": "Which Phase 2 PD1, CTLA-4 combination trials in Head and Neck should I review, and what were their regimens?",
+    "empty_gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Class of ICI\", \"Monotherapy/combination\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\"\nFROM clinical_trials\nWHERE \"Class of ICI\" = 'PD1, CTLA-4' AND \"Cancer type\" = 'Head and Neck' AND \"Trial phase\" = 'Phase 2' AND \"Monotherapy/combination\" = 'Combination';",
+    "new_gt_sql": null,
+    "difference": {
+      "replaced": null,
+      "error": "near \"' AND \"Class of ICI\" = '\": syntax error"
+    }
+  },
+  {
+    "line_number": 338,
+    "question": "Which Head and Neck trials used Radiation as the control arm?",
+    "empty_gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Control arm\", \"Cancer type\", \"Control regimen\", \"Trial phase\"\nFROM clinical_trials\nWHERE \"Cancer type\" = 'Head and Neck' AND \"Control arm\" = 'Radiation';",
+    "new_gt_sql": null,
+    "difference": {
+      "replaced": null,
+      "error": "unrecognized token: \"') LIMIT 5000;\""
+    }
+  },
+  {
+    "line_number": 412,
+    "question": "Which Head and Neck trials used Best supportive care as the control arm?",
+    "empty_gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Control arm\", \"Cancer type\", \"Control regimen\", \"Trial phase\"\nFROM clinical_trials\nWHERE \"Cancer type\" = 'Head and Neck' AND \"Control arm\" = 'Best supportive care';",
+    "new_gt_sql": null,
+    "difference": {
+      "replaced": null,
+      "error": "unrecognized token: \"'Head) LIMIT 5000;\""
+    }
+  },
+  {
+    "line_number": 418,
+    "question": "Which Head and Neck trials evaluated Atezolizumab+Trastuzumab emtansine+Placebo in phase 3?",
+    "empty_gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\", \"Trial name\", \"Treatment regimen\"\nFROM clinical_trials\nWHERE \"Name of ICI\" = 'Atezolizumab+Trastuzumab emtansine+Placebo' AND \"Cancer type\" = 'Head and Neck' AND \"Trial phase\" = 'Phase 3';",
+    "new_gt_sql": null,
+    "difference": {
+      "replaced": null,
+      "error": "unrecognized token: \"') LIMIT 5000;\""
+    }
+  },
+  {
+    "line_number": 423,
+    "question": "Show Head and Neck trials that used ICI+Vaccine combinations.",
+    "empty_gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Type of combination\", \"Cancer type\", \"Treatment regimen\", \"Trial phase\"\nFROM clinical_trials\nWHERE \"Cancer type\" = 'Head and Neck' AND \"Type of combination\" = 'ICI+Vaccine';",
+    "new_gt_sql": null,
+    "difference": {
+      "replaced": null,
+      "error": "unrecognized token: \"') LIMIT 5000;\""
+    }
+  },
+  {
+    "line_number": 433,
+    "question": "Find Phase 3 Chemotherapy trials in Head and Neck that were follow-up publications.",
+    "empty_gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\"\nFROM clinical_trials\nWHERE \"Name of ICI\" = 'Chemotherapy' AND \"Cancer type\" = 'Head and Neck' AND \"Trial phase\" = 'Phase 3' AND \"Originial publication or Follow-up\" = 'Follow-up';",
+    "new_gt_sql": null,
+    "difference": {
+      "replaced": null,
+      "error": "unrecognized token: \"'Head) LIMIT 5000;\""
+    }
+  },
+  {
+    "line_number": 464,
+    "question": "Show Head and Neck studies included in the meta‑analysis that used PD1, CTLA-4 agents.",
+    "empty_gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Included in MA\", \"Class of ICI\", \"Cancer type\", \"Name of ICI\"\nFROM clinical_trials\nWHERE \"Cancer type\" = 'Head and Neck' AND \"Class of ICI\" = 'PD1, CTLA-4' AND \"Included in MA\" = 'No';",
+    "new_gt_sql": null,
+    "difference": {
+      "replaced": null,
+      "error": "near \"' AND \"Class of ICI\" = '\": syntax error"
+    }
+  }
+]

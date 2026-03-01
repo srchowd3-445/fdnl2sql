@@ -1,0 +1,12 @@
+[
+  {
+    "task_index": 0,
+    "question_index": null,
+    "item_id": null,
+    "question": "List geparnuvo studies from 2019",
+    "natural_question": "List geparnuvo studies from 2019",
+    "pred_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Cancer type\" FROM clinical_trials WHERE \"Trial name\" = 'geparnuvo' AND \"Year\" = 2019",
+    "confidence_overall": null,
+    "error": null
+  }
+]

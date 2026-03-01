@@ -1,0 +1,268 @@
+[
+  {
+    "idx": 1,
+    "item_id": "extra_106_68_keep_two_select_columns_32",
+    "original_question": "For Melanoma trials, what is the minimum follow-up time by treatment arm?",
+    "gt_sql": "SELECT \"Author\", \"Type of follow-up given\" FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma' AND \"Type of follow-up given\" = 'Minimum';",
+    "decomposed_query": {
+      "query_1": {
+        "question": "What are the distinct treatment regimens used in Melanoma trials?",
+        "sql": "SELECT DISTINCT \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma';"
+      },
+      "query_2": {
+        "question": "For Melanoma trials, what is the minimum follow-up duration for the Rx arm by treatment regimen?",
+        "sql": "SELECT \"Treatment regimen\", MIN(\"Follow-up duration for primary endpoint(s) in months | Rx\") FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma' GROUP BY \"Treatment regimen\";"
+      },
+      "query_3": {
+        "question": "For Melanoma trials, what is the minimum follow-up duration for the Control arm by treatment regimen?",
+        "sql": "SELECT \"Treatment regimen\", MIN(\"Follow-up duration for primary endpoint(s) in months | Control\") FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma' GROUP BY \"Treatment regimen\";"
+      },
+      "query_4": {
+        "question": "For Melanoma trials, what is the minimum follow-up duration for Overall by treatment regimen?",
+        "sql": "SELECT \"Treatment regimen\", MIN(\"Follow-up duration for primary endpoint(s) in months | Overall\") FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma' GROUP BY \"Treatment regimen\";"
+      },
+      "query_5": {
+        "question": "For Melanoma trials, which authors have minimum follow-up?",
+        "sql": "SELECT \"Author\" FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma' AND \"Type of follow-up given\" = 'Minimum';"
+      }
+    },
+    "status": "ok",
+    "error": null,
+    "source_question_key": "original_question",
+    "source_sql_key": "gt_sql",
+    "model": "gpt-5-nano",
+    "custom_id": "decomp-1"
+  },
+  {
+    "idx": 2,
+    "item_id": "extra_148_256_drop_two_where_conditions_14",
+    "original_question": "Find Phase 3 Ipilimumab trials in Melanoma that were follow-up publications?",
+    "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Name of ICI\" = 'Ipilimumab' AND \"Cancer type\" = 'Melanoma';",
+    "decomposed_query": {
+      "query_1": {
+        "question": "What trials have Name of ICI equal to 'Ipilimumab'?",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Name of ICI\" = 'Ipilimumab';"
+      },
+      "query_2": {
+        "question": "What trials have Cancer type equal to 'Melanoma'?",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma';"
+      },
+      "query_3": {
+        "question": "What trials have Trial phase equal to 'Phase 3'?",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Trial phase\" = 'Phase 3';"
+      },
+      "query_4": {
+        "question": "What trials have Originial publication or Follow-up equal to 'Follow-up'?",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Originial publication or Follow-up\" = 'Follow-up';"
+      }
+    },
+    "status": "ok",
+    "error": null,
+    "source_question_key": "original_question",
+    "source_sql_key": "gt_sql",
+    "model": "gpt-5-nano",
+    "custom_id": "decomp-2"
+  },
+  {
+    "idx": 3,
+    "item_id": "extra_154_175_drop_select_column_41",
+    "original_question": "Find phase 2 clinical trials for Urothelial cancer that compared immunotherapy to anti-VEGF therapy?",
+    "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Urothelial' AND \"Trial phase\" = 'Phase 2' AND \"Control arm\" = 'Placebo';",
+    "decomposed_query": {
+      "query_1": {
+        "question": "Retrieve NCT, Author, Year, Originial publication or Follow-up, Trial phase, Control arm, Cancer type, and Treatment regimen for trials where Cancer type = 'Urothelial'.",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Urothelial';"
+      },
+      "query_2": {
+        "question": "Retrieve NCT, Author, Year, Originial publication or Follow-up, Trial phase, Control arm, Cancer type, and Treatment regimen for trials where Trial phase = 'Phase 2'.",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Treatment regimen\" FROM clinical_trials WHERE \"Trial phase\" = 'Phase 2';"
+      },
+      "query_3": {
+        "question": "Retrieve NCT, Author, Year, Originial publication or Follow-up, Trial phase, Control arm, Cancer type, and Treatment regimen for trials where Control arm = 'Placebo'.",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Treatment regimen\" FROM clinical_trials WHERE \"Control arm\" = 'Placebo';"
+      }
+    },
+    "status": "ok",
+    "error": null,
+    "source_question_key": "original_question",
+    "source_sql_key": "gt_sql",
+    "model": "gpt-5-nano",
+    "custom_id": "decomp-3"
+  },
+  {
+    "idx": 4,
+    "item_id": "extra_166_60_swap_text_equality_value_6",
+    "original_question": "Find trials for hepatocellular cancer that report median follow-up duration in months for both treatment and control arms?",
+    "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Type of follow-up given\", \"Cancer type\", \"Follow-up duration for primary endpoint(s) in months | Rx\", \"Follow-up duration for primary endpoint(s) in months | Control\" FROM clinical_trials WHERE \"Cancer type\" = 'Hepatocellular' AND \"Type of follow-up given\" = 'Median';",
+    "decomposed_query": {
+      "query_1": {
+        "question": "NCT identifiers for hepatocellular cancer trials reporting median follow-up",
+        "sql": "SELECT \"NCT\" FROM clinical_trials WHERE \"Cancer type\" = 'Hepatocellular' AND \"Type of follow-up given\" = 'Median';"
+      },
+      "query_2": {
+        "question": "Authors for hepatocellular cancer trials reporting median follow-up",
+        "sql": "SELECT \"Author\" FROM clinical_trials WHERE \"Cancer type\" = 'Hepatocellular' AND \"Type of follow-up given\" = 'Median';"
+      },
+      "query_3": {
+        "question": "Years for hepatocellular cancer trials reporting median follow-up",
+        "sql": "SELECT \"Year\" FROM clinical_trials WHERE \"Cancer type\" = 'Hepatocellular' AND \"Type of follow-up given\" = 'Median';"
+      },
+      "query_4": {
+        "question": "Originial publication or Follow-up field for hepatocellular cancer trials reporting median follow-up",
+        "sql": "SELECT \"Originial publication or Follow-up\" FROM clinical_trials WHERE \"Cancer type\" = 'Hepatocellular' AND \"Type of follow-up given\" = 'Median';"
+      },
+      "query_5": {
+        "question": "Type of follow-up given for hepatocellular cancer trials reporting median follow-up",
+        "sql": "SELECT \"Type of follow-up given\" FROM clinical_trials WHERE \"Cancer type\" = 'Hepatocellular' AND \"Type of follow-up given\" = 'Median';"
+      },
+      "query_6": {
+        "question": "Cancer type values for hepatocellular cancer trials reporting median follow-up",
+        "sql": "SELECT \"Cancer type\" FROM clinical_trials WHERE \"Cancer type\" = 'Hepatocellular' AND \"Type of follow-up given\" = 'Median';"
+      },
+      "query_7": {
+        "question": "Follow-up duration for primary endpoint(s) in months | Rx for hepatocellular cancer trials reporting median follow-up",
+        "sql": "SELECT \"Follow-up duration for primary endpoint(s) in months | Rx\" FROM clinical_trials WHERE \"Cancer type\" = 'Hepatocellular' AND \"Type of follow-up given\" = 'Median';"
+      },
+      "query_8": {
+        "question": "Follow-up duration for primary endpoint(s) in months | Control for hepatocellular cancer trials reporting median follow-up",
+        "sql": "SELECT \"Follow-up duration for primary endpoint(s) in months | Control\" FROM clinical_trials WHERE \"Cancer type\" = 'Hepatocellular' AND \"Type of follow-up given\" = 'Median';"
+      }
+    },
+    "status": "ok",
+    "error": null,
+    "source_question_key": "original_question",
+    "source_sql_key": "gt_sql",
+    "model": "gpt-5-nano",
+    "custom_id": "decomp-4"
+  },
+  {
+    "idx": 5,
+    "item_id": "extra_23_441_drop_two_where_conditions_3",
+    "original_question": "Which phase 3 prostate cancer trials compared immunotherapy to chemotherapy plus anti-EGFR therapy?",
+    "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Prostate';",
+    "decomposed_query": {
+      "query_1": {
+        "question": "What are the Phase 3 trials for prostate cancer?",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Prostate' AND \"Trial phase\" = 'Phase 3';"
+      },
+      "query_2": {
+        "question": "Which Phase 3 prostate cancer trials compared immunotherapy to chemotherapy plus anti-EGFR therapy?",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\", \"Control regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Prostate' AND \"Trial phase\" = 'Phase 3' AND \"Name of ICI\" IS NOT NULL AND \"Control regimen\" LIKE '%chemotherapy%' AND \"Control regimen\" LIKE '%anti-EGFR%';"
+      }
+    },
+    "status": "ok",
+    "error": null,
+    "source_question_key": "original_question",
+    "source_sql_key": "gt_sql",
+    "model": "gpt-5-nano",
+    "custom_id": "decomp-5"
+  },
+  {
+    "idx": 6,
+    "item_id": "extra_24_263_drop_two_where_conditions_4",
+    "original_question": "List Avelumab trials for esophageal or gastroesophageal junction cancer with overall follow-up longer than 10.6 months?",
+    "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Follow-up duration for primary endpoint(s) in months | Overall\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Follow-up duration for primary endpoint(s) in months | Overall\" > 10.6;",
+    "decomposed_query": {
+      "query_1": {
+        "question": "What are the NCT numbers for trials where Name of ICI is Avelumab?",
+        "sql": "SELECT \"NCT\" FROM clinical_trials WHERE \"Name of ICI\" = 'Avelumab';"
+      },
+      "query_2": {
+        "question": "What are the NCT numbers for Avelumab trials with cancer type esophageal cancer or gastroesophageal junction cancer?",
+        "sql": "SELECT \"NCT\" FROM clinical_trials WHERE \"Name of ICI\" = 'Avelumab' AND (\"Cancer type\" = 'esophageal cancer' OR \"Cancer type\" = 'gastroesophageal junction cancer');"
+      },
+      "query_3": {
+        "question": "What are the NCT numbers for Avelumab trials with esophageal or gastroesophageal junction cancer and follow-up duration for primary endpoint(s) in months | Overall greater than 10.6?",
+        "sql": "SELECT \"NCT\" FROM clinical_trials WHERE \"Name of ICI\" = 'Avelumab' AND (\"Cancer type\" = 'esophageal cancer' OR \"Cancer type\" = 'gastroesophageal junction cancer') AND \"Follow-up duration for primary endpoint(s) in months | Overall\" > 10.6;"
+      }
+    },
+    "status": "ok",
+    "error": null,
+    "source_question_key": "original_question",
+    "source_sql_key": "gt_sql",
+    "model": "gpt-5-nano",
+    "custom_id": "decomp-6"
+  },
+  {
+    "idx": 7,
+    "item_id": "extra_27_489_drop_where_condition_4",
+    "original_question": "Find phase 3 urothelial cancer trials comparing immunotherapy to tyrosine kinase inhibitors?",
+    "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Urothelial' AND \"Control arm\" = 'Chemo';",
+    "decomposed_query": {
+      "query_1": {
+        "question": "What trials in the clinical_trials table have Cancer type equal to 'Urothelial'?",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Urothelial';"
+      },
+      "query_2": {
+        "question": "What trials in the clinical_trials table have Control arm equal to 'Chemo'?",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Control arm\" = 'Chemo';"
+      }
+    },
+    "status": "ok",
+    "error": null,
+    "source_question_key": "original_question",
+    "source_sql_key": "gt_sql",
+    "model": "gpt-5-nano",
+    "custom_id": "decomp-7"
+  },
+  {
+    "idx": 8,
+    "item_id": "extra_37_386_drop_where_condition_8",
+    "original_question": "Which phase 3 trials for esophageal or gastroesophageal junction cancer compared immunotherapy to a vaccine, excluding trials with chemotherapy as the control arm?",
+    "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Esophageal/GEJ' AND \"Trial phase\" = 'Phase 3';",
+    "decomposed_query": {
+      "query_1": {
+        "question": "Phase 3 trials for Esophageal/GEJ cancer.",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Esophageal/GEJ' AND \"Trial phase\" = 'Phase 3';"
+      },
+      "query_2": {
+        "question": "Phase 3 esophageal/GEJ trials with an immunotherapy agent.",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Esophageal/GEJ' AND \"Trial phase\" = 'Phase 3' AND \"Name of ICI\" IS NOT NULL;"
+      },
+      "query_3": {
+        "question": "Among those, trials that compare immunotherapy to a vaccine.",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Esophageal/GEJ' AND \"Trial phase\" = 'Phase 3' AND \"Name of ICI\" IS NOT NULL AND (\"Type of control\" = 'Vaccine' OR \"Control arm\" LIKE '%vaccine%');"
+      },
+      "query_4": {
+        "question": "Exclude trials with chemotherapy as the control arm among the immunotherapy-vaccine Phase 3 esophageal/GEJ trials.",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Esophageal/GEJ' AND \"Trial phase\" = 'Phase 3' AND \"Name of ICI\" IS NOT NULL AND (\"Type of control\" = 'Vaccine' OR \"Control arm\" LIKE '%vaccine%') AND (\"Type of control\" NOT LIKE '%chemotherapy%' AND \"Control arm\" NOT LIKE '%chemotherapy%');"
+      }
+    },
+    "status": "ok",
+    "error": null,
+    "source_question_key": "original_question",
+    "source_sql_key": "gt_sql",
+    "model": "gpt-5-nano",
+    "custom_id": "decomp-8"
+  },
+  {
+    "idx": 9,
+    "item_id": "extra_69_239_drop_two_where_conditions_5",
+    "original_question": "Find trials for Non-Small Cell Lung cancer that use Tremelimumab in combination with other treatments?",
+    "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Monotherapy/combination\", \"Cancer type\", \"Type of combination\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Non-Small Cell Lung';",
+    "decomposed_query": {
+      "query_1": {
+        "question": "What trials have Name of ICI equal to Tremelimumab?",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Monotherapy/combination\", \"Cancer type\", \"Type of combination\", \"Trial phase\" FROM clinical_trials WHERE \"Name of ICI\" = 'Tremelimumab';"
+      },
+      "query_2": {
+        "question": "Among Tremelimumab trials, which have Monotherapy/combination = Combination?",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Monotherapy/combination\", \"Cancer type\", \"Type of combination\", \"Trial phase\" FROM clinical_trials WHERE \"Name of ICI\" = 'Tremelimumab' AND \"Monotherapy/combination\" = 'Combination';"
+      },
+      "query_3": {
+        "question": "Among Tremelimumab combination trials, which have Cancer type = Non-Small Cell Lung?",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Monotherapy/combination\", \"Cancer type\", \"Type of combination\", \"Trial phase\" FROM clinical_trials WHERE \"Name of ICI\" = 'Tremelimumab' AND \"Monotherapy/combination\" = 'Combination' AND \"Cancer type\" = 'Non-Small Cell Lung';"
+      },
+      "query_4": {
+        "question": "What is the Type of combination used in Tremelimumab combination trials for Non-Small Cell Lung cancer?",
+        "sql": "SELECT \"Type of combination\" FROM clinical_trials WHERE \"Name of ICI\" = 'Tremelimumab' AND \"Monotherapy/combination\" = 'Combination' AND \"Cancer type\" = 'Non-Small Cell Lung';"
+      }
+    },
+    "status": "ok",
+    "error": null,
+    "source_question_key": "original_question",
+    "source_sql_key": "gt_sql",
+    "model": "gpt-5-nano",
+    "custom_id": "decomp-9"
+  }
+]

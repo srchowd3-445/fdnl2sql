@@ -1,0 +1,103 @@
+{
+  "created_at": "2026-02-24 22:36:23",
+  "mode": "batch_run",
+  "input_json": "/mnt/data1/srchowd3/MAYO_AIM2/data/natural_question_additional_200_decomposed_final9_input.json",
+  "schema_json": "/mnt/data1/srchowd3/MAYO_AIM2/data/schema.json",
+  "table_name": "clinical_trials",
+  "model": "gpt-5-nano",
+  "start": 0,
+  "limit": -1,
+  "rows_in_input": 9,
+  "rows_in_slice": 9,
+  "request_count": 9,
+  "batch_jsonl_path": "/mnt/data1/srchowd3/MAYO_AIM2/data/decompose_batch_input_final9_8192.jsonl",
+  "requests": [
+    {
+      "custom_id": "decomp-1",
+      "idx": 1,
+      "item_id": "extra_106_68_keep_two_select_columns_32",
+      "original_question": "For Melanoma trials, what is the minimum follow-up time by treatment arm?",
+      "gt_sql": "SELECT \"Author\", \"Type of follow-up given\" FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma' AND \"Type of follow-up given\" = 'Minimum';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-2",
+      "idx": 2,
+      "item_id": "extra_148_256_drop_two_where_conditions_14",
+      "original_question": "Find Phase 3 Ipilimumab trials in Melanoma that were follow-up publications?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Name of ICI\" = 'Ipilimumab' AND \"Cancer type\" = 'Melanoma';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-3",
+      "idx": 3,
+      "item_id": "extra_154_175_drop_select_column_41",
+      "original_question": "Find phase 2 clinical trials for Urothelial cancer that compared immunotherapy to anti-VEGF therapy?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Urothelial' AND \"Trial phase\" = 'Phase 2' AND \"Control arm\" = 'Placebo';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-4",
+      "idx": 4,
+      "item_id": "extra_166_60_swap_text_equality_value_6",
+      "original_question": "Find trials for hepatocellular cancer that report median follow-up duration in months for both treatment and control arms?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Type of follow-up given\", \"Cancer type\", \"Follow-up duration for primary endpoint(s) in months | Rx\", \"Follow-up duration for primary endpoint(s) in months | Control\" FROM clinical_trials WHERE \"Cancer type\" = 'Hepatocellular' AND \"Type of follow-up given\" = 'Median';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-5",
+      "idx": 5,
+      "item_id": "extra_23_441_drop_two_where_conditions_3",
+      "original_question": "Which phase 3 prostate cancer trials compared immunotherapy to chemotherapy plus anti-EGFR therapy?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Prostate';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-6",
+      "idx": 6,
+      "item_id": "extra_24_263_drop_two_where_conditions_4",
+      "original_question": "List Avelumab trials for esophageal or gastroesophageal junction cancer with overall follow-up longer than 10.6 months?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Follow-up duration for primary endpoint(s) in months | Overall\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Follow-up duration for primary endpoint(s) in months | Overall\" > 10.6;",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-7",
+      "idx": 7,
+      "item_id": "extra_27_489_drop_where_condition_4",
+      "original_question": "Find phase 3 urothelial cancer trials comparing immunotherapy to tyrosine kinase inhibitors?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Urothelial' AND \"Control arm\" = 'Chemo';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-8",
+      "idx": 8,
+      "item_id": "extra_37_386_drop_where_condition_8",
+      "original_question": "Which phase 3 trials for esophageal or gastroesophageal junction cancer compared immunotherapy to a vaccine, excluding trials with chemotherapy as the control arm?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Esophageal/GEJ' AND \"Trial phase\" = 'Phase 3';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-9",
+      "idx": 9,
+      "item_id": "extra_69_239_drop_two_where_conditions_5",
+      "original_question": "Find trials for Non-Small Cell Lung cancer that use Tremelimumab in combination with other treatments?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Monotherapy/combination\", \"Cancer type\", \"Type of combination\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Non-Small Cell Lung';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    }
+  ],
+  "skipped_rows": [],
+  "batch_id": "batch_699e8a58cf6481908bec789a565019ba",
+  "batch_input_file_id": "file-6B9oKauywbYAVrDdczCyD7",
+  "batch_terminal_status": "completed",
+  "batch_output_file_id": "file-ALorndtxCaPqJdRLX3ydk3",
+  "batch_error_file_id": null
+}

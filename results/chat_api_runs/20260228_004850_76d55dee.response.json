@@ -1,0 +1,65 @@
+{
+  "status": "ok",
+  "item_id": null,
+  "question": "List Geparrrrnuevo",
+  "final_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Trial name\", \"Treatment regimen\" FROM clinical_trials WHERE \"Name of ICI\" = 'Geparrrrnuevo'",
+  "confidence_overall": null,
+  "error": null,
+  "decomposed_queries": [
+    "Which trials have Name of ICI = 'Geparrrrnuevo'?"
+  ],
+  "retrieval_top": [
+    {
+      "rank": 1,
+      "score": 0.9106462597846985,
+      "candidate_id": "seed[99].query_1",
+      "candidate_question": "Which trials have Name of ICI = 'Avelumab'?",
+      "candidate_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Trial name\", \"Treatment regimen\" FROM clinical_trials WHERE \"Name of ICI\" = 'Avelumab';"
+    },
+    {
+      "rank": 2,
+      "score": 0.9069651663303375,
+      "candidate_id": "seed[109].query_5",
+      "candidate_question": "What is the 'Name of ICI' for those trials?",
+      "candidate_sql": "SELECT \"Name of ICI\" FROM clinical_trials WHERE \"Name of ICI\" = 'Nivolumab' AND \"Cancer type\" = 'Renal cell' AND \"Trial phase\" = 'Phase 3' AND \"Originial publication or Follow-up\" = 'Follow-up';"
+    },
+    {
+      "rank": 3,
+      "score": 0.9029880464076996,
+      "candidate_id": "seed[74].query_5",
+      "candidate_question": "What is the Name of ICI used in those trials?",
+      "candidate_sql": "SELECT \"Name of ICI\" FROM clinical_trials WHERE \"Cancer type\" = 'Renal cell' AND \"Name of ICI\" = 'Nivolumab, Ipilimumab' AND \"Follow-up duration for primary endpoint(s) in months | Overall\" > 21;"
+    }
+  ],
+  "execution_preview": {
+    "error": null,
+    "columns": [
+      "NCT",
+      "Author",
+      "Year",
+      "Originial publication or Follow-up",
+      "Name of ICI",
+      "Control arm",
+      "Cancer type",
+      "Trial name",
+      "Treatment regimen"
+    ],
+    "rows": []
+  },
+  "artifacts": {
+    "decompose_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_004850_76d55dee/decompose_retrieve.json",
+    "synth_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_004850_76d55dee/synth.json",
+    "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_004850_76d55dee/eval_ready.json",
+    "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_004850_76d55dee/eval_ready.jsonl",
+    "eval_output_json": null
+  },
+  "meta": {
+    "backend": "openai_compat",
+    "model_name": "gemini-2.5-flash",
+    "use_pydantic_schema": true,
+    "logprob_mode": "none",
+    "run_eval": 0,
+    "skip_exec": 0,
+    "run_tag": "20260228_004850_76d55dee"
+  }
+}

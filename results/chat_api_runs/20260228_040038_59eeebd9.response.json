@@ -1,0 +1,63 @@
+{
+  "status": "ok",
+  "item_id": null,
+  "question": "please retrieve authors of imvigor211 and include nct",
+  "final_sql": "SELECT \"NCT\", \"Author\" FROM clinical_trials WHERE \"Trial name\" LIKE '%imvigor211%';",
+  "confidence_overall": null,
+  "error": null,
+  "decomposed_queries": [
+    "Trial name = 'imvigor211'"
+  ],
+  "retrieval_top": [
+    {
+      "rank": 1,
+      "score": 0.7790253758430481,
+      "candidate_id": "seed[204].query_1",
+      "candidate_question": "Find me studies from the imvigor211 trials",
+      "candidate_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Cancer type\" FROM clinical_trials WHERE \"Trial name\" LIKE '%imvigor211%';"
+    },
+    {
+      "rank": 2,
+      "score": 0.7475986182689667,
+      "candidate_id": "seed[12].query_5",
+      "candidate_question": "Trial names for trials where Name of ICI = 'Ipilimumab' AND Cancer type = 'Pancreatic' AND Trial phase = 'Phase 2'.",
+      "candidate_sql": "SELECT \"Trial name\" FROM clinical_trials WHERE \"Name of ICI\" = 'Ipilimumab' AND \"Cancer type\" = 'Pancreatic' AND \"Trial phase\" = 'Phase 2';"
+    },
+    {
+      "rank": 3,
+      "score": 0.7446743100881577,
+      "candidate_id": "seed[32].query_3",
+      "candidate_question": "What trials have Name of ICI = 'Durvalumab, Tremelimumab'?",
+      "candidate_sql": "SELECT \"NCT\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\", \"Trial name\", \"Treatment regimen\" FROM clinical_trials WHERE \"Name of ICI\" = 'Durvalumab, Tremelimumab';"
+    }
+  ],
+  "execution_preview": {
+    "error": null,
+    "columns": [
+      "NCT",
+      "Author"
+    ],
+    "rows": [
+      [
+        "NCT02302807",
+        "Powles T et al"
+      ]
+    ]
+  },
+  "artifacts": {
+    "decompose_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_040038_59eeebd9/decompose_retrieve.json",
+    "synth_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_040038_59eeebd9/synth.json",
+    "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_040038_59eeebd9/eval_ready.json",
+    "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_040038_59eeebd9/eval_ready.jsonl",
+    "eval_output_json": null
+  },
+  "meta": {
+    "backend": "openai_compat",
+    "model_name": "gpt-5-nano",
+    "use_pydantic_schema": true,
+    "logprob_mode": "none",
+    "run_eval": 0,
+    "skip_exec": 0,
+    "run_tag": "20260228_040038_59eeebd9"
+  }
+}

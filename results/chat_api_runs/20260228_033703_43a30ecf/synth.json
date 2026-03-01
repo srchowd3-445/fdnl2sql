@@ -1,0 +1,293 @@
+{
+  "meta": {
+    "pipeline_stage": "synthesis_from_decomposition_retrieval",
+    "retrieval_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_033703_43a30ecf/decompose_retrieve.json",
+    "retrieval_meta": {
+      "backend": "openai_compat",
+      "question": "Give me gastric cancer related research\n\nIMPORTANT: The previous SQL answer was not acceptable.\nYou MUST provide a different SQL answer than the prior attempt.\nDo not repeat the same SQL string.\nIf the previous SQL used an incorrect filter/value/operator, correct it.\n\nPrevious SQL:\nSELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ';",
+      "question_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/natural_question_1500.json",
+      "question_index": 0,
+      "batch_mode": 0,
+      "start_index": 0,
+      "limit": 1,
+      "prompt_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_prompt.txt",
+      "schema_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/schema.json",
+      "decompose_examples_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_examples.txt",
+      "seed_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/seed_questions.json",
+      "candidate_json": null,
+      "candidate_sqlite": null,
+      "candidate_table": "query_library",
+      "top_k": 3,
+      "retrieval_per_decomp": 3,
+      "max_decomposed_queries": 5,
+      "sbert": {
+        "model": "/mnt/shared/shared_hf_home/hub/models--sentence-transformers--all-MiniLM-L6-v2/snapshots/c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+        "device": null,
+        "batch_size": 64
+      },
+      "api_base": "https://api.openai.com/v1",
+      "model_name": "gpt-5-nano",
+      "model_path": null,
+      "gen_batch_size": 1,
+      "batch_concurrency": 1,
+      "pipeline_stage": "decompose_then_retrieve"
+    },
+    "retrieval_contract": "expects per-decomposed top-k in retrieval_by_decomposition when available",
+    "backend": "openai_compat",
+    "prompt_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/synthesis_prompt.txt",
+    "schema_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/schema.json",
+    "api_base": "https://api.openai.com/v1",
+    "model_name": "gpt-5-nano",
+    "model_path": null,
+    "db_path": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/database.db",
+    "skip_exec": 0,
+    "logprobs": 0,
+    "logprob_mode": "none",
+    "use_pydantic_schema": true,
+    "synth_evidence_per_decomp": 2,
+    "synth_include_global_merged": false,
+    "synth_where_only_evidence": true,
+    "gen_batch_size": 1,
+    "batch_concurrency": 1,
+    "eval": {
+      "run_eval": 0,
+      "gt_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/natural_question_1500.json",
+      "eval_script": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/eval_run_baselines_v2.py",
+      "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_033703_43a30ecf/eval_ready.json",
+      "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_033703_43a30ecf/eval_ready.jsonl",
+      "eval_output_json": null,
+      "eval_ran": false
+    },
+    "acceptance": {
+      "config_path": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/decompose_method/seed_acceptance_rules.config",
+      "config_format": "seed_acceptance_rules.config",
+      "acceptance_output_json": null
+    }
+  },
+  "counts": {
+    "total_tasks": 1,
+    "error_tasks": 0,
+    "generated_nonempty_sql": 1,
+    "exec_ok": 1,
+    "with_confidence": 0
+  },
+  "eval_summary": {},
+  "acceptance_summary": {
+    "evaluated": 0,
+    "accepted": 0,
+    "accepted_main_metric": 0,
+    "accepted_non_main": 0,
+    "rejected": 0
+  },
+  "results": [
+    {
+      "task_index": 0,
+      "question_index": null,
+      "item_id": null,
+      "input_question": "Give me gastric cancer related research\n\nIMPORTANT: The previous SQL answer was not acceptable.\nYou MUST provide a different SQL answer than the prior attempt.\nDo not repeat the same SQL string.\nIf the previous SQL used an incorrect filter/value/operator, correct it.\n\nPrevious SQL:\nSELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ';",
+      "error": null,
+      "decomposition": {
+        "raw_text": "{\"decomposed_queries\": [\"Which trials have Cancer type LIKE 'Gastric%'?\"]}",
+        "decomposed_queries": [
+          "Which trials have Cancer type LIKE 'Gastric%'?"
+        ],
+        "model_meta": {
+          "provider_call_ok": true,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids_len": 1439,
+          "backend": "openai_compat"
+        },
+        "error": null
+      },
+      "retrieval_trace": [
+        {
+          "decomposed_query": "Which trials have Cancer type LIKE 'Gastric%'?",
+          "top1_candidate_id": "seed[90].query_1",
+          "top1_score": 0.9379876255989075
+        }
+      ],
+      "retrieval_by_decomposition": [
+        {
+          "decomposed_query": "Which trials have Cancer type LIKE 'Gastric%'?",
+          "ranked_results": [
+            {
+              "rank": 1,
+              "total_score": 0.9379876255989075,
+              "sbert_score": 0.9379876255989075,
+              "candidate": {
+                "candidate_id": "seed[90].query_1",
+                "question": "What trials have Cancer type equal to Gastric/GEJ?",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Cancer type\", \"Control regimen\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ';",
+                "parent_question": "Find trials for gastric or gastroesophageal junction cancer that compared treatment to a placebo?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 2,
+              "total_score": 0.9379876255989075,
+              "sbert_score": 0.9379876255989075,
+              "candidate": {
+                "candidate_id": "seed[147].query_2",
+                "question": "What trials have cancer type equal to Gastric/GEJ?",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Cancer type\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ';",
+                "parent_question": "List trials of cemiplimab for gastric or gastroesophageal junction cancer with overall follow-up longer than 21 months?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 3,
+              "total_score": 0.9379108250141144,
+              "sbert_score": 0.9379108250141144,
+              "candidate": {
+                "candidate_id": "seed[37].query_2",
+                "question": "Which trials have Cancer type equal to 'Gastric/GEJ'?",
+                "sql": "SELECT \"Year\", \"Cancer type\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ';",
+                "parent_question": "Which trials of Avelumab for gastric or gastroesophageal junction cancer were in phase 3?",
+                "source": "seed_json/decomposed"
+              }
+            }
+          ]
+        }
+      ],
+      "ranked_results": [
+        {
+          "rank": 1,
+          "total_score": 0.9379876255989075,
+          "sbert_score": 0.9379876255989075,
+          "candidate": {
+            "candidate_id": "seed[90].query_1",
+            "question": "What trials have Cancer type equal to Gastric/GEJ?",
+            "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Cancer type\", \"Control regimen\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ';",
+            "parent_question": "Find trials for gastric or gastroesophageal junction cancer that compared treatment to a placebo?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 2,
+          "total_score": 0.9379876255989075,
+          "sbert_score": 0.9379876255989075,
+          "candidate": {
+            "candidate_id": "seed[147].query_2",
+            "question": "What trials have cancer type equal to Gastric/GEJ?",
+            "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Cancer type\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ';",
+            "parent_question": "List trials of cemiplimab for gastric or gastroesophageal junction cancer with overall follow-up longer than 21 months?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 3,
+          "total_score": 0.9379108250141144,
+          "sbert_score": 0.9379108250141144,
+          "candidate": {
+            "candidate_id": "seed[37].query_2",
+            "question": "Which trials have Cancer type equal to 'Gastric/GEJ'?",
+            "sql": "SELECT \"Year\", \"Cancer type\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ';",
+            "parent_question": "Which trials of Avelumab for gastric or gastroesophageal junction cancer were in phase 3?",
+            "source": "seed_json/decomposed"
+          }
+        }
+      ],
+      "synthesized": {
+        "raw_text": "{\"sql\":\"SELECT \\\"NCT\\\", \\\"Trial name\\\", \\\"Year\\\", \\\"Author\\\", \\\"Total sample size\\\", \\\"Primary endpoint\\\", \\\"Trial phase\\\" FROM clinical_trials WHERE \\\"Cancer type\\\" = 'Gastric/GEJ';\"}",
+        "final_sql": "SELECT \"NCT\", \"Trial name\", \"Year\", \"Author\", \"Total sample size\", \"Primary endpoint\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ';",
+        "field_logprobs": {},
+        "field_confidence": {},
+        "confidence_overall": null,
+        "model_meta": {
+          "provider_call_ok": true,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids_len": 1855,
+          "backend": "openai_compat"
+        }
+      },
+      "execution_preview": {
+        "columns": [
+          "NCT",
+          "Trial name",
+          "Year",
+          "Author",
+          "Total sample size",
+          "Primary endpoint",
+          "Trial phase"
+        ],
+        "rows": [
+          [
+            "NCT01585987",
+            null,
+            2017,
+            "Bang YJ et al",
+            114.0,
+            "PFS",
+            "Phase 2"
+          ],
+          [
+            "NCT02267343",
+            "ATTRACTION-2",
+            2017,
+            "Kang YK et al",
+            493.0,
+            "OS",
+            "Phase 3"
+          ],
+          [
+            "NCT02625623",
+            "JAVELIN Gastric 300",
+            2018,
+            "Bang YJ et al",
+            371.0,
+            "OS",
+            "Phase 3"
+          ],
+          [
+            "NCT02370498",
+            "Keynote-061",
+            2018,
+            "Shitara K et al",
+            395.0,
+            "OS+PFS",
+            "Phase 3"
+          ],
+          [
+            "NCT02267343",
+            "ATTRACTION-2",
+            2019,
+            "Chen LT et al",
+            493.0,
+            "OS",
+            "Phase 3"
+          ],
+          [
+            "NCT02494583",
+            "Keynote-062",
+            2020,
+            "Shitara K et al",
+            763.0,
+            "OS+PFS",
+            "Phase 3"
+          ],
+          [
+            "NCT02494583",
+            "Keynote-062",
+            2020,
+            "Shitara K et al (1)",
+            763.0,
+            "OS+PFS",
+            "Phase 3"
+          ],
+          [
+            " NCT02625610",
+            "Javelin Gastric 100",
+            2020,
+            "Moehler M et al",
+            499.0,
+            "OS",
+            "Phase 3"
+          ]
+        ],
+        "error": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+[
+  {
+    "task_index": 0,
+    "question_index": null,
+    "item_id": null,
+    "question": "Give me studies from 2018",
+    "natural_question": "Give me studies from 2018",
+    "pred_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\" FROM clinical_trials WHERE \"Year\" = 2018",
+    "confidence_overall": null,
+    "error": null
+  }
+]

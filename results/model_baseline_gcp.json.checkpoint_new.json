@@ -1,0 +1,103 @@
+{
+  "completed": {
+    "line_1": {
+      "baseline_question_used": "What clinical trials for colorectal cancer have at least three arms and use a multikinase inhibitor as the control?",
+      "baseline_pred_sql": "",
+      "baseline_model_raw_sql_output": "",
+      "baseline_model_meta": {
+        "finish_reason": "error",
+        "stop_reason": null,
+        "token_ids_len": null,
+        "error": "litellm.BadRequestError: Vertex_aiException BadRequestError - {\n  \"error\": {\n    \"code\": 403,\n    \"message\": \"Permission 'aiplatform.endpoints.predict' denied on resource '//aiplatform.googleapis.com/projects/praxis-flight-482822-q2/locations/us-central1/publishers/google/models/gemini-2.5-flash' (or it may not exist).\",\n    \"status\": \"PERMISSION_DENIED\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"IAM_PERMISSION_DENIED\",\n        \"domain\": \"aiplatform.googleapis.com\",\n        \"metadata\": {\n          \"resource\": \"projects/praxis-flight-482822-q2/locations/us-central1/publishers/google/models/gemini-2.5-flash\",\n          \"permission\": \"aiplatform.endpoints.predict\"\n        }\n      }\n    ]\n  }\n}\n"
+      },
+      "baseline_backend": "gcp",
+      "baseline_prompt_style": "zero_shot",
+      "baseline_answer_columns": [],
+      "baseline_answer_rows": [],
+      "baseline_answer_row_count": 0,
+      "baseline_answer_error": "EMPTY_PRED_SQL",
+      "baseline_exec_eval": {
+        "eval_ok": false,
+        "error": "MISSING_PRED_OR_GOLD_SQL",
+        "match_mode_requested": "hungarian",
+        "cell_text_metric_requested": "rouge1_f1"
+      }
+    },
+    "line_2": {
+      "baseline_question_used": "What clinical trials involved nivolumab in combination therapy for renal cell cancer?",
+      "baseline_pred_sql": "",
+      "baseline_model_raw_sql_output": "",
+      "baseline_model_meta": {
+        "finish_reason": "error",
+        "stop_reason": null,
+        "token_ids_len": null,
+        "error": "litellm.BadRequestError: Vertex_aiException BadRequestError - {\n  \"error\": {\n    \"code\": 403,\n    \"message\": \"Permission 'aiplatform.endpoints.predict' denied on resource '//aiplatform.googleapis.com/projects/praxis-flight-482822-q2/locations/us-central1/publishers/google/models/gemini-2.5-flash' (or it may not exist).\",\n    \"status\": \"PERMISSION_DENIED\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"IAM_PERMISSION_DENIED\",\n        \"domain\": \"aiplatform.googleapis.com\",\n        \"metadata\": {\n          \"resource\": \"projects/praxis-flight-482822-q2/locations/us-central1/publishers/google/models/gemini-2.5-flash\",\n          \"permission\": \"aiplatform.endpoints.predict\"\n        }\n      }\n    ]\n  }\n}\n"
+      },
+      "baseline_backend": "gcp",
+      "baseline_prompt_style": "zero_shot",
+      "baseline_answer_columns": [],
+      "baseline_answer_rows": [],
+      "baseline_answer_row_count": 0,
+      "baseline_answer_error": "EMPTY_PRED_SQL",
+      "baseline_exec_eval": {
+        "eval_ok": false,
+        "error": "MISSING_PRED_OR_GOLD_SQL",
+        "match_mode_requested": "hungarian",
+        "cell_text_metric_requested": "rouge1_f1"
+      }
+    },
+    "line_3": {
+      "baseline_question_used": "What clinical trials involving Non-Small Cell Lung cancer and CTLA-4 inhibitors have been started in or after 2018?",
+      "baseline_pred_sql": "",
+      "baseline_model_raw_sql_output": "",
+      "baseline_model_meta": {
+        "finish_reason": "error",
+        "stop_reason": null,
+        "token_ids_len": null,
+        "error": "litellm.BadRequestError: Vertex_aiException BadRequestError - {\n  \"error\": {\n    \"code\": 403,\n    \"message\": \"Permission 'aiplatform.endpoints.predict' denied on resource '//aiplatform.googleapis.com/projects/praxis-flight-482822-q2/locations/us-central1/publishers/google/models/gemini-2.5-flash' (or it may not exist).\",\n    \"status\": \"PERMISSION_DENIED\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"IAM_PERMISSION_DENIED\",\n        \"domain\": \"aiplatform.googleapis.com\",\n        \"metadata\": {\n          \"resource\": \"projects/praxis-flight-482822-q2/locations/us-central1/publishers/google/models/gemini-2.5-flash\",\n          \"permission\": \"aiplatform.endpoints.predict\"\n        }\n      }\n    ]\n  }\n}\n"
+      },
+      "baseline_backend": "gcp",
+      "baseline_prompt_style": "zero_shot",
+      "baseline_answer_columns": [],
+      "baseline_answer_rows": [],
+      "baseline_answer_row_count": 0,
+      "baseline_answer_error": "EMPTY_PRED_SQL",
+      "baseline_exec_eval": {
+        "eval_ok": false,
+        "error": "MISSING_PRED_OR_GOLD_SQL",
+        "match_mode_requested": "hungarian",
+        "cell_text_metric_requested": "rouge1_f1"
+      }
+    },
+    "line_4": {
+      "baseline_question_used": "What clinical trials involving ipilimumab for small cell lung cancer are in phase 3?",
+      "baseline_pred_sql": "",
+      "baseline_model_raw_sql_output": "",
+      "baseline_model_meta": {
+        "finish_reason": "error",
+        "stop_reason": null,
+        "token_ids_len": null,
+        "error": "litellm.BadRequestError: Vertex_aiException BadRequestError - {\n  \"error\": {\n    \"code\": 403,\n    \"message\": \"Permission 'aiplatform.endpoints.predict' denied on resource '//aiplatform.googleapis.com/projects/praxis-flight-482822-q2/locations/us-central1/publishers/google/models/gemini-2.5-flash' (or it may not exist).\",\n    \"status\": \"PERMISSION_DENIED\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"IAM_PERMISSION_DENIED\",\n        \"domain\": \"aiplatform.googleapis.com\",\n        \"metadata\": {\n          \"resource\": \"projects/praxis-flight-482822-q2/locations/us-central1/publishers/google/models/gemini-2.5-flash\",\n          \"permission\": \"aiplatform.endpoints.predict\"\n        }\n      }\n    ]\n  }\n}\n"
+      },
+      "baseline_backend": "gcp",
+      "baseline_prompt_style": "zero_shot",
+      "baseline_answer_columns": [],
+      "baseline_answer_rows": [],
+      "baseline_answer_row_count": 0,
+      "baseline_answer_error": "EMPTY_PRED_SQL",
+      "baseline_exec_eval": {
+        "eval_ok": false,
+        "error": "MISSING_PRED_OR_GOLD_SQL",
+        "match_mode_requested": "hungarian",
+        "cell_text_metric_requested": "rouge1_f1"
+      }
+    }
+  },
+  "meta": {
+    "backend": "gcp",
+    "prompt_style": "zero_shot",
+    "match_mode": "hungarian",
+    "cell_text_metric": "rouge1_f1",
+    "total_selected": 390
+  }
+}

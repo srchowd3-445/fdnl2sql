@@ -1,0 +1,1 @@
+{"task_index": 0, "question_index": null, "item_id": null, "question": "Give me colorectal trials", "natural_question": "Give me colorectal trials", "pred_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Cancer type\", \"Trial name\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal'", "confidence_overall": null, "error": null}

@@ -1,0 +1,1 @@
+{"task_index": 0, "question_index": null, "item_id": null, "question": "List IMblaze130 authors", "natural_question": "List IMblaze130 authors", "pred_sql": "SELECT \"Author\" FROM clinical_trials WHERE \"Trial name\" = 'IMblaze130'", "confidence_overall": null, "error": null}

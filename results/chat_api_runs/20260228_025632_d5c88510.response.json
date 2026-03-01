@@ -1,0 +1,55 @@
+{
+  "status": "error",
+  "item_id": null,
+  "question": "Which Colorectal trials had 3 or more arms and used a multikinase inhibitor as a control?",
+  "final_sql": "",
+  "confidence_overall": null,
+  "error": "Connection error.",
+  "decomposed_queries": [
+    "Which Colorectal trials had 3 or more arms and used a multikinase inhibitor as a control?"
+  ],
+  "retrieval_top": [
+    {
+      "rank": 1,
+      "score": 0.8794240355491638,
+      "candidate_id": "seed[9].query_4",
+      "candidate_question": "Which trials satisfy Name of ICI = Atezolizumab AND Cancer type = Colorectal AND Control arm = Multikinase inhibitor?",
+      "candidate_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Trial name\" FROM clinical_trials WHERE \"Name of ICI\" = 'Atezolizumab' AND \"Cancer type\" = 'Colorectal' AND \"Control arm\" = 'Multikinase inhibitor';"
+    },
+    {
+      "rank": 2,
+      "score": 0.8706462383270264,
+      "candidate_id": "seed[9].query_3",
+      "candidate_question": "Which trials have Control arm equal to Multikinase inhibitor?",
+      "candidate_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Trial name\" FROM clinical_trials WHERE \"Control arm\" = 'Multikinase inhibitor';"
+    },
+    {
+      "rank": 3,
+      "score": 0.8672868609428406,
+      "candidate_id": "seed[105].query_1",
+      "candidate_question": "What trials are for Colorectal cancer?",
+      "candidate_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Number of arms\", \"Control arm\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal';"
+    }
+  ],
+  "execution_preview": {
+    "error": "Connection error.",
+    "columns": [],
+    "rows": []
+  },
+  "artifacts": {
+    "decompose_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_025632_d5c88510/decompose_retrieve.json",
+    "synth_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_025632_d5c88510/synth.json",
+    "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_025632_d5c88510/eval_ready.json",
+    "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_025632_d5c88510/eval_ready.jsonl",
+    "eval_output_json": null
+  },
+  "meta": {
+    "backend": "openai_compat",
+    "model_name": "gemma-3-27b-local",
+    "use_pydantic_schema": true,
+    "logprob_mode": "none",
+    "run_eval": 0,
+    "skip_exec": 0,
+    "run_tag": "20260228_025632_d5c88510"
+  }
+}

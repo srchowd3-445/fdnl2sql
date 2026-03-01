@@ -1,0 +1,42 @@
+[2026-02-24 22:36:23] starting batch run
+
+=== batch prepare complete ===
+batch_jsonl_path: /mnt/data1/srchowd3/MAYO_AIM2/data/decompose_batch_input_final9_8192.jsonl
+batch_meta_path:  /mnt/data1/srchowd3/MAYO_AIM2/data/decompose_batch_meta_final9_8192.json
+request_count:    9
+skipped_rows:     0
+submitted batch_id=batch_699e8a58cf6481908bec789a565019ba
+[batch batch_699e8a58cf6481908bec789a565019ba] status=validating
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=in_progress
+[batch batch_699e8a58cf6481908bec789a565019ba] status=finalizing
+[batch batch_699e8a58cf6481908bec789a565019ba] status=completed
+downloaded batch output: /mnt/data1/srchowd3/MAYO_AIM2/data/decompose_batch_output_final9_8192.jsonl
+
+=== batch collect complete ===
+rows_total:      9
+rows_ok:         9
+rows_error:      0
+rows_missing:    0
+output_json:     /mnt/data1/srchowd3/MAYO_AIM2/data/natural_question_additional_200_decomposed_final9_8192.json
+raw_output:      /mnt/data1/srchowd3/MAYO_AIM2/data/decompose_batch_raw_final9_8192.jsonl
+[2026-02-24 22:40:19] finished rc=0

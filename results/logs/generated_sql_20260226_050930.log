@@ -1,0 +1,29 @@
+2026-02-26 05:09:30,069 | INFO | Log file: results/logs/generated_sql_20260226_050930.log
+2026-02-26 05:10:21,546 | INFO | Checkpoint saved at batch 1 (processed 50 since last save).
+2026-02-26 05:10:22,184 | INFO | Checkpoint saved at batch 1 (processed 50 since last save).
+2026-02-26 05:10:22,528 | INFO | Batch 1/12 processed=128 elapsed=52.38s throughput=2.44 rec/s completed=128/1500 success=70 error=58
+2026-02-26 05:11:12,396 | INFO | Checkpoint saved at batch 2 (processed 50 since last save).
+2026-02-26 05:11:13,005 | INFO | Checkpoint saved at batch 2 (processed 50 since last save).
+2026-02-26 05:11:13,776 | INFO | Checkpoint saved at batch 2 (processed 50 since last save).
+2026-02-26 05:11:13,846 | INFO | Batch 2/12 processed=128 elapsed=51.32s throughput=2.49 rec/s completed=256/1500 success=137 error=119
+2026-02-26 05:12:03,588 | INFO | Checkpoint saved at batch 3 (processed 50 since last save).
+2026-02-26 05:12:04,106 | INFO | Checkpoint saved at batch 3 (processed 50 since last save).
+2026-02-26 05:12:04,543 | INFO | Batch 3/12 processed=128 elapsed=50.70s throughput=2.52 rec/s completed=384/1500 success=193 error=191
+2026-02-26 05:12:54,079 | INFO | Checkpoint saved at batch 4 (processed 50 since last save).
+2026-02-26 05:12:54,635 | INFO | Checkpoint saved at batch 4 (processed 50 since last save).
+2026-02-26 05:12:55,355 | INFO | Checkpoint saved at batch 4 (processed 50 since last save).
+2026-02-26 05:12:55,492 | INFO | Batch 4/12 processed=128 elapsed=50.95s throughput=2.51 rec/s completed=512/1500 success=252 error=260
+2026-02-26 05:13:44,392 | INFO | Checkpoint saved at batch 5 (processed 50 since last save).
+2026-02-26 05:13:45,285 | INFO | Checkpoint saved at batch 5 (processed 50 since last save).
+2026-02-26 05:13:45,779 | INFO | Batch 5/12 processed=128 elapsed=50.29s throughput=2.55 rec/s completed=640/1500 success=328 error=312
+2026-02-26 05:14:34,246 | INFO | Checkpoint saved at batch 6 (processed 50 since last save).
+2026-02-26 05:14:35,104 | INFO | Checkpoint saved at batch 6 (processed 50 since last save).
+2026-02-26 05:14:35,913 | INFO | Checkpoint saved at batch 6 (processed 50 since last save).
+2026-02-26 05:14:36,208 | INFO | Batch 6/12 processed=128 elapsed=50.43s throughput=2.54 rec/s completed=768/1500 success=407 error=361
+2026-02-26 05:15:24,969 | INFO | Checkpoint saved at batch 7 (processed 50 since last save).
+2026-02-26 05:15:25,709 | INFO | Checkpoint saved at batch 7 (processed 50 since last save).
+2026-02-26 05:15:26,591 | INFO | Batch 7/12 processed=128 elapsed=50.38s throughput=2.54 rec/s completed=896/1500 success=490 error=406
+2026-02-26 05:16:14,265 | INFO | Checkpoint saved at batch 8 (processed 50 since last save).
+2026-02-26 05:16:15,058 | INFO | Checkpoint saved at batch 8 (processed 50 since last save).
+2026-02-26 05:16:15,772 | INFO | Checkpoint saved at batch 8 (processed 50 since last save).
+2026-02-26 05:16:16,184 | INFO | Batch 8/12 processed=128 elapsed=49.59s throughput=2.58 rec/s completed=1024/1500 success=566 error=458

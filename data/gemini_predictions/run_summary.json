@@ -1,0 +1,78 @@
+{
+  "run_started_at": "2026-02-25T05:47:18.334185Z",
+  "api_keys": [
+    "key_1",
+    "key_2"
+  ],
+  "api_key_strategy": "round_robin",
+  "model": "gemini-2.5-flash",
+  "input_path": "/Users/mananroychoudhury/Downloads/approach1_bilstm_concat_nofilter/Mayo/natural_question_1500.json",
+  "schema_path": "/Users/mananroychoudhury/Downloads/approach1_bilstm_concat_nofilter/Mayo/schema.json",
+  "output_root": "/Users/mananroychoudhury/Downloads/approach1_bilstm_concat_nofilter/Mayo/gemini_predictions",
+  "styles": {
+    "zero_shot": {
+      "style": "zero_shot",
+      "total_rows": 1500,
+      "pending_rows": 1500,
+      "processed": 1500,
+      "success": 1119,
+      "error": 381,
+      "cache_hit": 108,
+      "cache_miss": 1392,
+      "started_at": "2026-02-25T05:47:18.334962Z",
+      "model": "gemini-2.5-flash",
+      "api_keys": [
+        "key_1",
+        "key_2"
+      ],
+      "api_key_strategy": "round_robin",
+      "api_key_usage_count": {
+        "key_1": 546,
+        "key_2": 573
+      },
+      "elapsed_sec": 577.111,
+      "completed_at": "2026-02-25T05:56:55.446449Z"
+    },
+    "few_shot": {
+      "style": "few_shot",
+      "total_rows": 1500,
+      "pending_rows": 1500,
+      "processed": 1500,
+      "success": 0,
+      "error": 1500,
+      "cache_hit": 106,
+      "cache_miss": 1394,
+      "started_at": "2026-02-25T05:56:55.447801Z",
+      "model": "gemini-2.5-flash",
+      "api_keys": [
+        "key_1",
+        "key_2"
+      ],
+      "api_key_strategy": "round_robin",
+      "api_key_usage_count": {},
+      "elapsed_sec": 417.887,
+      "completed_at": "2026-02-25T06:03:53.334395Z"
+    },
+    "cot": {
+      "style": "cot",
+      "total_rows": 1500,
+      "pending_rows": 1500,
+      "processed": 1500,
+      "success": 0,
+      "error": 1500,
+      "cache_hit": 106,
+      "cache_miss": 1394,
+      "started_at": "2026-02-25T06:03:53.335565Z",
+      "model": "gemini-2.5-flash",
+      "api_keys": [
+        "key_1",
+        "key_2"
+      ],
+      "api_key_strategy": "round_robin",
+      "api_key_usage_count": {},
+      "elapsed_sec": 390.597,
+      "completed_at": "2026-02-25T06:10:23.932320Z"
+    }
+  },
+  "run_completed_at": "2026-02-25T06:10:23.932817Z"
+}

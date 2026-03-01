@@ -1,0 +1,44 @@
+2026-02-24 13:49:41,052 | INFO | Log file: /gscratch/tkishore/MAYO_AIM2//results/logs/generated_sql_zero_shot_20260224_134941.log
+2026-02-24 13:49:41,354 | INFO | =========== RUN START ===========
+2026-02-24 13:49:41,354 | INFO | Input: /gscratch/tkishore/MAYO_AIM2//data/dataset.jsonl
+2026-02-24 13:49:41,354 | INFO | Input format used: jsonl
+2026-02-24 13:49:41,354 | INFO | Output: /gscratch/tkishore/MAYO_AIM2//logs/Gemma/27B/sql_with_conf_new/generated_sql_zero_shot.jsonl
+2026-02-24 13:49:41,354 | INFO | Error log: /gscratch/tkishore/MAYO_AIM2//logs/Gemma/27B/sql_with_conf_new/error_log_zero_shot.jsonl
+2026-02-24 13:49:41,354 | INFO | Checkpoint: /gscratch/tkishore/MAYO_AIM2//logs/Gemma/27B/sql_with_conf_new/generated_sql_zero_shot.jsonl.checkpoint.json
+2026-02-24 13:49:41,354 | INFO | Rows selected: 500
+2026-02-24 13:49:41,355 | INFO | Resuming: True
+2026-02-24 13:49:41,355 | INFO | Already completed: 0
+2026-02-24 13:49:41,355 | INFO | Prompt style: zero_shot
+2026-02-24 13:49:41,355 | INFO | Backend: openai_compat
+2026-02-24 13:49:41,355 | INFO | Model: google/gemma-3-27b-it
+2026-02-24 13:49:41,355 | INFO | Logprob mode: structured
+2026-02-24 13:49:41,355 | INFO | Batch size: 32
+2026-02-24 13:49:41,355 | INFO | Batch concurrency: 8
+2026-02-24 13:49:41,355 | INFO | Schema columns: 32
+2026-02-24 13:49:41,355 | INFO | Schema hints columns: 32
+2026-02-24 13:49:58,805 | INFO | Batch 1/16 processed=32 elapsed=17.30s throughput=1.85 rec/s completed=32/500 success=0 error=32
+2026-02-24 13:50:12,013 | INFO | Batch 2/16 processed=32 elapsed=13.19s throughput=2.43 rec/s completed=64/500 success=0 error=64
+2026-02-24 13:50:32,280 | INFO | Batch 3/16 processed=32 elapsed=20.25s throughput=1.58 rec/s completed=96/500 success=0 error=96
+2026-02-24 13:50:49,446 | INFO | Batch 4/16 processed=32 elapsed=17.15s throughput=1.87 rec/s completed=128/500 success=0 error=128
+2026-02-24 13:51:02,232 | INFO | Batch 5/16 processed=32 elapsed=12.77s throughput=2.51 rec/s completed=160/500 success=0 error=160
+2026-02-24 13:51:23,138 | INFO | Batch 6/16 processed=32 elapsed=20.89s throughput=1.53 rec/s completed=192/500 success=0 error=192
+2026-02-24 13:51:40,511 | INFO | Batch 7/16 processed=32 elapsed=17.36s throughput=1.84 rec/s completed=224/500 success=0 error=224
+2026-02-24 13:51:54,760 | INFO | Batch 8/16 processed=32 elapsed=14.23s throughput=2.25 rec/s completed=256/500 success=0 error=256
+2026-02-24 13:52:16,914 | INFO | Batch 9/16 processed=32 elapsed=22.14s throughput=1.45 rec/s completed=288/500 success=0 error=288
+2026-02-24 13:52:37,085 | INFO | Batch 10/16 processed=32 elapsed=20.15s throughput=1.59 rec/s completed=320/500 success=0 error=320
+2026-02-24 13:52:54,445 | INFO | Batch 11/16 processed=32 elapsed=17.34s throughput=1.85 rec/s completed=352/500 success=0 error=352
+2026-02-24 13:53:10,428 | INFO | Batch 12/16 processed=32 elapsed=15.96s throughput=2.00 rec/s completed=384/500 success=0 error=384
+2026-02-24 13:53:29,817 | INFO | Batch 13/16 processed=32 elapsed=19.36s throughput=1.65 rec/s completed=416/500 success=0 error=416
+2026-02-24 13:53:49,359 | INFO | Batch 14/16 processed=32 elapsed=19.52s throughput=1.64 rec/s completed=448/500 success=0 error=448
+2026-02-24 13:54:10,172 | INFO | Batch 15/16 processed=32 elapsed=20.79s throughput=1.54 rec/s completed=480/500 success=0 error=480
+2026-02-24 13:54:18,280 | INFO | Batch 16/16 processed=20 elapsed=8.09s throughput=2.47 rec/s completed=500/500 success=0 error=500
+2026-02-24 13:54:18,326 | INFO | =========== RUN SUMMARY ===========
+2026-02-24 13:54:18,326 | INFO | Rows selected: 500
+2026-02-24 13:54:18,326 | INFO | Rows completed in checkpoint: 500
+2026-02-24 13:54:18,326 | INFO | Processed this run: 500
+2026-02-24 13:54:18,326 | INFO | Non-empty predicted SQL: 0
+2026-02-24 13:54:18,326 | INFO | Success count (this run): 0
+2026-02-24 13:54:18,326 | INFO | Error count (this run): 500
+2026-02-24 13:54:18,326 | INFO | Avg confidence_overall (this run): NA
+2026-02-24 13:54:18,326 | INFO | Total runtime: 276.82s
+2026-02-24 13:54:18,326 | INFO | ===================================

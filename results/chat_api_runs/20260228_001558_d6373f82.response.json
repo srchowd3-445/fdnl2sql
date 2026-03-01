@@ -1,0 +1,244 @@
+{
+  "status": "ok",
+  "item_id": null,
+  "question": "List I",
+  "final_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials",
+  "confidence_overall": null,
+  "error": null,
+  "decomposed_queries": [
+    "Which trials have Trial phase = 'Phase 1'?"
+  ],
+  "retrieval_top": [
+    {
+      "rank": 1,
+      "score": 0.9744522571563721,
+      "candidate_id": "seed[10].query_4",
+      "candidate_question": "Which trials have Trial phase = 'Phase 2'?",
+      "candidate_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Trial phase\" = 'Phase 2';"
+    },
+    {
+      "rank": 2,
+      "score": 0.9693399667739868,
+      "candidate_id": "seed[183].query_2",
+      "candidate_question": "What trials have Trial phase = 'Phase 2'?",
+      "candidate_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Trial phase\" = 'Phase 2';"
+    },
+    {
+      "rank": 3,
+      "score": 0.9687684774398804,
+      "candidate_id": "seed[199].query_1",
+      "candidate_question": "Which trials have Trial phase equal to 'Phase 2'?",
+      "candidate_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Trial phase\" = 'Phase 2';"
+    }
+  ],
+  "execution_preview": {
+    "error": null,
+    "columns": [
+      "NCT",
+      "Author",
+      "Year",
+      "Originial publication or Follow-up",
+      "Name of ICI",
+      "Trial phase",
+      "Cancer type"
+    ],
+    "rows": [
+      [
+        "NCT02302807",
+        "Powles T et al",
+        2018,
+        "Original publication",
+        "Atezolizumab",
+        "Phase 3",
+        "Bladder"
+      ],
+      [
+        "NCT02256436",
+        "Bellmunt J et al",
+        2017,
+        "Original publication",
+        "Pembrolizumab",
+        "Phase 3",
+        "Bladder"
+      ],
+      [
+        "NCT02256436",
+        "Fradet Y et al",
+        2019,
+        "Follow-up",
+        "Pembrolizumab",
+        "Phase 3",
+        "Bladder"
+      ],
+      [
+        "NCT02425891",
+        "Schmid P et al",
+        2018,
+        "Original publication",
+        "Atezolizumab",
+        "Phase 3",
+        "Breast"
+      ],
+      [
+        "NCT02685059",
+        "Loibl S et al",
+        2019,
+        "Original publication",
+        "Durvalumab",
+        "Phase 2",
+        "Breast"
+      ],
+      [
+        "NCT02788279",
+        "Eng C et al",
+        2019,
+        "Original publication",
+        "Atezolizumab",
+        "Phase 3",
+        "Colorectal"
+      ],
+      [
+        "NCT02788279",
+        "Eng C et al (1)",
+        2019,
+        "Original publication",
+        "Atezolizumab",
+        "Phase 3",
+        "Colorectal"
+      ],
+      [
+        "NCT01585987",
+        "Bang YJ et al",
+        2017,
+        "Original publication",
+        "Ipilimumab",
+        "Phase 2",
+        "Gastric/GEJ"
+      ],
+      [
+        "NCT02267343",
+        "Kang YK et al",
+        2017,
+        "Original publication",
+        "Nivolumab",
+        "Phase 3",
+        "Gastric/GEJ"
+      ],
+      [
+        "NCT02625623",
+        "Bang YJ et al",
+        2018,
+        "Original publication",
+        "Avelumab",
+        "Phase 3",
+        "Gastric/GEJ"
+      ],
+      [
+        "NCT02370498",
+        "Shitara K et al",
+        2018,
+        "Original publication",
+        "Pembrolizumab",
+        "Phase 3",
+        "Gastric/GEJ"
+      ],
+      [
+        "NCT02252042",
+        "Cohen EEW et al",
+        2018,
+        "Original publication",
+        "Pembrolizumab",
+        "Phase 3",
+        "Head and Neck "
+      ],
+      [
+        "NCT02105636",
+        "Ferris RL et al",
+        2016,
+        "Original publication",
+        "Nivolumab",
+        "Phase 3",
+        "Head and Neck"
+      ],
+      [
+        "NCT02105636",
+        "Ferris RL et al",
+        2018,
+        "Follow-up",
+        "Nivolumab",
+        "Phase 3",
+        "Head and Neck"
+      ],
+      [
+        "NCT01668784",
+        "Motzer RJ et al",
+        2015,
+        "Original publication",
+        "Nivolumab",
+        "Phase 3",
+        "Renal cell"
+      ],
+      [
+        "NCT01984242",
+        "McDermott DF et al",
+        2018,
+        "Original publication",
+        "Atezolizumab",
+        "Phase 2",
+        "Renal cell"
+      ],
+      [
+        "NCT01984242",
+        "McDermott DF et al (1)",
+        2018,
+        "Original publication",
+        "Atezolizumab",
+        "Phase 2",
+        "Renal cell"
+      ],
+      [
+        "NCT02231749",
+        "Motzer RJ et al",
+        2018,
+        "Original publication",
+        "Nivolumab, Ipilimumab",
+        "Phase 3",
+        "Renal cell"
+      ],
+      [
+        "NCT02231749",
+        "Motzer RJ et al",
+        2019,
+        "Follow-up",
+        "Nivolumab, Ipilimumab",
+        "Phase 3",
+        "Renal cell"
+      ],
+      [
+        "NCT02684006",
+        "Motzer RJ et al",
+        2019,
+        "Original publication",
+        "Avelumab",
+        "Phase 3",
+        "Renal cell"
+      ]
+    ]
+  },
+  "artifacts": {
+    "decompose_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_001558_d6373f82/decompose_retrieve.json",
+    "synth_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_001558_d6373f82/synth.json",
+    "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_001558_d6373f82/eval_ready.json",
+    "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_001558_d6373f82/eval_ready.jsonl",
+    "eval_output_json": null
+  },
+  "meta": {
+    "backend": "openai_compat",
+    "model_name": "gemini-2.5-flash",
+    "use_pydantic_schema": true,
+    "logprob_mode": "none",
+    "run_eval": 0,
+    "skip_exec": 0,
+    "run_tag": "20260228_001558_d6373f82"
+  }
+}

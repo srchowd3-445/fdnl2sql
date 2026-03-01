@@ -1,0 +1,64 @@
+{
+  "status": "ok",
+  "item_id": null,
+  "question": "List IMblaze130 authors",
+  "final_sql": "SELECT DISTINCT \"Author\" FROM clinical_trials WHERE \"Trial name\" = 'IMblaze130';",
+  "confidence_overall": null,
+  "error": null,
+  "decomposed_queries": [
+    "Trial name = 'IMblaze130'?"
+  ],
+  "retrieval_top": [
+    {
+      "rank": 1,
+      "score": 0.7650182247161865,
+      "candidate_id": "seed[32].query_3",
+      "candidate_question": "What trials have Name of ICI = 'Durvalumab, Tremelimumab'?",
+      "candidate_sql": "SELECT \"NCT\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\", \"Trial name\", \"Treatment regimen\" FROM clinical_trials WHERE \"Name of ICI\" = 'Durvalumab, Tremelimumab';"
+    },
+    {
+      "rank": 2,
+      "score": 0.7620365917682648,
+      "candidate_id": "seed[183].query_3",
+      "candidate_question": "What trials have Name of ICI = 'tremelimumab'?",
+      "candidate_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Name of ICI\" = 'tremelimumab';"
+    },
+    {
+      "rank": 3,
+      "score": 0.7558656334877014,
+      "candidate_id": "seed[117].query_2",
+      "candidate_question": "What trials have Name of ICI = 'Nivolumab, Ipilimumab' ?",
+      "candidate_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Name of ICI\" = 'Nivolumab, Ipilimumab';"
+    }
+  ],
+  "execution_preview": {
+    "error": null,
+    "columns": [
+      "Author"
+    ],
+    "rows": [
+      [
+        "Eng C et al"
+      ],
+      [
+        "Eng C et al (1)"
+      ]
+    ]
+  },
+  "artifacts": {
+    "decompose_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_034025_52b5c9bc/decompose_retrieve.json",
+    "synth_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_034025_52b5c9bc/synth.json",
+    "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_034025_52b5c9bc/eval_ready.json",
+    "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_034025_52b5c9bc/eval_ready.jsonl",
+    "eval_output_json": null
+  },
+  "meta": {
+    "backend": "openai_compat",
+    "model_name": "gpt-5-nano",
+    "use_pydantic_schema": true,
+    "logprob_mode": "none",
+    "run_eval": 0,
+    "skip_exec": 0,
+    "run_tag": "20260228_034025_52b5c9bc"
+  }
+}

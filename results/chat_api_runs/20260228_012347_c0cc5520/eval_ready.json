@@ -1,0 +1,12 @@
+[
+  {
+    "task_index": 0,
+    "question_index": null,
+    "item_id": null,
+    "question": "list studies with ferris RL et al in the year 2016\n\nIMPORTANT: The previous SQL answer was not acceptable.\nYou MUST provide a different SQL answer than the prior attempt.\nDo not repeat the same SQL string.\nIf the previous SQL used an incorrect filter/value/operator, correct it.\n\nPrevious SQL:\nSELECT \"NCT\", \"Trial name\", \"Author\", \"Year\" FROM clinical_trials WHERE \"Author\" LIKE '%ferris RL et al%' AND \"Year\" = 2016",
+    "natural_question": "list studies with ferris RL et al in the year 2016\n\nIMPORTANT: The previous SQL answer was not acceptable.\nYou MUST provide a different SQL answer than the prior attempt.\nDo not repeat the same SQL string.\nIf the previous SQL used an incorrect filter/value/operator, correct it.\n\nPrevious SQL:\nSELECT \"NCT\", \"Trial name\", \"Author\", \"Year\" FROM clinical_trials WHERE \"Author\" LIKE '%ferris RL et al%' AND \"Year\" = 2016",
+    "pred_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Author\" LIKE '%ferris RL et al%' AND \"Year\" = 2016",
+    "confidence_overall": null,
+    "error": null
+  }
+]

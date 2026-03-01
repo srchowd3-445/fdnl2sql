@@ -1,0 +1,203 @@
+{
+  "meta": {
+    "pipeline_stage": "synthesis_from_decomposition_retrieval",
+    "retrieval_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_023304_b55667ae/decompose_retrieve.json",
+    "retrieval_meta": {
+      "backend": "openai_compat",
+      "question": "List the names of ipilimumab trials for melanoma where the overall follow-up duration was greater than 21 months?",
+      "question_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/natural_question_1500.json",
+      "question_index": 0,
+      "batch_mode": 0,
+      "start_index": 0,
+      "limit": 1,
+      "prompt_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_prompt.txt",
+      "schema_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/schema.json",
+      "decompose_examples_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_examples.txt",
+      "seed_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/seed_questions.json",
+      "candidate_json": null,
+      "candidate_sqlite": null,
+      "candidate_table": "query_library",
+      "top_k": 3,
+      "retrieval_per_decomp": 3,
+      "max_decomposed_queries": 5,
+      "sbert": {
+        "model": "/mnt/shared/shared_hf_home/hub/models--sentence-transformers--all-MiniLM-L6-v2/snapshots/c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+        "device": null,
+        "batch_size": 64
+      },
+      "api_base": "http://127.0.0.1:8000/v1",
+      "model_name": "gemma-3-27b-local",
+      "model_path": null,
+      "gen_batch_size": 1,
+      "batch_concurrency": 1,
+      "pipeline_stage": "decompose_then_retrieve"
+    },
+    "retrieval_contract": "expects per-decomposed top-k in retrieval_by_decomposition when available",
+    "backend": "openai_compat",
+    "prompt_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/synthesis_prompt.txt",
+    "schema_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/schema.json",
+    "api_base": "http://127.0.0.1:8000/v1",
+    "model_name": "gemma-3-27b-local",
+    "model_path": null,
+    "db_path": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/database.db",
+    "skip_exec": 0,
+    "logprobs": 0,
+    "logprob_mode": "none",
+    "use_pydantic_schema": true,
+    "synth_evidence_per_decomp": 2,
+    "synth_include_global_merged": false,
+    "synth_where_only_evidence": true,
+    "gen_batch_size": 1,
+    "batch_concurrency": 1,
+    "eval": {
+      "run_eval": 0,
+      "gt_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/natural_question_1500.json",
+      "eval_script": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/eval_run_baselines_v2.py",
+      "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_023304_b55667ae/eval_ready.json",
+      "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_023304_b55667ae/eval_ready.jsonl",
+      "eval_output_json": null,
+      "eval_ran": false
+    },
+    "acceptance": {
+      "config_path": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/decompose_method/seed_acceptance_rules.config",
+      "config_format": "seed_acceptance_rules.config",
+      "acceptance_output_json": null
+    }
+  },
+  "counts": {
+    "total_tasks": 1,
+    "error_tasks": 1,
+    "generated_nonempty_sql": 0,
+    "exec_ok": 0,
+    "with_confidence": 0
+  },
+  "eval_summary": {},
+  "acceptance_summary": {
+    "evaluated": 0,
+    "accepted": 0,
+    "accepted_main_metric": 0,
+    "accepted_non_main": 0,
+    "rejected": 0
+  },
+  "results": [
+    {
+      "task_index": 0,
+      "question_index": null,
+      "item_id": null,
+      "input_question": "List the names of ipilimumab trials for melanoma where the overall follow-up duration was greater than 21 months?",
+      "error": "Connection error.",
+      "decomposition": {
+        "raw_text": "",
+        "decomposed_queries": [
+          "List the names of ipilimumab trials for melanoma where the overall follow-up duration was greater than 21 months?"
+        ],
+        "model_meta": {
+          "provider_call_ok": false,
+          "backend": "openai_compat"
+        },
+        "error": "Connection error."
+      },
+      "retrieval_trace": [
+        {
+          "decomposed_query": "List the names of ipilimumab trials for melanoma where the overall follow-up duration was greater than 21 months?",
+          "top1_candidate_id": "seed[1].query_2",
+          "top1_score": 0.9386705160140991
+        }
+      ],
+      "retrieval_by_decomposition": [
+        {
+          "decomposed_query": "List the names of ipilimumab trials for melanoma where the overall follow-up duration was greater than 21 months?",
+          "ranked_results": [
+            {
+              "rank": 1,
+              "total_score": 0.9386705160140991,
+              "sbert_score": 0.9386705160140991,
+              "candidate": {
+                "candidate_id": "seed[1].query_2",
+                "question": "From ipilimumab melanoma trials, which have an overall follow-up duration greater than 21 months, list the Name of ICI and overall follow-up duration?",
+                "sql": "SELECT \"Name of ICI\", \"Follow-up duration for primary endpoint(s) in months | Overall\" FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma' AND \"Name of ICI\" = 'Ipilimumab' AND \"Follow-up duration for primary endpoint(s) in months | Overall\" > 21;",
+                "parent_question": "List the names of ipilimumab trials for melanoma where the overall follow-up duration was greater than 21 months?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 2,
+              "total_score": 0.928687334060669,
+              "sbert_score": 0.928687334060669,
+              "candidate": {
+                "candidate_id": "seed[153].query_3",
+                "question": "What Melanoma trials involve Ipilimumab?",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma' AND \"Name of ICI\" = 'Ipilimumab';",
+                "parent_question": "Find Phase 3 Ipilimumab trials in Melanoma that were follow-up publications?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 3,
+              "total_score": 0.9244957566261292,
+              "sbert_score": 0.9244957566261292,
+              "candidate": {
+                "candidate_id": "seed[1].query_1",
+                "question": "What are the Name of ICI and overall follow-up duration for trials where Cancer type is Melanoma and Name of ICI is Ipilimumab?",
+                "sql": "SELECT \"Name of ICI\", \"Follow-up duration for primary endpoint(s) in months | Overall\" FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma' AND \"Name of ICI\" = 'Ipilimumab';",
+                "parent_question": "List the names of ipilimumab trials for melanoma where the overall follow-up duration was greater than 21 months?",
+                "source": "seed_json/decomposed"
+              }
+            }
+          ]
+        }
+      ],
+      "ranked_results": [
+        {
+          "rank": 1,
+          "total_score": 0.9386705160140991,
+          "sbert_score": 0.9386705160140991,
+          "candidate": {
+            "candidate_id": "seed[1].query_2",
+            "question": "From ipilimumab melanoma trials, which have an overall follow-up duration greater than 21 months, list the Name of ICI and overall follow-up duration?",
+            "sql": "SELECT \"Name of ICI\", \"Follow-up duration for primary endpoint(s) in months | Overall\" FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma' AND \"Name of ICI\" = 'Ipilimumab' AND \"Follow-up duration for primary endpoint(s) in months | Overall\" > 21;",
+            "parent_question": "List the names of ipilimumab trials for melanoma where the overall follow-up duration was greater than 21 months?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 2,
+          "total_score": 0.928687334060669,
+          "sbert_score": 0.928687334060669,
+          "candidate": {
+            "candidate_id": "seed[153].query_3",
+            "question": "What Melanoma trials involve Ipilimumab?",
+            "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma' AND \"Name of ICI\" = 'Ipilimumab';",
+            "parent_question": "Find Phase 3 Ipilimumab trials in Melanoma that were follow-up publications?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 3,
+          "total_score": 0.9244957566261292,
+          "sbert_score": 0.9244957566261292,
+          "candidate": {
+            "candidate_id": "seed[1].query_1",
+            "question": "What are the Name of ICI and overall follow-up duration for trials where Cancer type is Melanoma and Name of ICI is Ipilimumab?",
+            "sql": "SELECT \"Name of ICI\", \"Follow-up duration for primary endpoint(s) in months | Overall\" FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma' AND \"Name of ICI\" = 'Ipilimumab';",
+            "parent_question": "List the names of ipilimumab trials for melanoma where the overall follow-up duration was greater than 21 months?",
+            "source": "seed_json/decomposed"
+          }
+        }
+      ],
+      "synthesized": {
+        "raw_text": "",
+        "final_sql": "",
+        "field_logprobs": {},
+        "field_confidence": {},
+        "confidence_overall": null,
+        "model_meta": {}
+      },
+      "execution_preview": {
+        "columns": [],
+        "rows": [],
+        "error": "Connection error."
+      }
+    }
+  ]
+}

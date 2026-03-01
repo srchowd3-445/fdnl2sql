@@ -1,0 +1,229 @@
+{
+  "created_at": "2026-02-24 22:15:24",
+  "mode": "batch_run",
+  "input_json": "/mnt/data1/srchowd3/MAYO_AIM2/data/natural_question_additional_200_decomposed_retry23_final_input.json",
+  "schema_json": "/mnt/data1/srchowd3/MAYO_AIM2/data/schema.json",
+  "table_name": "clinical_trials",
+  "model": "gpt-5-nano",
+  "start": 0,
+  "limit": -1,
+  "rows_in_input": 23,
+  "rows_in_slice": 23,
+  "request_count": 23,
+  "batch_jsonl_path": "/mnt/data1/srchowd3/MAYO_AIM2/data/decompose_batch_input_final23_5128.jsonl",
+  "requests": [
+    {
+      "custom_id": "decomp-1",
+      "idx": 1,
+      "item_id": "extra_106_68_keep_two_select_columns_32",
+      "original_question": "For Melanoma trials, what is the minimum follow-up time by treatment arm?",
+      "gt_sql": "SELECT \"Author\", \"Type of follow-up given\" FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma' AND \"Type of follow-up given\" = 'Minimum';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-2",
+      "idx": 2,
+      "item_id": "extra_109_422_drop_select_column_31",
+      "original_question": "Which trials of Atezolizumab for Colorectal cancer used a multikinase inhibitor as the control?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Trial name\" FROM clinical_trials WHERE \"Name of ICI\" = 'Atezolizumab' AND \"Cancer type\" = 'Colorectal' AND \"Control arm\" = 'Multikinase inhibitor';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-3",
+      "idx": 3,
+      "item_id": "extra_112_18_drop_where_condition_19",
+      "original_question": "Which trials used an antibody-drug conjugate as a control arm?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Control arm\", \"Cancer type\", \"Control regimen\", \"Trial phase\" FROM clinical_trials WHERE \"Control arm\" = 'Antibody-drug conjugate';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-4",
+      "idx": 4,
+      "item_id": "extra_120_371_drop_two_where_conditions_12",
+      "original_question": "Find Phase 3 trials of Durvalumab or Tremelimumab for gastric or gastroesophageal junction cancer that are follow-up publications?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Trial phase\" = 'Phase 3' AND \"Originial publication or Follow-up\" = 'Follow-up';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-5",
+      "idx": 5,
+      "item_id": "extra_145_262_keep_two_select_columns_49",
+      "original_question": "Show the author and class of immune checkpoint inhibitor for Multiple Myeloma studies not included in the meta-analysis that used PD1 or CTLA-4 agents?",
+      "gt_sql": "SELECT \"Author\", \"Class of ICI\" FROM clinical_trials WHERE \"Cancer type\" = 'Multiple Myeloma' AND \"Class of ICI\" = 'PD1' AND \"Included in MA\" = 'No';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-6",
+      "idx": 6,
+      "item_id": "extra_148_256_drop_two_where_conditions_14",
+      "original_question": "Find Phase 3 Ipilimumab trials in Melanoma that were follow-up publications?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Name of ICI\" = 'Ipilimumab' AND \"Cancer type\" = 'Melanoma';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-7",
+      "idx": 7,
+      "item_id": "extra_154_175_drop_select_column_41",
+      "original_question": "Find phase 2 clinical trials for Urothelial cancer that compared immunotherapy to anti-VEGF therapy?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Urothelial' AND \"Trial phase\" = 'Phase 2' AND \"Control arm\" = 'Placebo';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-8",
+      "idx": 8,
+      "item_id": "extra_15_406_drop_where_condition_3",
+      "original_question": "Which phase 3 trials for Non-Small Cell Lung cancer compared immunotherapy to an mTOR inhibitor, excluding trials with chemotherapy as the control arm?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Non-Small Cell Lung' AND \"Trial phase\" = 'Phase 3';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-9",
+      "idx": 9,
+      "item_id": "extra_164_282_drop_where_condition_24",
+      "original_question": "What are the regimens for Phase 2 clinical trials combining PD1 and CTLA-4 for Head and Neck cancer?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Class of ICI\", \"Monotherapy/combination\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Class of ICI\" = 'PD1, CTLA-4' AND \"Cancer type\" = 'Melanoma' AND \"Trial phase\" = 'Phase 2';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-10",
+      "idx": 10,
+      "item_id": "extra_166_60_swap_text_equality_value_6",
+      "original_question": "Find trials for hepatocellular cancer that report median follow-up duration in months for both treatment and control arms?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Type of follow-up given\", \"Cancer type\", \"Follow-up duration for primary endpoint(s) in months | Rx\", \"Follow-up duration for primary endpoint(s) in months | Control\" FROM clinical_trials WHERE \"Cancer type\" = 'Hepatocellular' AND \"Type of follow-up given\" = 'Median';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-11",
+      "idx": 11,
+      "item_id": "extra_172_315_drop_where_condition_26",
+      "original_question": "What phase 3 clinical trials for Mesothelioma compared immunotherapy to chemoradiation, excluding trials where chemoradiation was the control arm?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Mesothelioma' AND \"Trial phase\" = 'Phase 3';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-12",
+      "idx": 12,
+      "item_id": "extra_195_122_keep_two_select_columns_64",
+      "original_question": "Find the authors and trial phase for Non-Small Cell Lung cancer trials using Ipilimumab that are Phase 2 and were originally published?",
+      "gt_sql": "SELECT \"Author\", \"Trial phase\" FROM clinical_trials WHERE \"Name of ICI\" = 'Ipilimumab' AND \"Cancer type\" = 'Non-Small Cell Lung' AND \"Trial phase\" = 'Phase 2' AND \"Originial publication or Follow-up\" = 'Original publication';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-13",
+      "idx": 13,
+      "item_id": "extra_1_240_drop_select_column_1",
+      "original_question": "What are the regimens for Phase 3 combination trials using CTLA-4 in Melanoma?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Class of ICI\", \"Monotherapy/combination\", \"Cancer type\", \"Treatment regimen\" FROM clinical_trials WHERE \"Class of ICI\" = 'CTLA-4' AND \"Cancer type\" = 'Melanoma' AND \"Trial phase\" = 'Phase 3' AND \"Monotherapy/combination\" = 'Combination';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-14",
+      "idx": 14,
+      "item_id": "extra_23_441_drop_two_where_conditions_3",
+      "original_question": "Which phase 3 prostate cancer trials compared immunotherapy to chemotherapy plus anti-EGFR therapy?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Prostate';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-15",
+      "idx": 15,
+      "item_id": "extra_24_263_drop_two_where_conditions_4",
+      "original_question": "List Avelumab trials for esophageal or gastroesophageal junction cancer with overall follow-up longer than 10.6 months?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Follow-up duration for primary endpoint(s) in months | Overall\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Follow-up duration for primary endpoint(s) in months | Overall\" > 10.6;",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-16",
+      "idx": 16,
+      "item_id": "extra_27_489_drop_where_condition_4",
+      "original_question": "Find phase 3 urothelial cancer trials comparing immunotherapy to tyrosine kinase inhibitors?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Urothelial' AND \"Control arm\" = 'Chemo';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-17",
+      "idx": 17,
+      "item_id": "extra_2_355_drop_two_where_conditions_1",
+      "original_question": "Show studies of Small Cell Lung cancer that used PD1 agents and were included in a meta-analysis?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Included in MA\", \"Class of ICI\", \"Cancer type\", \"Name of ICI\" FROM clinical_trials WHERE \"Cancer type\" = 'Small Cell Lung';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-18",
+      "idx": 18,
+      "item_id": "extra_32_230_drop_where_condition_5",
+      "original_question": "What are the regimens for Phase 3 combination trials studying Multiple Myeloma that use PD1 inhibitors?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Class of ICI\", \"Monotherapy/combination\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Multiple Myeloma' AND \"Trial phase\" = 'Phase 3' AND \"Monotherapy/combination\" = 'Combination';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-19",
+      "idx": 19,
+      "item_id": "extra_37_386_drop_where_condition_8",
+      "original_question": "Which phase 3 trials for esophageal or gastroesophageal junction cancer compared immunotherapy to a vaccine, excluding trials with chemotherapy as the control arm?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Esophageal/GEJ' AND \"Trial phase\" = 'Phase 3';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-20",
+      "idx": 20,
+      "item_id": "extra_58_256_keep_one_where_condition_8",
+      "original_question": "Find Phase 3 Ipilimumab trials in Melanoma that were follow-up publications?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-21",
+      "idx": 21,
+      "item_id": "extra_60_92_drop_select_column_18",
+      "original_question": "Which studies of colorectal cancer tested combinations of immunotherapy, chemotherapy, and anti-VEGF therapies, and what were their primary endpoints?",
+      "gt_sql": "SELECT \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Type of combination\", \"Cancer type\", \"Treatment regimen\", \"Primary endpoint\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal' AND \"Type of combination\" = 'ICI+MEKi';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-22",
+      "idx": 22,
+      "item_id": "extra_69_239_drop_two_where_conditions_5",
+      "original_question": "Find trials for Non-Small Cell Lung cancer that use Tremelimumab in combination with other treatments?",
+      "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Monotherapy/combination\", \"Cancer type\", \"Type of combination\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Non-Small Cell Lung';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    },
+    {
+      "custom_id": "decomp-23",
+      "idx": 23,
+      "item_id": "extra_72_250_drop_select_column_22",
+      "original_question": "Find phase 2 clinical trials for Urothelial cancer that compared immunotherapy to chemotherapy or anti-EGFR therapy?",
+      "gt_sql": "SELECT \"NCT\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Control arm\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Urothelial' AND \"Trial phase\" = 'Phase 2' AND \"Control arm\" = 'Placebo';",
+      "source_question_key": "original_question",
+      "source_sql_key": "gt_sql"
+    }
+  ],
+  "skipped_rows": [],
+  "batch_id": "batch_699e856ccc548190b50ddbcb2744d7b2",
+  "batch_input_file_id": "file-W8guikfrwxBgAuxJ3cthqk",
+  "batch_terminal_status": "completed",
+  "batch_output_file_id": "file-PJyZqhJyXhcDyeryD5TnzP",
+  "batch_error_file_id": null
+}

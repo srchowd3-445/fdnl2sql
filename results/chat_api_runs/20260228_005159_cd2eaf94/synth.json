@@ -1,0 +1,219 @@
+{
+  "meta": {
+    "pipeline_stage": "synthesis_from_decomposition_retrieval",
+    "retrieval_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_005159_cd2eaf94/decompose_retrieve.json",
+    "retrieval_meta": {
+      "backend": "openai_compat",
+      "question": "List the studies for Checkmate 141",
+      "question_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/natural_question_1500.json",
+      "question_index": 0,
+      "batch_mode": 0,
+      "start_index": 0,
+      "limit": 1,
+      "prompt_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_prompt.txt",
+      "schema_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/schema.json",
+      "decompose_examples_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_examples.txt",
+      "seed_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/seed_questions.json",
+      "candidate_json": null,
+      "candidate_sqlite": null,
+      "candidate_table": "query_library",
+      "top_k": 3,
+      "retrieval_per_decomp": 3,
+      "max_decomposed_queries": 5,
+      "sbert": {
+        "model": "/mnt/shared/shared_hf_home/hub/models--sentence-transformers--all-MiniLM-L6-v2/snapshots/c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+        "device": null,
+        "batch_size": 64
+      },
+      "api_base": "https://generativelanguage.googleapis.com/v1beta/openai/",
+      "model_name": "gemini-2.5-flash",
+      "model_path": null,
+      "gen_batch_size": 1,
+      "batch_concurrency": 1,
+      "pipeline_stage": "decompose_then_retrieve"
+    },
+    "retrieval_contract": "expects per-decomposed top-k in retrieval_by_decomposition when available",
+    "backend": "openai_compat",
+    "prompt_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/synthesis_prompt.txt",
+    "schema_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/schema.json",
+    "api_base": "https://generativelanguage.googleapis.com/v1beta/openai/",
+    "model_name": "gemini-2.5-flash",
+    "model_path": null,
+    "db_path": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/database.db",
+    "skip_exec": 0,
+    "logprobs": 0,
+    "logprob_mode": "none",
+    "use_pydantic_schema": true,
+    "synth_evidence_per_decomp": 2,
+    "synth_include_global_merged": false,
+    "synth_where_only_evidence": true,
+    "gen_batch_size": 1,
+    "batch_concurrency": 1,
+    "eval": {
+      "run_eval": 0,
+      "gt_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/natural_question_1500.json",
+      "eval_script": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/eval_run_baselines_v2.py",
+      "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_005159_cd2eaf94/eval_ready.json",
+      "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_005159_cd2eaf94/eval_ready.jsonl",
+      "eval_output_json": null,
+      "eval_ran": false
+    },
+    "acceptance": {
+      "config_path": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/decompose_method/seed_acceptance_rules.config",
+      "config_format": "seed_acceptance_rules.config",
+      "acceptance_output_json": null
+    }
+  },
+  "counts": {
+    "total_tasks": 1,
+    "error_tasks": 0,
+    "generated_nonempty_sql": 1,
+    "exec_ok": 1,
+    "with_confidence": 0
+  },
+  "eval_summary": {},
+  "acceptance_summary": {
+    "evaluated": 0,
+    "accepted": 0,
+    "accepted_main_metric": 0,
+    "accepted_non_main": 0,
+    "rejected": 0
+  },
+  "results": [
+    {
+      "task_index": 0,
+      "question_index": null,
+      "item_id": null,
+      "input_question": "List the studies for Checkmate 141",
+      "error": null,
+      "decomposition": {
+        "raw_text": "{\"decomposed_queries\": [\"Which trials have Trial name = 'Checkmate 141'?\"]}",
+        "decomposed_queries": [
+          "Which trials have Trial name = 'Checkmate 141'?"
+        ],
+        "model_meta": {
+          "provider_call_ok": true,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids_len": 22,
+          "backend": "openai_compat"
+        },
+        "error": null
+      },
+      "retrieval_trace": [
+        {
+          "decomposed_query": "Which trials have Trial name = 'Checkmate 141'?",
+          "top1_candidate_id": "seed[38].query_6",
+          "top1_score": 0.8439188599586487
+        }
+      ],
+      "retrieval_by_decomposition": [
+        {
+          "decomposed_query": "Which trials have Trial name = 'Checkmate 141'?",
+          "ranked_results": [
+            {
+              "rank": 1,
+              "total_score": 0.8439188599586487,
+              "sbert_score": 0.8439188599586487,
+              "candidate": {
+                "candidate_id": "seed[38].query_6",
+                "question": "What is the Trial phase for those trials?",
+                "sql": "SELECT \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Esophageal/GEJ' AND \"Class of ICI\" = 'PD1' AND \"Year\" >= 2018;",
+                "parent_question": "Show the NCT identifier, author, publication status, ICI class, cancer type, and trial phase for PD1 trials treating esophageal or gastroesophageal junction cancer that began in 2018 or later?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 2,
+              "total_score": 0.8439188599586487,
+              "sbert_score": 0.8439188599586487,
+              "candidate": {
+                "candidate_id": "seed[74].query_8",
+                "question": "What is the trial phase for those trials?",
+                "sql": "SELECT \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Renal cell' AND \"Name of ICI\" = 'Nivolumab, Ipilimumab' AND \"Follow-up duration for primary endpoint(s) in months | Overall\" > 21;",
+                "parent_question": "List trials of Nivolumab and Ipilimumab for Renal cell cancer with overall follow-up exceeding 21 months?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 3,
+              "total_score": 0.8439188599586487,
+              "sbert_score": 0.8439188599586487,
+              "candidate": {
+                "candidate_id": "seed[104].query_2",
+                "question": "What is the trial phase for those trials?",
+                "sql": "SELECT DISTINCT \"Trial phase\" FROM clinical_trials WHERE \"Name of ICI\" = 'Ipilimumab' AND \"Cancer type\" = 'Non-Small Cell Lung' AND \"Trial phase\" = 'Phase 2' AND \"Originial publication or Follow-up\" = 'Original publication';",
+                "parent_question": "Find the authors and trial phase for Non-Small Cell Lung cancer trials using Ipilimumab that are Phase 2 and were originally published?",
+                "source": "seed_json/decomposed"
+              }
+            }
+          ]
+        }
+      ],
+      "ranked_results": [
+        {
+          "rank": 1,
+          "total_score": 0.8439188599586487,
+          "sbert_score": 0.8439188599586487,
+          "candidate": {
+            "candidate_id": "seed[38].query_6",
+            "question": "What is the Trial phase for those trials?",
+            "sql": "SELECT \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Esophageal/GEJ' AND \"Class of ICI\" = 'PD1' AND \"Year\" >= 2018;",
+            "parent_question": "Show the NCT identifier, author, publication status, ICI class, cancer type, and trial phase for PD1 trials treating esophageal or gastroesophageal junction cancer that began in 2018 or later?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 2,
+          "total_score": 0.8439188599586487,
+          "sbert_score": 0.8439188599586487,
+          "candidate": {
+            "candidate_id": "seed[74].query_8",
+            "question": "What is the trial phase for those trials?",
+            "sql": "SELECT \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Renal cell' AND \"Name of ICI\" = 'Nivolumab, Ipilimumab' AND \"Follow-up duration for primary endpoint(s) in months | Overall\" > 21;",
+            "parent_question": "List trials of Nivolumab and Ipilimumab for Renal cell cancer with overall follow-up exceeding 21 months?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 3,
+          "total_score": 0.8439188599586487,
+          "sbert_score": 0.8439188599586487,
+          "candidate": {
+            "candidate_id": "seed[104].query_2",
+            "question": "What is the trial phase for those trials?",
+            "sql": "SELECT DISTINCT \"Trial phase\" FROM clinical_trials WHERE \"Name of ICI\" = 'Ipilimumab' AND \"Cancer type\" = 'Non-Small Cell Lung' AND \"Trial phase\" = 'Phase 2' AND \"Originial publication or Follow-up\" = 'Original publication';",
+            "parent_question": "Find the authors and trial phase for Non-Small Cell Lung cancer trials using Ipilimumab that are Phase 2 and were originally published?",
+            "source": "seed_json/decomposed"
+          }
+        }
+      ],
+      "synthesized": {
+        "raw_text": "{\"sql\": \"SELECT \\\"NCT\\\", \\\"Trial name\\\", \\\"Author\\\", \\\"Year\\\", \\\"Cancer type\\\", \\\"Originial publication or Follow-up\\\" FROM clinical_trials WHERE \\\"Trial name\\\" = 'Checkmate 141'\"}",
+        "final_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Cancer type\", \"Originial publication or Follow-up\" FROM clinical_trials WHERE \"Trial name\" = 'Checkmate 141'",
+        "field_logprobs": {},
+        "field_confidence": {},
+        "confidence_overall": null,
+        "model_meta": {
+          "provider_call_ok": true,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids_len": 51,
+          "backend": "openai_compat"
+        }
+      },
+      "execution_preview": {
+        "columns": [
+          "NCT",
+          "Trial name",
+          "Author",
+          "Year",
+          "Cancer type",
+          "Originial publication or Follow-up"
+        ],
+        "rows": [],
+        "error": null
+      }
+    }
+  ]
+}

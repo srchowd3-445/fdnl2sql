@@ -1,0 +1,45 @@
+2026-02-24 14:14:43,719 | INFO | Log file: /gscratch/tkishore/MAYO_AIM2//results/logs/generated_sql_zero_shot_20260224_141443.log
+2026-02-24 14:14:44,008 | INFO | =========== RUN START ===========
+2026-02-24 14:14:44,008 | INFO | Input: /gscratch/tkishore/MAYO_AIM2//data/dataset.jsonl
+2026-02-24 14:14:44,008 | INFO | Input format used: jsonl
+2026-02-24 14:14:44,008 | INFO | Output: /gscratch/tkishore/MAYO_AIM2//logs/Gemma/27B/sql_with_conf_new/generated_sql_zero_shot.jsonl
+2026-02-24 14:14:44,008 | INFO | Error log: /gscratch/tkishore/MAYO_AIM2//logs/Gemma/27B/sql_with_conf_new/error_log_zero_shot.jsonl
+2026-02-24 14:14:44,008 | INFO | Checkpoint: /gscratch/tkishore/MAYO_AIM2//logs/Gemma/27B/sql_with_conf_new/generated_sql_zero_shot.jsonl.checkpoint.json
+2026-02-24 14:14:44,009 | INFO | Rows selected: 500
+2026-02-24 14:14:44,009 | INFO | Resuming: True
+2026-02-24 14:14:44,009 | INFO | Already completed: 0
+2026-02-24 14:14:44,009 | INFO | Prompt style: zero_shot
+2026-02-24 14:14:44,009 | INFO | Backend: openai_compat
+2026-02-24 14:14:44,009 | INFO | Model: google/gemma-3-27b-it
+2026-02-24 14:14:44,009 | INFO | Logprob mode: structured
+2026-02-24 14:14:44,009 | INFO | Batch size: 32
+2026-02-24 14:14:44,009 | INFO | Batch concurrency: 8
+2026-02-24 14:14:44,009 | INFO | Use pydantic response schema: True
+2026-02-24 14:14:44,009 | INFO | Schema columns: 32
+2026-02-24 14:14:44,009 | INFO | Schema hints columns: 32
+2026-02-24 14:15:35,741 | INFO | Batch 1/16 processed=32 elapsed=51.55s throughput=0.62 rec/s completed=32/500 success=28 error=4
+2026-02-24 14:16:21,707 | INFO | Batch 2/16 processed=32 elapsed=45.95s throughput=0.70 rec/s completed=64/500 success=57 error=7
+2026-02-24 14:17:08,753 | INFO | Batch 3/16 processed=32 elapsed=47.03s throughput=0.68 rec/s completed=96/500 success=83 error=13
+2026-02-24 14:17:55,251 | INFO | Batch 4/16 processed=32 elapsed=46.48s throughput=0.69 rec/s completed=128/500 success=111 error=17
+2026-02-24 14:18:33,636 | INFO | Batch 5/16 processed=32 elapsed=38.36s throughput=0.83 rec/s completed=160/500 success=138 error=22
+2026-02-24 14:19:17,928 | INFO | Batch 6/16 processed=32 elapsed=44.27s throughput=0.72 rec/s completed=192/500 success=166 error=26
+2026-02-24 14:19:53,602 | INFO | Batch 7/16 processed=32 elapsed=35.65s throughput=0.90 rec/s completed=224/500 success=196 error=28
+2026-02-24 14:20:40,263 | INFO | Batch 8/16 processed=32 elapsed=46.63s throughput=0.69 rec/s completed=256/500 success=225 error=31
+2026-02-24 14:21:35,361 | INFO | Batch 9/16 processed=32 elapsed=55.07s throughput=0.58 rec/s completed=288/500 success=252 error=36
+2026-02-24 14:22:24,671 | INFO | Batch 10/16 processed=32 elapsed=49.27s throughput=0.65 rec/s completed=320/500 success=278 error=42
+2026-02-24 14:23:13,196 | INFO | Batch 11/16 processed=32 elapsed=48.48s throughput=0.66 rec/s completed=352/500 success=307 error=45
+2026-02-24 14:23:45,694 | INFO | Batch 12/16 processed=32 elapsed=32.46s throughput=0.99 rec/s completed=384/500 success=338 error=46
+2026-02-24 14:24:33,432 | INFO | Batch 13/16 processed=32 elapsed=47.70s throughput=0.67 rec/s completed=416/500 success=366 error=50
+2026-02-24 14:25:14,771 | INFO | Batch 14/16 processed=32 elapsed=41.30s throughput=0.77 rec/s completed=448/500 success=395 error=53
+2026-02-24 14:26:02,771 | INFO | Batch 15/16 processed=32 elapsed=47.95s throughput=0.67 rec/s completed=480/500 success=422 error=58
+2026-02-24 14:26:33,832 | INFO | Batch 16/16 processed=20 elapsed=31.01s throughput=0.65 rec/s completed=500/500 success=441 error=59
+2026-02-24 14:26:33,951 | INFO | =========== RUN SUMMARY ===========
+2026-02-24 14:26:33,951 | INFO | Rows selected: 500
+2026-02-24 14:26:33,951 | INFO | Rows completed in checkpoint: 500
+2026-02-24 14:26:33,951 | INFO | Processed this run: 500
+2026-02-24 14:26:33,951 | INFO | Non-empty predicted SQL: 441
+2026-02-24 14:26:33,951 | INFO | Success count (this run): 441
+2026-02-24 14:26:33,951 | INFO | Error count (this run): 59
+2026-02-24 14:26:33,951 | INFO | Avg confidence_overall (this run): 0.777617
+2026-02-24 14:26:33,951 | INFO | Total runtime: 709.76s
+2026-02-24 14:26:33,951 | INFO | ===================================

@@ -1,0 +1,206 @@
+{
+  "meta": {
+    "pipeline_stage": "synthesis_from_decomposition_retrieval",
+    "retrieval_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260227_210838_e6c4b665/decompose_retrieve.json",
+    "retrieval_meta": {
+      "backend": "openai_compat",
+      "question": "Give me studies from 2019 onwards",
+      "question_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/natural_question_1500.json",
+      "question_index": 0,
+      "batch_mode": 0,
+      "start_index": 0,
+      "limit": 1,
+      "prompt_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_prompt.txt",
+      "schema_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/schema.json",
+      "decompose_examples_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_examples.txt",
+      "seed_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/seed_questions.json",
+      "candidate_json": null,
+      "candidate_sqlite": null,
+      "candidate_table": "query_library",
+      "top_k": 3,
+      "retrieval_per_decomp": 3,
+      "max_decomposed_queries": 5,
+      "sbert": {
+        "model": "/mnt/shared/shared_hf_home/hub/models--sentence-transformers--all-MiniLM-L6-v2/snapshots/c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+        "device": null,
+        "batch_size": 64
+      },
+      "api_base": "https://generativelanguage.googleapis.com/v1beta/openai/",
+      "model_name": "gemini-2.5-flash",
+      "model_path": null,
+      "gen_batch_size": 1,
+      "batch_concurrency": 1,
+      "pipeline_stage": "decompose_then_retrieve"
+    },
+    "retrieval_contract": "expects per-decomposed top-k in retrieval_by_decomposition when available",
+    "backend": "openai_compat",
+    "prompt_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/synthesis_prompt.txt",
+    "schema_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/schema.json",
+    "api_base": "https://generativelanguage.googleapis.com/v1beta/openai/",
+    "model_name": "gemini-2.5-flash",
+    "model_path": null,
+    "db_path": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/database.db",
+    "skip_exec": 0,
+    "logprobs": 0,
+    "logprob_mode": "none",
+    "use_pydantic_schema": true,
+    "synth_evidence_per_decomp": 2,
+    "synth_include_global_merged": false,
+    "synth_where_only_evidence": true,
+    "gen_batch_size": 1,
+    "batch_concurrency": 1,
+    "eval": {
+      "run_eval": 0,
+      "gt_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/natural_question_1500.json",
+      "eval_script": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/eval_run_baselines_v2.py",
+      "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260227_210838_e6c4b665/eval_ready.json",
+      "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260227_210838_e6c4b665/eval_ready.jsonl",
+      "eval_output_json": null,
+      "eval_ran": false
+    },
+    "acceptance": {
+      "config_path": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/decompose_method/seed_acceptance_rules.config",
+      "config_format": "seed_acceptance_rules.config",
+      "acceptance_output_json": null
+    }
+  },
+  "counts": {
+    "total_tasks": 1,
+    "error_tasks": 1,
+    "generated_nonempty_sql": 0,
+    "exec_ok": 0,
+    "with_confidence": 0
+  },
+  "eval_summary": {},
+  "acceptance_summary": {
+    "evaluated": 0,
+    "accepted": 0,
+    "accepted_main_metric": 0,
+    "accepted_non_main": 0,
+    "rejected": 0
+  },
+  "results": [
+    {
+      "task_index": 0,
+      "question_index": null,
+      "item_id": null,
+      "input_question": "Give me studies from 2019 onwards",
+      "error": "Error code: 400 - [{'error': {'code': 400, 'message': 'Invalid JSON payload received. Unknown name \"logprobs\": Cannot find field.', 'status': 'INVALID_ARGUMENT', 'details': [{'@type': 'type.googleapis.com/google.rpc.BadRequest', 'fieldViolations': [{'description': 'Invalid JSON payload received. Unknown name \"logprobs\": Cannot find field.'}]}]}}]",
+      "decomposition": {
+        "raw_text": "{\"decomposed_queries\": [\"Which studies have Year >= 2019?\"]}",
+        "decomposed_queries": [
+          "Which studies have Year >= 2019?"
+        ],
+        "model_meta": {
+          "provider_call_ok": true,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids_len": 19,
+          "backend": "openai_compat"
+        },
+        "error": null
+      },
+      "retrieval_trace": [
+        {
+          "decomposed_query": "Which studies have Year >= 2019?",
+          "top1_candidate_id": "seed[156].query_2",
+          "top1_score": 0.8267703652381897
+        }
+      ],
+      "retrieval_by_decomposition": [
+        {
+          "decomposed_query": "Which studies have Year >= 2019?",
+          "ranked_results": [
+            {
+              "rank": 1,
+              "total_score": 0.8267703652381897,
+              "sbert_score": 0.8267703652381897,
+              "candidate": {
+                "candidate_id": "seed[156].query_2",
+                "question": "List years of publication or follow-up for these studies.",
+                "sql": "SELECT \"Year\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal' AND \"Type of combination\" = 'ICI+MEKi';",
+                "parent_question": "Which studies of colorectal cancer tested combinations of immunotherapy, chemotherapy, and anti-VEGF therapies, and what were their primary endpoints?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 2,
+              "total_score": 0.7789063453674316,
+              "sbert_score": 0.7789063453674316,
+              "candidate": {
+                "candidate_id": "seed[156].query_3",
+                "question": "What is the Originial publication or Follow-up for these studies?",
+                "sql": "SELECT \"Originial publication or Follow-up\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal' AND \"Type of combination\" = 'ICI+MEKi';",
+                "parent_question": "Which studies of colorectal cancer tested combinations of immunotherapy, chemotherapy, and anti-VEGF therapies, and what were their primary endpoints?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 3,
+              "total_score": 0.7635433077812195,
+              "sbert_score": 0.7635433077812195,
+              "candidate": {
+                "candidate_id": "seed[109].query_3",
+                "question": "What are the publication years for those trials?",
+                "sql": "SELECT \"Year\" FROM clinical_trials WHERE \"Name of ICI\" = 'Nivolumab' AND \"Cancer type\" = 'Renal cell' AND \"Trial phase\" = 'Phase 3' AND \"Originial publication or Follow-up\" = 'Follow-up';",
+                "parent_question": "Find Phase 3 Nivolumab trials for renal cell cancer that are follow-up publications?",
+                "source": "seed_json/decomposed"
+              }
+            }
+          ]
+        }
+      ],
+      "ranked_results": [
+        {
+          "rank": 1,
+          "total_score": 0.8267703652381897,
+          "sbert_score": 0.8267703652381897,
+          "candidate": {
+            "candidate_id": "seed[156].query_2",
+            "question": "List years of publication or follow-up for these studies.",
+            "sql": "SELECT \"Year\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal' AND \"Type of combination\" = 'ICI+MEKi';",
+            "parent_question": "Which studies of colorectal cancer tested combinations of immunotherapy, chemotherapy, and anti-VEGF therapies, and what were their primary endpoints?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 2,
+          "total_score": 0.7789063453674316,
+          "sbert_score": 0.7789063453674316,
+          "candidate": {
+            "candidate_id": "seed[156].query_3",
+            "question": "What is the Originial publication or Follow-up for these studies?",
+            "sql": "SELECT \"Originial publication or Follow-up\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal' AND \"Type of combination\" = 'ICI+MEKi';",
+            "parent_question": "Which studies of colorectal cancer tested combinations of immunotherapy, chemotherapy, and anti-VEGF therapies, and what were their primary endpoints?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 3,
+          "total_score": 0.7635433077812195,
+          "sbert_score": 0.7635433077812195,
+          "candidate": {
+            "candidate_id": "seed[109].query_3",
+            "question": "What are the publication years for those trials?",
+            "sql": "SELECT \"Year\" FROM clinical_trials WHERE \"Name of ICI\" = 'Nivolumab' AND \"Cancer type\" = 'Renal cell' AND \"Trial phase\" = 'Phase 3' AND \"Originial publication or Follow-up\" = 'Follow-up';",
+            "parent_question": "Find Phase 3 Nivolumab trials for renal cell cancer that are follow-up publications?",
+            "source": "seed_json/decomposed"
+          }
+        }
+      ],
+      "synthesized": {
+        "raw_text": "",
+        "final_sql": "",
+        "field_logprobs": {},
+        "field_confidence": {},
+        "confidence_overall": null,
+        "model_meta": {}
+      },
+      "execution_preview": {
+        "columns": [],
+        "rows": [],
+        "error": "Error code: 400 - [{'error': {'code': 400, 'message': 'Invalid JSON payload received. Unknown name \"logprobs\": Cannot find field.', 'status': 'INVALID_ARGUMENT', 'details': [{'@type': 'type.googleapis.com/google.rpc.BadRequest', 'fieldViolations': [{'description': 'Invalid JSON payload received. Unknown name \"logprobs\": Cannot find field.'}]}]}}]"
+      }
+    }
+  ]
+}

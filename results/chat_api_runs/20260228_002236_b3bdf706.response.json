@@ -1,0 +1,64 @@
+{
+  "status": "ok",
+  "item_id": null,
+  "question": "List Powels et al's original publication",
+  "final_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Author\" = 'Powels et al' AND \"Originial publication or Follow-up\" = 'Original publication'",
+  "confidence_overall": null,
+  "error": null,
+  "decomposed_queries": [
+    "Which trials have Author = 'Powels et al'?",
+    "Which trials have Originial publication or Follow-up = 'Original publication'?"
+  ],
+  "retrieval_top": [
+    {
+      "rank": 1,
+      "score": 1.0,
+      "candidate_id": "seed[10].query_3",
+      "candidate_question": "Which trials have Originial publication or Follow-up = 'Original publication'?",
+      "candidate_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Originial publication or Follow-up\" = 'Original publication';"
+    },
+    {
+      "rank": 2,
+      "score": 0.9589646458625793,
+      "candidate_id": "seed[68].query_4",
+      "candidate_question": "Trials with Originial publication or Follow-up Original publication",
+      "candidate_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Originial publication or Follow-up\" = 'Original publication';"
+    },
+    {
+      "rank": 3,
+      "score": 0.9582280516624451,
+      "candidate_id": "seed[52].query_4",
+      "candidate_question": "What trials have Originial publication or Follow-up equal to 'Follow-up'?",
+      "candidate_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Originial publication or Follow-up\" = 'Follow-up';"
+    }
+  ],
+  "execution_preview": {
+    "error": null,
+    "columns": [
+      "NCT",
+      "Trial name",
+      "Author",
+      "Year",
+      "Originial publication or Follow-up",
+      "Cancer type",
+      "Trial phase"
+    ],
+    "rows": []
+  },
+  "artifacts": {
+    "decompose_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_002236_b3bdf706/decompose_retrieve.json",
+    "synth_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_002236_b3bdf706/synth.json",
+    "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_002236_b3bdf706/eval_ready.json",
+    "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_002236_b3bdf706/eval_ready.jsonl",
+    "eval_output_json": null
+  },
+  "meta": {
+    "backend": "openai_compat",
+    "model_name": "gemini-2.5-flash",
+    "use_pydantic_schema": true,
+    "logprob_mode": "none",
+    "run_eval": 0,
+    "skip_exec": 0,
+    "run_tag": "20260228_002236_b3bdf706"
+  }
+}

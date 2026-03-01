@@ -1,0 +1,118 @@
+[
+  {
+    "item_id": "extra_1_240_drop_select_column_1",
+    "line_number": 240,
+    "question": "Which Phase 3 CTLA-4 combination trials in Melanoma should I review, and what were their regimens (return fewer columns)?",
+    "natural_question": "Which Phase 3 CTLA-4 combination trials in Melanoma should I review, and what were their regimens (return fewer columns)?",
+    "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Class of ICI\", \"Monotherapy/combination\", \"Cancer type\", \"Treatment regimen\" FROM clinical_trials WHERE \"Class of ICI\" = 'CTLA-4' AND \"Cancer type\" = 'Melanoma' AND \"Trial phase\" = 'Phase 3' AND \"Monotherapy/combination\" = 'Combination';",
+    "source": "variation_extra",
+    "base_source": "original_working",
+    "variation_type": "drop_select_column",
+    "variation_note": "return fewer columns",
+    "row_exists": true,
+    "metadata": {
+      "parent_item_id": "line_240",
+      "parent_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Trial phase\", \"Class of ICI\", \"Monotherapy/combination\", \"Cancer type\", \"Name of ICI\", \"Treatment regimen\"\nFROM clinical_trials\nWHERE \"Class of ICI\" = 'CTLA-4' AND \"Cancer type\" = 'Melanoma' AND \"Trial phase\" = 'Phase 3' AND \"Monotherapy/combination\" = 'Combination';",
+      "mutation": {
+        "removed_select": "\"Name of ICI\""
+      },
+      "error": null,
+      "generated_by": "build_additional_questions_from_variations.py"
+    }
+  },
+  {
+    "item_id": "extra_2_355_drop_two_where_conditions_1",
+    "line_number": 355,
+    "question": "Show Small Cell Lung studies included in the meta‑analysis that used PD1 agents. (with fewer filtering conditions)?",
+    "natural_question": "Show Small Cell Lung studies included in the meta‑analysis that used PD1 agents. (with fewer filtering conditions)?",
+    "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Included in MA\", \"Class of ICI\", \"Cancer type\", \"Name of ICI\" FROM clinical_trials WHERE \"Cancer type\" = 'Small Cell Lung';",
+    "source": "variation_extra",
+    "base_source": "fixed_empty",
+    "variation_type": "drop_two_where_conditions",
+    "variation_note": "with fewer filtering conditions",
+    "row_exists": true,
+    "metadata": {
+      "parent_item_id": "line_355",
+      "parent_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Included in MA\", \"Class of ICI\", \"Cancer type\", \"Name of ICI\"\nFROM clinical_trials WHERE \"Cancer type\" = 'Small Cell Lung' AND \"Class of ICI\" = 'PD1' AND \"Included in MA\" = 'Yes';",
+      "mutation": {
+        "removed_conditions": [
+          "\"Class of ICI\" = 'PD1'",
+          "\"Included in MA\" = 'Yes'"
+        ]
+      },
+      "error": null,
+      "generated_by": "build_additional_questions_from_variations.py"
+    }
+  },
+  {
+    "item_id": "extra_3_37_keep_one_where_condition_1",
+    "line_number": 37,
+    "question": "Which Pancreatic trials evaluated Ipilimumab in phase 3 (using only one filter condition)?",
+    "natural_question": "Which Pancreatic trials evaluated Ipilimumab in phase 3 (using only one filter condition)?",
+    "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\", \"Trial name\", \"Treatment regimen\" FROM clinical_trials WHERE \"Name of ICI\" = 'Ipilimumab';",
+    "source": "variation_extra",
+    "base_source": "fixed_empty",
+    "variation_type": "keep_one_where_condition",
+    "variation_note": "using only one filter condition",
+    "row_exists": true,
+    "metadata": {
+      "parent_item_id": "line_37",
+      "parent_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\", \"Trial name\", \"Treatment regimen\"\nFROM clinical_trials WHERE \"Name of ICI\" = 'Ipilimumab' AND \"Cancer type\" = 'Pancreatic' AND \"Trial phase\" = 'Phase 2';",
+      "mutation": {
+        "kept_condition": "\"Name of ICI\" = 'Ipilimumab'",
+        "dropped_count": 2
+      },
+      "error": null,
+      "generated_by": "build_additional_questions_from_variations.py"
+    }
+  },
+  {
+    "item_id": "extra_4_83_keep_two_select_columns_1",
+    "line_number": 83,
+    "question": "Show Gastric/GEJ CTLA-4 trials conducted in 2018 or later. (return only two key columns)?",
+    "natural_question": "Show Gastric/GEJ CTLA-4 trials conducted in 2018 or later. (return only two key columns)?",
+    "gt_sql": "SELECT \"Originial publication or Follow-up\", \"Class of ICI\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ' AND \"Class of ICI\" = 'CTLA-4' AND \"Year\" >= 2017;",
+    "source": "variation_extra",
+    "base_source": "fixed_empty",
+    "variation_type": "keep_two_select_columns",
+    "variation_note": "return only two key columns",
+    "row_exists": true,
+    "metadata": {
+      "parent_item_id": "line_83",
+      "parent_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Class of ICI\", \"Cancer type\", \"Trial phase\"\nFROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ' AND \"Class of ICI\" = 'CTLA-4' AND \"Year\" >= 2017;",
+      "mutation": {
+        "kept_select": [
+          "\"Originial publication or Follow-up\"",
+          "\"Class of ICI\""
+        ],
+        "dropped_count": 5
+      },
+      "error": null,
+      "generated_by": "build_additional_questions_from_variations.py"
+    }
+  },
+  {
+    "item_id": "extra_5_188_drop_two_where_conditions_2",
+    "line_number": 188,
+    "question": "Show Bladder trials with at least 2 prior lines of therapy that used combination treatment. (with fewer filtering conditions)?",
+    "natural_question": "Show Bladder trials with at least 2 prior lines of therapy that used combination treatment. (with fewer filtering conditions)?",
+    "gt_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Lines of treatment\", \"Monotherapy/combination\", \"Cancer type\", \"Type of combination\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Breast';",
+    "source": "variation_extra",
+    "base_source": "fixed_empty",
+    "variation_type": "drop_two_where_conditions",
+    "variation_note": "with fewer filtering conditions",
+    "row_exists": true,
+    "metadata": {
+      "parent_item_id": "line_188",
+      "parent_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Lines of treatment\", \"Monotherapy/combination\", \"Cancer type\", \"Type of combination\", \"Trial phase\"\nFROM clinical_trials WHERE \"Cancer type\" = 'Breast' AND \"Lines of treatment\" >= 2 AND \"Monotherapy/combination\" = 'Combination';",
+      "mutation": {
+        "removed_conditions": [
+          "\"Lines of treatment\" >= 2",
+          "\"Monotherapy/combination\" = 'Combination'"
+        ]
+      },
+      "error": null,
+      "generated_by": "build_additional_questions_from_variations.py"
+    }
+  }
+]

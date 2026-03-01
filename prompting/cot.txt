@@ -1,0 +1,118 @@
+You are an expert natural language to SQL generator.
+The task is to query cancer drug trial studies from the "clinical_trials" table.
+
+You MUST follow the reasoning scaffold below and SHOW your work.
+Use only columns from this table schema: {SCHEMA}
+
+STRICT OUTPUT FORMAT:
+
+* Wrap the user question in: `<USER>...</USER>`
+* Wrap the assistant output in: `<ASSISTANT>...</ASSISTANT>`
+* Inside `<ASSISTANT>`, output TWO tagged blocks in this exact order:
+
+  1. `<THINKING>...</THINKING>`
+  2. `<SQL>...</SQL>`
+
+SQL RULES (STRICT):
+
+* The SQL MUST start with SELECT.
+* Use only columns from the schema.
+* Put double quotes around EVERY column name exactly as in the schema.
+* Use single quotes for string literals.
+* End with a semicolon.
+* No extra text outside `<THINKING>` and `<SQL>`.
+
+REASONING SCAFFOLD TO SHOW (do not skip steps, keep numbering): <THINKING>
+
+1. Normalize terms:
+
+   * Rewrite entities to match schema values (title case for categorical values).
+2. Identify intent:
+
+   * State the user intent in one sentence (list/filter trials, etc.).
+3. Map to columns:
+
+   * List each extracted constraint and the exact schema column it maps to.
+4. Choose constraints:
+
+   * Specify operators (=, >=, IN, LIKE) and how constraints combine (AND/OR).
+5. Compose query:
+
+   * List the selected output columns and justify briefly (key identifiers + question-relevant fields).
+   * Then write the final SQL in <SQL>.
+
+     </THINKING>
+
+GOOD EXAMPLE (CORRECT SCHEMA USE): <USER>QUESTION: List head and neck trials requiring a biomarker other than PD-L1 for inclusion.</USER> <ASSISTANT> <THINKING>
+
+1. Normalize terms:
+
+   * "head and neck" -> 'Head and Neck'
+   * "requiring a biomarker other than PD-L1" -> "Is any other biomarker used for inclusion" = 'Yes'
+2. Identify intent:
+
+   * List trials in the Head and Neck cohort where a non–PD-L1 biomarker is required for inclusion.
+3. Map to columns:
+
+   * Cancer cohort constraint -> "Cancer type" = 'Head and Neck'
+   * Biomarker requirement constraint -> "Is any other biomarker used for inclusion" = 'Yes'
+4. Choose constraints:
+
+   * Use '=' for categorical exact matches.
+   * Combine constraints with AND.
+5. Compose query:
+
+   * Output columns:
+
+     * Identifiers/citation: "NCT", "Author", "Year", "Originial publication or Follow-up"
+     * Inclusion flag: "Is any other biomarker used for inclusion"
+     * Context: "Cancer type", "Primary endpoint"
+
+       </THINKING>
+
+<SQL>
+SELECT "NCT", "Author", "Year", "Originial publication or Follow-up", "Is any other biomarker used for inclusion", "Cancer type", "Primary endpoint"
+FROM clinical_trials
+WHERE "Cancer type" = 'Head and Neck'
+  AND "Is any other biomarker used for inclusion" = 'Yes';
+</SQL>
+</ASSISTANT>
+
+BAD EXAMPLE (INCORRECT / WHAT NOT TO DO): <USER>QUESTION: List head and neck trials requiring a biomarker other than PD-L1 for inclusion.</USER> <ASSISTANT> <THINKING>
+
+1. Normalize terms:
+
+   * "head and neck" -> 'Head & Neck'
+   * "requiring a biomarker other than PD-L1" -> "Other biomarker inclusion" = 'True'
+2. Identify intent:
+
+   * Show all immunotherapy studies and their outcomes for head & neck cancers.
+3. Map to columns:
+
+   * Cancer cohort constraint -> "Cancer" = 'Head & Neck'
+   * Biomarker requirement constraint -> "Biomarker required" = 'True'
+4. Choose constraints:
+
+   * Use LIKE for everything to be safe.
+   * Combine constraints with OR.
+5. Compose query:
+
+   * Output columns:
+
+     * Select * to avoid missing information.
+
+       </THINKING>
+
+<SQL>
+SELECT *
+FROM clinical_trials
+WHERE "Cancer" LIKE '%Head & Neck%'
+   OR "Other biomarker inclusion" = 'True';
+</SQL>
+</ASSISTANT>
+
+Now, answer the following.
+
+<USER>QUESTION: {QUESTION}</USER> 
+
+<ASSISTANT> <THINKING> </THINKING> <SQL> </SQL> </ASSISTANT>

@@ -1,0 +1,474 @@
+==========================================
+🚀 Starting Gemma-3-27B SQL Job
+==========================================
+Model: google/gemma-3-27b-it
+Tensor Parallel: 2
+GPU Memory Utilization: 0.85
+Port: 8000
+==========================================
+
+🔧 Launching vLLM server...
+vLLM PID: 3102521
+⏳ Waiting for vLLM server... (1/60)
+⏳ Waiting for vLLM server... (2/60)
+⏳ Waiting for vLLM server... (3/60)
+⏳ Waiting for vLLM server... (4/60)
+⏳ Waiting for vLLM server... (5/60)
+⏳ Waiting for vLLM server... (6/60)
+⏳ Waiting for vLLM server... (7/60)
+⏳ Waiting for vLLM server... (8/60)
+⏳ Waiting for vLLM server... (9/60)
+⏳ Waiting for vLLM server... (10/60)
+⏳ Waiting for vLLM server... (11/60)
+⏳ Waiting for vLLM server... (12/60)
+⏳ Waiting for vLLM server... (13/60)
+⏳ Waiting for vLLM server... (14/60)
+⏳ Waiting for vLLM server... (15/60)
+⏳ Waiting for vLLM server... (16/60)
+⏳ Waiting for vLLM server... (17/60)
+⏳ Waiting for vLLM server... (18/60)
+⏳ Waiting for vLLM server... (19/60)
+⏳ Waiting for vLLM server... (20/60)
+⏳ Waiting for vLLM server... (21/60)
+⏳ Waiting for vLLM server... (22/60)
+⏳ Waiting for vLLM server... (23/60)
+⏳ Waiting for vLLM server... (24/60)
+⏳ Waiting for vLLM server... (25/60)
+⏳ Waiting for vLLM server... (26/60)
+⏳ Waiting for vLLM server... (27/60)
+⏳ Waiting for vLLM server... (28/60)
+⏳ Waiting for vLLM server... (29/60)
+⏳ Waiting for vLLM server... (30/60)
+⏳ Waiting for vLLM server... (31/60)
+⏳ Waiting for vLLM server... (32/60)
+⏳ Waiting for vLLM server... (33/60)
+✅ vLLM server is ready!
+
+📊 Running SQL generation...
+Output: /gscratch/tkishore/MAYO_AIM2//logs/Gemma/27B/sql/generated_sql.jsonl
+
+Resuming from line 86
+[86] Saved.
+[87] Saved.
+[88] Saved.
+[89] Saved.
+[90] Saved.
+[91] Saved.
+[92] Saved.
+[93] Saved.
+[94] Saved.
+[95] Saved.
+[96] Saved.
+[97] Saved.
+[98] Saved.
+[99] Saved.
+[100] Saved.
+[101] Saved.
+[102] Saved.
+[103] Saved.
+[104] Saved.
+[105] Saved.
+[106] Saved.
+[107] Saved.
+[108] Saved.
+[109] Saved.
+[110] Saved.
+[111] Saved.
+[112] Saved.
+[113] Saved.
+[114] Saved.
+[115] Saved.
+[116] Saved.
+[117] Saved.
+[118] Saved.
+[119] Saved.
+[120] Saved.
+[121] Saved.
+[122] Saved.
+[123] Saved.
+[124] Saved.
+[125] Saved.
+[126] Saved.
+[127] Saved.
+[128] Saved.
+[129] Saved.
+[130] Saved.
+[131] Saved.
+[132] Saved.
+[133] Saved.
+[134] Saved.
+[135] Saved.
+[136] Saved.
+[137] Saved.
+[138] Saved.
+[139] Saved.
+[140] Saved.
+[141] Saved.
+[142] Saved.
+[143] Saved.
+[144] Saved.
+[145] Saved.
+[146] Saved.
+[147] Saved.
+[148] Saved.
+[149] Saved.
+[150] Saved.
+[151] Saved.
+[152] Saved.
+[153] Saved.
+[154] Saved.
+[155] Saved.
+[156] Saved.
+[157] Saved.
+[158] Saved.
+[159] Saved.
+[160] Saved.
+[161] Saved.
+[162] Saved.
+[163] Saved.
+[164] Saved.
+[165] Saved.
+[166] Saved.
+[167] Saved.
+[168] Saved.
+[169] Saved.
+[170] Saved.
+[171] Saved.
+[172] Saved.
+[173] Saved.
+[174] Saved.
+[175] Saved.
+[176] Saved.
+[177] Saved.
+[178] Saved.
+[179] Saved.
+[180] Saved.
+[181] Saved.
+[182] Saved.
+[183] Saved.
+[184] Saved.
+[185] Saved.
+[186] Saved.
+[187] Saved.
+[188] Saved.
+[189] Saved.
+[190] Saved.
+[191] Saved.
+[192] Saved.
+[193] Saved.
+[194] Saved.
+[195] Saved.
+[196] Saved.
+[197] Saved.
+[198] Saved.
+[199] Saved.
+[200] Saved.
+[201] Saved.
+[202] Saved.
+[203] Saved.
+[204] Saved.
+[205] Saved.
+[206] Saved.
+[207] Saved.
+[208] Saved.
+[209] Saved.
+[210] Saved.
+[211] Saved.
+[212] Saved.
+[213] Saved.
+[214] Saved.
+[215] Saved.
+[216] Saved.
+[217] Saved.
+[218] Saved.
+[219] Saved.
+[220] Saved.
+[221] Saved.
+[222] Saved.
+[223] Saved.
+[224] Saved.
+[225] Saved.
+[226] Saved.
+[227] Saved.
+[228] Saved.
+[229] Saved.
+[230] Saved.
+[231] Saved.
+[232] Saved.
+[233] Saved.
+[234] Saved.
+[235] Saved.
+[236] Saved.
+[237] Saved.
+[238] Saved.
+[239] Saved.
+[240] Saved.
+[241] Saved.
+[242] Saved.
+[243] Saved.
+[244] Saved.
+[245] Saved.
+[246] Saved.
+[247] Saved.
+[248] Saved.
+[249] Saved.
+[250] Saved.
+[251] Saved.
+[252] Saved.
+[253] Saved.
+[254] Saved.
+[255] Saved.
+[256] Saved.
+[257] Saved.
+[258] Saved.
+[259] Saved.
+[260] Saved.
+[261] Saved.
+[262] Saved.
+[263] Saved.
+[264] Saved.
+[265] Saved.
+[266] Saved.
+[267] Saved.
+[268] Saved.
+[269] Saved.
+[270] Saved.
+[271] Saved.
+[272] Saved.
+[273] Saved.
+[274] Saved.
+[275] Saved.
+[276] Saved.
+[277] Saved.
+[278] Saved.
+[279] Saved.
+[280] Saved.
+[281] Saved.
+[282] Saved.
+[283] Saved.
+[284] Saved.
+[285] Saved.
+[286] Saved.
+[287] Saved.
+[288] Saved.
+[289] Saved.
+[290] Saved.
+[291] Saved.
+[292] Saved.
+[293] Saved.
+[294] Saved.
+[295] Saved.
+[296] Saved.
+[297] Saved.
+[298] Saved.
+[299] Saved.
+[300] Saved.
+[301] Saved.
+[302] Saved.
+[303] Saved.
+[304] Saved.
+[305] Saved.
+[306] Saved.
+[307] Saved.
+[308] Saved.
+[309] Saved.
+[310] Saved.
+[311] Saved.
+[312] Saved.
+[313] Saved.
+[314] Saved.
+[315] Saved.
+[316] Saved.
+[317] Saved.
+[318] Saved.
+[319] Saved.
+[320] Saved.
+[321] Saved.
+[322] Saved.
+[323] Saved.
+[324] Saved.
+[325] Saved.
+[326] Saved.
+[327] Saved.
+[328] Saved.
+[329] Saved.
+[330] Saved.
+[331] Saved.
+[332] Saved.
+[333] Saved.
+[334] Saved.
+[335] Saved.
+[336] Saved.
+[337] Saved.
+[338] Saved.
+[339] Saved.
+[340] Saved.
+[341] Saved.
+[342] Saved.
+[343] Saved.
+[344] Saved.
+[345] Saved.
+[346] Saved.
+[347] Saved.
+[348] Saved.
+[349] Saved.
+[350] Saved.
+[351] Saved.
+[352] Saved.
+[353] Saved.
+[354] Saved.
+[355] Saved.
+[356] Saved.
+[357] Saved.
+[358] Saved.
+[359] Saved.
+[360] Saved.
+[361] Saved.
+[362] Saved.
+[363] Saved.
+[364] Saved.
+[365] Saved.
+[366] Saved.
+[367] Saved.
+[368] Saved.
+[369] Saved.
+[370] Saved.
+[371] Saved.
+[372] Saved.
+[373] Saved.
+[374] Saved.
+[375] Saved.
+[376] Saved.
+[377] Saved.
+[378] Saved.
+[379] Saved.
+[380] Saved.
+[381] Saved.
+[382] Saved.
+[383] Saved.
+[384] Saved.
+[385] Saved.
+[386] Saved.
+[387] Saved.
+[388] Saved.
+[389] Saved.
+[390] Saved.
+[391] Saved.
+[392] Saved.
+[393] Saved.
+[394] Saved.
+[395] Saved.
+[396] Saved.
+[397] Saved.
+[398] Saved.
+[399] Saved.
+[400] Saved.
+[401] Saved.
+[402] Saved.
+[403] Saved.
+[404] Saved.
+[405] Saved.
+[406] Saved.
+[407] Saved.
+[408] Saved.
+[409] Saved.
+[410] Saved.
+[411] Saved.
+[412] Saved.
+[413] Saved.
+[414] Saved.
+[415] Saved.
+[416] Saved.
+[417] Saved.
+[418] Saved.
+[419] Saved.
+[420] Saved.
+[421] Saved.
+[422] Saved.
+[423] Saved.
+[424] Saved.
+[425] Saved.
+[426] Saved.
+[427] Saved.
+[428] Saved.
+[429] Saved.
+[430] Saved.
+[431] Saved.
+[432] Saved.
+[433] Saved.
+[434] Saved.
+[435] Saved.
+[436] Saved.
+[437] Saved.
+[438] Saved.
+[439] Saved.
+[440] Saved.
+[441] Saved.
+[442] Saved.
+[443] Saved.
+[444] Saved.
+[445] Saved.
+[446] Saved.
+[447] Saved.
+[448] Saved.
+[449] Saved.
+[450] Saved.
+[451] Saved.
+[452] Saved.
+[453] Saved.
+[454] Saved.
+[455] Saved.
+[456] Saved.
+[457] Saved.
+[458] Saved.
+[459] Saved.
+[460] Saved.
+[461] Saved.
+[462] Saved.
+[463] Saved.
+[464] Saved.
+[465] Saved.
+[466] Saved.
+[467] Saved.
+[468] Saved.
+[469] Saved.
+[470] Saved.
+[471] Saved.
+[472] Saved.
+[473] Saved.
+[474] Saved.
+[475] Saved.
+[476] Saved.
+[477] Saved.
+[478] Saved.
+[479] Saved.
+[480] Saved.
+[481] Saved.
+[482] Saved.
+[483] Saved.
+[484] Saved.
+[485] Saved.
+[486] Saved.
+[487] Saved.
+[488] Saved.
+[489] Saved.
+[490] Saved.
+[491] Saved.
+[492] Saved.
+[493] Saved.
+[494] Saved.
+[495] Saved.
+[496] Saved.
+[497] Saved.
+[498] Saved.
+[499] Saved.
+[500] Saved.
+Done.
+
+==========================================
+✅ Gemma-27B SQL job completed!
+Results: /gscratch/tkishore/MAYO_AIM2//logs/Gemma/27B/sql/generated_sql.jsonl
+==========================================
+
+🧹 Cleaning up vLLM server...
+✅ vLLM server stopped

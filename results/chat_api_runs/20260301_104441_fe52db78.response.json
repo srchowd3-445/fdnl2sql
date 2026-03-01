@@ -1,0 +1,55 @@
+{
+  "status": "error",
+  "item_id": null,
+  "question": "Give me gastric cancer related research",
+  "final_sql": "",
+  "confidence_overall": null,
+  "error": "Connection error.",
+  "decomposed_queries": [
+    "Give me gastric cancer related research"
+  ],
+  "retrieval_top": [
+    {
+      "rank": 1,
+      "score": 1.0,
+      "candidate_id": "seed[205].query_1",
+      "candidate_question": "Give me gastric cancer related research",
+      "candidate_sql": "SELECT \"NCT\", \"Trial name\", \"Year\", \"Author\", \"Total sample size\", \"Primary endpoint\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ';"
+    },
+    {
+      "rank": 2,
+      "score": 0.8674988448619843,
+      "candidate_id": "seed[128].query_2",
+      "candidate_question": "Trials where Cancer type equals 'Gastric/GEJ'.",
+      "candidate_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ';"
+    },
+    {
+      "rank": 3,
+      "score": 0.8667414486408234,
+      "candidate_id": "seed[113].query_1",
+      "candidate_question": "Which trials have cancer type Gastric/GEJ?",
+      "candidate_sql": "SELECT \"Author\", \"Originial publication or Follow-up\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ';"
+    }
+  ],
+  "execution_preview": {
+    "error": "Connection error.",
+    "columns": [],
+    "rows": []
+  },
+  "artifacts": {
+    "decompose_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260301_104441_fe52db78/decompose_retrieve.json",
+    "synth_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260301_104441_fe52db78/synth.json",
+    "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260301_104441_fe52db78/eval_ready.json",
+    "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260301_104441_fe52db78/eval_ready.jsonl",
+    "eval_output_json": null
+  },
+  "meta": {
+    "backend": "openai_compat",
+    "model_name": "gemma-3-27b-local",
+    "use_pydantic_schema": true,
+    "logprob_mode": "none",
+    "run_eval": 0,
+    "skip_exec": 0,
+    "run_tag": "20260301_104441_fe52db78"
+  }
+}

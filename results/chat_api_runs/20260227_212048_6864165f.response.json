@@ -1,0 +1,118 @@
+{
+  "status": "ok",
+  "item_id": null,
+  "question": "hello",
+  "final_sql": "SELECT 1 FROM clinical_trials",
+  "confidence_overall": null,
+  "error": null,
+  "decomposed_queries": [
+    "hello"
+  ],
+  "retrieval_top": [
+    {
+      "rank": 1,
+      "score": 0.5897990167140961,
+      "candidate_id": "seed[174].query_3",
+      "candidate_question": "Name of ICI equals Tremelimumab.",
+      "candidate_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Name of ICI\" = 'Tremelimumab';"
+    },
+    {
+      "rank": 2,
+      "score": 0.585951067507267,
+      "candidate_id": "seed[117].query_2",
+      "candidate_question": "What trials have Name of ICI = 'Nivolumab, Ipilimumab' ?",
+      "candidate_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Name of ICI\" = 'Nivolumab, Ipilimumab';"
+    },
+    {
+      "rank": 3,
+      "score": 0.5832537859678268,
+      "candidate_id": "seed[7].query_1",
+      "candidate_question": "What are the NCT and Name of ICI for trials where \"Name of ICI\" equals 'Nivolumab, Ipilimumab'?",
+      "candidate_sql": "SELECT \"NCT\", \"Name of ICI\" FROM clinical_trials WHERE \"Name of ICI\" = 'Nivolumab, Ipilimumab';"
+    }
+  ],
+  "execution_preview": {
+    "error": null,
+    "columns": [
+      "1"
+    ],
+    "rows": [
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ]
+    ]
+  },
+  "artifacts": {
+    "decompose_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260227_212048_6864165f/decompose_retrieve.json",
+    "synth_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260227_212048_6864165f/synth.json",
+    "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260227_212048_6864165f/eval_ready.json",
+    "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260227_212048_6864165f/eval_ready.jsonl",
+    "eval_output_json": null
+  },
+  "meta": {
+    "backend": "openai_compat",
+    "model_name": "gemini-2.5-flash",
+    "use_pydantic_schema": true,
+    "logprob_mode": "none",
+    "run_eval": 0,
+    "skip_exec": 0,
+    "run_tag": "20260227_212048_6864165f"
+  }
+}

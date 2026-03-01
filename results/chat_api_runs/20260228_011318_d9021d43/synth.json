@@ -1,0 +1,252 @@
+{
+  "meta": {
+    "pipeline_stage": "synthesis_from_decomposition_retrieval",
+    "retrieval_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_011318_d9021d43/decompose_retrieve.json",
+    "retrieval_meta": {
+      "backend": "openai_compat",
+      "question": "Give me colorectal trials",
+      "question_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/natural_question_1500.json",
+      "question_index": 0,
+      "batch_mode": 0,
+      "start_index": 0,
+      "limit": 1,
+      "prompt_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_prompt.txt",
+      "schema_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/schema.json",
+      "decompose_examples_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_examples.txt",
+      "seed_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/seed_questions.json",
+      "candidate_json": null,
+      "candidate_sqlite": null,
+      "candidate_table": "query_library",
+      "top_k": 3,
+      "retrieval_per_decomp": 3,
+      "max_decomposed_queries": 5,
+      "sbert": {
+        "model": "/mnt/shared/shared_hf_home/hub/models--sentence-transformers--all-MiniLM-L6-v2/snapshots/c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+        "device": null,
+        "batch_size": 64
+      },
+      "api_base": "https://generativelanguage.googleapis.com/v1beta/openai/",
+      "model_name": "gemini-2.5-flash",
+      "model_path": null,
+      "gen_batch_size": 1,
+      "batch_concurrency": 1,
+      "pipeline_stage": "decompose_then_retrieve"
+    },
+    "retrieval_contract": "expects per-decomposed top-k in retrieval_by_decomposition when available",
+    "backend": "openai_compat",
+    "prompt_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/synthesis_prompt.txt",
+    "schema_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/schema.json",
+    "api_base": "https://generativelanguage.googleapis.com/v1beta/openai/",
+    "model_name": "gemini-2.5-flash",
+    "model_path": null,
+    "db_path": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/database.db",
+    "skip_exec": 0,
+    "logprobs": 0,
+    "logprob_mode": "none",
+    "use_pydantic_schema": true,
+    "synth_evidence_per_decomp": 2,
+    "synth_include_global_merged": false,
+    "synth_where_only_evidence": true,
+    "gen_batch_size": 1,
+    "batch_concurrency": 1,
+    "eval": {
+      "run_eval": 0,
+      "gt_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/natural_question_1500.json",
+      "eval_script": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/eval_run_baselines_v2.py",
+      "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_011318_d9021d43/eval_ready.json",
+      "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_011318_d9021d43/eval_ready.jsonl",
+      "eval_output_json": null,
+      "eval_ran": false
+    },
+    "acceptance": {
+      "config_path": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/decompose_method/seed_acceptance_rules.config",
+      "config_format": "seed_acceptance_rules.config",
+      "acceptance_output_json": null
+    }
+  },
+  "counts": {
+    "total_tasks": 1,
+    "error_tasks": 0,
+    "generated_nonempty_sql": 1,
+    "exec_ok": 1,
+    "with_confidence": 0
+  },
+  "eval_summary": {},
+  "acceptance_summary": {
+    "evaluated": 0,
+    "accepted": 0,
+    "accepted_main_metric": 0,
+    "accepted_non_main": 0,
+    "rejected": 0
+  },
+  "results": [
+    {
+      "task_index": 0,
+      "question_index": null,
+      "item_id": null,
+      "input_question": "Give me colorectal trials",
+      "error": null,
+      "decomposition": {
+        "raw_text": "{\"decomposed_queries\": [\"Which trials have Cancer type = 'Colorectal'?\"]}",
+        "decomposed_queries": [
+          "Which trials have Cancer type = 'Colorectal'?"
+        ],
+        "model_meta": {
+          "provider_call_ok": true,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids_len": 19,
+          "backend": "openai_compat"
+        },
+        "error": null
+      },
+      "retrieval_trace": [
+        {
+          "decomposed_query": "Which trials have Cancer type = 'Colorectal'?",
+          "top1_candidate_id": "seed[9].query_2",
+          "top1_score": 0.9914021492004395
+        }
+      ],
+      "retrieval_by_decomposition": [
+        {
+          "decomposed_query": "Which trials have Cancer type = 'Colorectal'?",
+          "ranked_results": [
+            {
+              "rank": 1,
+              "total_score": 0.9914021492004395,
+              "sbert_score": 0.9914021492004395,
+              "candidate": {
+                "candidate_id": "seed[9].query_2",
+                "question": "Which trials have Cancer type equal to Colorectal?",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Trial name\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal';",
+                "parent_question": "Which trials of Atezolizumab for Colorectal cancer used a multikinase inhibitor as the control?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 2,
+              "total_score": 0.9758086800575256,
+              "sbert_score": 0.9758086800575256,
+              "candidate": {
+                "candidate_id": "seed[95].query_1",
+                "question": "Trials with Cancer type = 'Colorectal'?",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Number of arms\", \"Control arm\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal';",
+                "parent_question": "Find Colorectal cancer trials with at least 4 arms where the control treatment was Chemo/Anti-EGFR?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 3,
+              "total_score": 0.9620954990386963,
+              "sbert_score": 0.9620954990386963,
+              "candidate": {
+                "candidate_id": "seed[196].query_2",
+                "question": "Trials where Cancer type is Colorectal",
+                "sql": "SELECT \"NCT\", \"Author\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Follow-up duration for primary endpoint(s) in months | Overall\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal';",
+                "parent_question": "List trials of Atezolizumab for Multiple Myeloma with overall follow-up longer than 21 months?",
+                "source": "seed_json/decomposed"
+              }
+            }
+          ]
+        }
+      ],
+      "ranked_results": [
+        {
+          "rank": 1,
+          "total_score": 0.9914021492004395,
+          "sbert_score": 0.9914021492004395,
+          "candidate": {
+            "candidate_id": "seed[9].query_2",
+            "question": "Which trials have Cancer type equal to Colorectal?",
+            "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Trial name\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal';",
+            "parent_question": "Which trials of Atezolizumab for Colorectal cancer used a multikinase inhibitor as the control?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 2,
+          "total_score": 0.9758086800575256,
+          "sbert_score": 0.9758086800575256,
+          "candidate": {
+            "candidate_id": "seed[95].query_1",
+            "question": "Trials with Cancer type = 'Colorectal'?",
+            "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Number of arms\", \"Control arm\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal';",
+            "parent_question": "Find Colorectal cancer trials with at least 4 arms where the control treatment was Chemo/Anti-EGFR?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 3,
+          "total_score": 0.9620954990386963,
+          "sbert_score": 0.9620954990386963,
+          "candidate": {
+            "candidate_id": "seed[196].query_2",
+            "question": "Trials where Cancer type is Colorectal",
+            "sql": "SELECT \"NCT\", \"Author\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Follow-up duration for primary endpoint(s) in months | Overall\", \"Cancer type\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal';",
+            "parent_question": "List trials of Atezolizumab for Multiple Myeloma with overall follow-up longer than 21 months?",
+            "source": "seed_json/decomposed"
+          }
+        }
+      ],
+      "synthesized": {
+        "raw_text": "{\"sql\": \"SELECT \\\"NCT\\\", \\\"Author\\\", \\\"Year\\\", \\\"Originial publication or Follow-up\\\", \\\"Cancer type\\\", \\\"Trial name\\\" FROM clinical_trials WHERE \\\"Cancer type\\\" = 'Colorectal'\"}",
+        "final_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Cancer type\", \"Trial name\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal'",
+        "field_logprobs": {},
+        "field_confidence": {},
+        "confidence_overall": null,
+        "model_meta": {
+          "provider_call_ok": true,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids_len": 48,
+          "backend": "openai_compat"
+        }
+      },
+      "execution_preview": {
+        "columns": [
+          "NCT",
+          "Author",
+          "Year",
+          "Originial publication or Follow-up",
+          "Cancer type",
+          "Trial name"
+        ],
+        "rows": [
+          [
+            "NCT02788279",
+            "Eng C et al",
+            2019,
+            "Original publication",
+            "Colorectal",
+            "IMblaze130"
+          ],
+          [
+            "NCT02788279",
+            "Eng C et al (1)",
+            2019,
+            "Original publication",
+            "Colorectal",
+            "IMblaze130"
+          ],
+          [
+            "NCT02870920",
+            "Chen EX et al",
+            2020,
+            "Original publication",
+            "Colorectal",
+            null
+          ],
+          [
+            "NCT02563002",
+            "Andre T et al.",
+            2020,
+            "Original publication",
+            "Colorectal",
+            "MK-3475/Keynote-177"
+          ]
+        ],
+        "error": null
+      }
+    }
+  ]
+}

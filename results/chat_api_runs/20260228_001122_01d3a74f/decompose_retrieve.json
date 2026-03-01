@@ -1,0 +1,149 @@
+{
+  "meta": {
+    "backend": "openai_compat",
+    "question": "List the names of IMblaze130 authors",
+    "question_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/natural_question_1500.json",
+    "question_index": 0,
+    "batch_mode": 0,
+    "start_index": 0,
+    "limit": 1,
+    "prompt_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_prompt.txt",
+    "schema_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/schema.json",
+    "decompose_examples_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_examples.txt",
+    "seed_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/seed_questions.json",
+    "candidate_json": null,
+    "candidate_sqlite": null,
+    "candidate_table": "query_library",
+    "top_k": 3,
+    "retrieval_per_decomp": 3,
+    "max_decomposed_queries": 5,
+    "sbert": {
+      "model": "/mnt/shared/shared_hf_home/hub/models--sentence-transformers--all-MiniLM-L6-v2/snapshots/c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+      "device": null,
+      "batch_size": 64
+    },
+    "api_base": "https://generativelanguage.googleapis.com/v1beta/openai/",
+    "model_name": "gemini-2.5-flash",
+    "model_path": null,
+    "gen_batch_size": 1,
+    "batch_concurrency": 1,
+    "pipeline_stage": "decompose_then_retrieve"
+  },
+  "counts": {
+    "total_tasks": 1,
+    "error_tasks": 0,
+    "with_decomposition": 1,
+    "with_retrieval": 1
+  },
+  "results": [
+    {
+      "task_index": 0,
+      "question_index": null,
+      "item_id": null,
+      "input_question": "List the names of IMblaze130 authors",
+      "error": null,
+      "decomposition": {
+        "raw_text": "{\"decomposed_queries\": [\"Which trials have Trial name = 'IMblaze130'?\"]}",
+        "decomposed_queries": [
+          "Which trials have Trial name = 'IMblaze130'?"
+        ],
+        "model_meta": {
+          "provider_call_ok": true,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids_len": 22,
+          "backend": "openai_compat"
+        },
+        "error": null
+      },
+      "retrieval_trace": [
+        {
+          "decomposed_query": "Which trials have Trial name = 'IMblaze130'?",
+          "top1_candidate_id": "seed[38].query_6",
+          "top1_score": 0.8421175181865692
+        }
+      ],
+      "retrieval_by_decomposition": [
+        {
+          "decomposed_query": "Which trials have Trial name = 'IMblaze130'?",
+          "ranked_results": [
+            {
+              "rank": 1,
+              "total_score": 0.8421175181865692,
+              "sbert_score": 0.8421175181865692,
+              "candidate": {
+                "candidate_id": "seed[38].query_6",
+                "question": "What is the Trial phase for those trials?",
+                "sql": "SELECT \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Esophageal/GEJ' AND \"Class of ICI\" = 'PD1' AND \"Year\" >= 2018;",
+                "parent_question": "Show the NCT identifier, author, publication status, ICI class, cancer type, and trial phase for PD1 trials treating esophageal or gastroesophageal junction cancer that began in 2018 or later?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 2,
+              "total_score": 0.8421175181865692,
+              "sbert_score": 0.8421175181865692,
+              "candidate": {
+                "candidate_id": "seed[74].query_8",
+                "question": "What is the trial phase for those trials?",
+                "sql": "SELECT \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Renal cell' AND \"Name of ICI\" = 'Nivolumab, Ipilimumab' AND \"Follow-up duration for primary endpoint(s) in months | Overall\" > 21;",
+                "parent_question": "List trials of Nivolumab and Ipilimumab for Renal cell cancer with overall follow-up exceeding 21 months?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 3,
+              "total_score": 0.8421175181865692,
+              "sbert_score": 0.8421175181865692,
+              "candidate": {
+                "candidate_id": "seed[104].query_2",
+                "question": "What is the trial phase for those trials?",
+                "sql": "SELECT DISTINCT \"Trial phase\" FROM clinical_trials WHERE \"Name of ICI\" = 'Ipilimumab' AND \"Cancer type\" = 'Non-Small Cell Lung' AND \"Trial phase\" = 'Phase 2' AND \"Originial publication or Follow-up\" = 'Original publication';",
+                "parent_question": "Find the authors and trial phase for Non-Small Cell Lung cancer trials using Ipilimumab that are Phase 2 and were originally published?",
+                "source": "seed_json/decomposed"
+              }
+            }
+          ]
+        }
+      ],
+      "ranked_results": [
+        {
+          "rank": 1,
+          "total_score": 0.8421175181865692,
+          "sbert_score": 0.8421175181865692,
+          "candidate": {
+            "candidate_id": "seed[38].query_6",
+            "question": "What is the Trial phase for those trials?",
+            "sql": "SELECT \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Esophageal/GEJ' AND \"Class of ICI\" = 'PD1' AND \"Year\" >= 2018;",
+            "parent_question": "Show the NCT identifier, author, publication status, ICI class, cancer type, and trial phase for PD1 trials treating esophageal or gastroesophageal junction cancer that began in 2018 or later?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 2,
+          "total_score": 0.8421175181865692,
+          "sbert_score": 0.8421175181865692,
+          "candidate": {
+            "candidate_id": "seed[74].query_8",
+            "question": "What is the trial phase for those trials?",
+            "sql": "SELECT \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Renal cell' AND \"Name of ICI\" = 'Nivolumab, Ipilimumab' AND \"Follow-up duration for primary endpoint(s) in months | Overall\" > 21;",
+            "parent_question": "List trials of Nivolumab and Ipilimumab for Renal cell cancer with overall follow-up exceeding 21 months?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 3,
+          "total_score": 0.8421175181865692,
+          "sbert_score": 0.8421175181865692,
+          "candidate": {
+            "candidate_id": "seed[104].query_2",
+            "question": "What is the trial phase for those trials?",
+            "sql": "SELECT DISTINCT \"Trial phase\" FROM clinical_trials WHERE \"Name of ICI\" = 'Ipilimumab' AND \"Cancer type\" = 'Non-Small Cell Lung' AND \"Trial phase\" = 'Phase 2' AND \"Originial publication or Follow-up\" = 'Original publication';",
+            "parent_question": "Find the authors and trial phase for Non-Small Cell Lung cancer trials using Ipilimumab that are Phase 2 and were originally published?",
+            "source": "seed_json/decomposed"
+          }
+        }
+      ]
+    }
+  ]
+}

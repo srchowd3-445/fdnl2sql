@@ -1,0 +1,69 @@
+{
+  "status": "ok",
+  "item_id": null,
+  "question": "List the IMvigor211 studies",
+  "final_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Cancer type\" FROM clinical_trials WHERE \"Trial name\" LIKE '%imvigor211%';",
+  "confidence_overall": null,
+  "error": null,
+  "decomposed_queries": [
+    "List the IMvigor211 studies"
+  ],
+  "retrieval_top": [
+    {
+      "rank": 1,
+      "score": 0.9103893637657166,
+      "candidate_id": "seed[204].query_1",
+      "candidate_question": "Find me studies from the imvigor211 trials",
+      "candidate_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Cancer type\" FROM clinical_trials WHERE \"Trial name\" LIKE '%imvigor211%';"
+    },
+    {
+      "rank": 2,
+      "score": 0.8757869303226471,
+      "candidate_id": "seed[203].query_1",
+      "candidate_question": "List imblaze13 studies",
+      "candidate_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Cancer type\" FROM clinical_trials WHERE \"Trial name\" LIKE '%imblaze13%'"
+    },
+    {
+      "rank": 3,
+      "score": 0.7655842900276184,
+      "candidate_id": "seed[156].query_6",
+      "candidate_question": "What treatment regimens were used in these studies?",
+      "candidate_sql": "SELECT \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal' AND \"Type of combination\" = 'ICI+MEKi';"
+    }
+  ],
+  "execution_preview": {
+    "error": null,
+    "columns": [
+      "NCT",
+      "Trial name",
+      "Author",
+      "Year",
+      "Cancer type"
+    ],
+    "rows": [
+      [
+        "NCT02302807",
+        "IMvigor211",
+        "Powles T et al",
+        2018,
+        "Bladder"
+      ]
+    ]
+  },
+  "artifacts": {
+    "decompose_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_032949_20f25ed5/decompose_retrieve.json",
+    "synth_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_032949_20f25ed5/synth.json",
+    "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_032949_20f25ed5/eval_ready.json",
+    "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_032949_20f25ed5/eval_ready.jsonl",
+    "eval_output_json": null
+  },
+  "meta": {
+    "backend": "openai_compat",
+    "model_name": "gpt-5-nano",
+    "use_pydantic_schema": true,
+    "logprob_mode": "none",
+    "run_eval": 0,
+    "skip_exec": 0,
+    "run_tag": "20260228_032949_20f25ed5"
+  }
+}

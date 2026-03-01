@@ -1,0 +1,55 @@
+{
+  "status": "error",
+  "item_id": null,
+  "question": "Give me IMpassion130 trials",
+  "final_sql": "",
+  "confidence_overall": null,
+  "error": "Connection error.",
+  "decomposed_queries": [
+    "Give me IMpassion130 trials"
+  ],
+  "retrieval_top": [
+    {
+      "rank": 1,
+      "score": 0.7923915684223175,
+      "candidate_id": "seed[204].query_1",
+      "candidate_question": "Find me studies from the imvigor211 trials",
+      "candidate_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Cancer type\" FROM clinical_trials WHERE \"Trial name\" LIKE '%imvigor211%';"
+    },
+    {
+      "rank": 2,
+      "score": 0.7757720053195953,
+      "candidate_id": "seed[44].query_4",
+      "candidate_question": "What is the Trial phase for these trials?",
+      "candidate_sql": "SELECT \"Trial phase\" FROM clinical_trials WHERE \"Class of ICI\" = 'PD1' AND \"Cancer type\" = 'Bladder' AND \"Trial phase\" = 'Phase 3' AND \"Monotherapy/combination\" = 'Monotherapy';"
+    },
+    {
+      "rank": 3,
+      "score": 0.7757720053195953,
+      "candidate_id": "seed[47].query_9",
+      "candidate_question": "What is the Trial phase for these trials?",
+      "candidate_sql": "SELECT \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Urothelial' AND \"Name of ICI\" = 'Avelumab' AND \"Monotherapy/combination\" = 'combination';"
+    }
+  ],
+  "execution_preview": {
+    "error": "Connection error.",
+    "columns": [],
+    "rows": []
+  },
+  "artifacts": {
+    "decompose_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_030502_33476d1a/decompose_retrieve.json",
+    "synth_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_030502_33476d1a/synth.json",
+    "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_030502_33476d1a/eval_ready.json",
+    "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_030502_33476d1a/eval_ready.jsonl",
+    "eval_output_json": null
+  },
+  "meta": {
+    "backend": "openai_compat",
+    "model_name": "gemma-3-27b-local",
+    "use_pydantic_schema": true,
+    "logprob_mode": "none",
+    "run_eval": 0,
+    "skip_exec": 0,
+    "run_tag": "20260228_030502_33476d1a"
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "meta": {
+    "backend": "openai_compat",
+    "question": "Give me gastric cancer related research",
+    "question_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/natural_question_1500.json",
+    "question_index": 0,
+    "batch_mode": 0,
+    "start_index": 0,
+    "limit": 1,
+    "prompt_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_prompt.txt",
+    "schema_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/schema.json",
+    "decompose_examples_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_examples.txt",
+    "seed_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/seed_questions.json",
+    "candidate_json": null,
+    "candidate_sqlite": null,
+    "candidate_table": "query_library",
+    "top_k": 3,
+    "retrieval_per_decomp": 3,
+    "max_decomposed_queries": 5,
+    "sbert": {
+      "model": "/mnt/shared/shared_hf_home/hub/models--sentence-transformers--all-MiniLM-L6-v2/snapshots/c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+      "device": null,
+      "batch_size": 64
+    },
+    "api_base": "http://127.0.0.1:8000/v1",
+    "model_name": "gemma-3-27b-local",
+    "model_path": null,
+    "gen_batch_size": 1,
+    "batch_concurrency": 1,
+    "pipeline_stage": "decompose_then_retrieve"
+  },
+  "counts": {
+    "total_tasks": 1,
+    "error_tasks": 0,
+    "with_decomposition": 1,
+    "with_retrieval": 1
+  },
+  "results": [
+    {
+      "task_index": 0,
+      "question_index": null,
+      "item_id": null,
+      "input_question": "Give me gastric cancer related research",
+      "error": null,
+      "decomposition": {
+        "raw_text": "",
+        "decomposed_queries": [
+          "Give me gastric cancer related research"
+        ],
+        "model_meta": {
+          "provider_call_ok": false,
+          "backend": "openai_compat"
+        },
+        "error": "Connection error."
+      },
+      "retrieval_trace": [
+        {
+          "decomposed_query": "Give me gastric cancer related research",
+          "top1_candidate_id": "seed[205].query_1",
+          "top1_score": 1.0
+        }
+      ],
+      "retrieval_by_decomposition": [
+        {
+          "decomposed_query": "Give me gastric cancer related research",
+          "ranked_results": [
+            {
+              "rank": 1,
+              "total_score": 1.0,
+              "sbert_score": 1.0,
+              "candidate": {
+                "candidate_id": "seed[205].query_1",
+                "question": "Give me gastric cancer related research",
+                "sql": "SELECT \"NCT\", \"Trial name\", \"Year\", \"Author\", \"Total sample size\", \"Primary endpoint\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ';",
+                "parent_question": "Give me gastric cancer related research",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 2,
+              "total_score": 0.8674988448619843,
+              "sbert_score": 0.8674988448619843,
+              "candidate": {
+                "candidate_id": "seed[128].query_2",
+                "question": "Trials where Cancer type equals 'Gastric/GEJ'.",
+                "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ';",
+                "parent_question": "Find Avelumab trials for gastric cancer that used best supportive care as the control?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 3,
+              "total_score": 0.8667414486408234,
+              "sbert_score": 0.8667414486408234,
+              "candidate": {
+                "candidate_id": "seed[113].query_1",
+                "question": "Which trials have cancer type Gastric/GEJ?",
+                "sql": "SELECT \"Author\", \"Originial publication or Follow-up\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ';",
+                "parent_question": "Which trials for gastric or gastroesophageal junction cancer used a placebo control?",
+                "source": "seed_json/decomposed"
+              }
+            }
+          ]
+        }
+      ],
+      "ranked_results": [
+        {
+          "rank": 1,
+          "total_score": 1.0,
+          "sbert_score": 1.0,
+          "candidate": {
+            "candidate_id": "seed[205].query_1",
+            "question": "Give me gastric cancer related research",
+            "sql": "SELECT \"NCT\", \"Trial name\", \"Year\", \"Author\", \"Total sample size\", \"Primary endpoint\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ';",
+            "parent_question": "Give me gastric cancer related research",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 2,
+          "total_score": 0.8674988448619843,
+          "sbert_score": 0.8674988448619843,
+          "candidate": {
+            "candidate_id": "seed[128].query_2",
+            "question": "Trials where Cancer type equals 'Gastric/GEJ'.",
+            "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ';",
+            "parent_question": "Find Avelumab trials for gastric cancer that used best supportive care as the control?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 3,
+          "total_score": 0.8667414486408234,
+          "sbert_score": 0.8667414486408234,
+          "candidate": {
+            "candidate_id": "seed[113].query_1",
+            "question": "Which trials have cancer type Gastric/GEJ?",
+            "sql": "SELECT \"Author\", \"Originial publication or Follow-up\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ';",
+            "parent_question": "Which trials for gastric or gastroesophageal junction cancer used a placebo control?",
+            "source": "seed_json/decomposed"
+          }
+        }
+      ]
+    }
+  ]
+}

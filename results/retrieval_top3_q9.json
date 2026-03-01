@@ -1,0 +1,84 @@
+{
+  "input_question": "Which clinical trials evaluated Tremelimumab for Melanoma in phase 3?",
+  "ranked_results": [
+    {
+      "rank": 1,
+      "total_score": 0.6699721643540447,
+      "lexical_score": 0.5811804108851115,
+      "char_score": 0.5625,
+      "literal_score": 1.0,
+      "operator_score": 0.5,
+      "column_score": 0.5,
+      "candidate": {
+        "candidate_id": "seed[127].query_3",
+        "question": "Among Tremelimumab trials with Melanoma, which are Phase 3?",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Name of ICI\" = 'Tremelimumab' AND \"Cancer type\" = 'Melanoma' AND \"Trial phase\" = 'Phase 3';",
+        "parent_question": "Find Phase 3 Tremelimumab trials for Melanoma that were originally published?",
+        "source": "seed_json/decomposed"
+      }
+    },
+    {
+      "rank": 2,
+      "total_score": 0.6027952617535559,
+      "lexical_score": 0.4614784456460256,
+      "char_score": 0.46601941747572817,
+      "literal_score": 1.0,
+      "operator_score": 0.5,
+      "column_score": 0.5,
+      "candidate": {
+        "candidate_id": "seed[153].query_2",
+        "question": "What Melanoma trials have Phase 3?",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\" FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma' AND \"Trial phase\" = 'Phase 3';",
+        "parent_question": "Find Phase 3 Ipilimumab trials in Melanoma that were follow-up publications?",
+        "source": "seed_json/decomposed"
+      }
+    },
+    {
+      "rank": 3,
+      "total_score": 0.5996670285042353,
+      "lexical_score": 0.419426191950243,
+      "char_score": 0.5344827586206896,
+      "literal_score": 1.0,
+      "operator_score": 0.5,
+      "column_score": 0.5,
+      "candidate": {
+        "candidate_id": "seed[133].query_3",
+        "question": "Which trials have Trial phase equal to Phase 3?",
+        "sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Trial phase\", \"Cancer type\", \"Trial name\", \"Treatment regimen\" FROM clinical_trials WHERE \"Trial phase\" = 'Phase 3';",
+        "parent_question": "Which clinical trials evaluated Ipilimumab for pancreatic cancer in phase 3?",
+        "source": "seed_json/decomposed"
+      }
+    }
+  ],
+  "top1_sql_preview": {
+    "candidate_id": "seed[127].query_3",
+    "columns": [
+      "NCT",
+      "Author",
+      "Year",
+      "Originial publication or Follow-up",
+      "Name of ICI",
+      "Trial phase",
+      "Cancer type"
+    ],
+    "rows": [
+      [
+        "NCT00257205",
+        "Ribas A et al",
+        2013,
+        "Original publication",
+        "Tremelimumab",
+        "Phase 3",
+        "Melanoma"
+      ]
+    ],
+    "error": null
+  },
+  "weights": {
+    "lexical": 0.4,
+    "char": 0.2,
+    "literal": 0.25,
+    "operator": 0.1,
+    "column": 0.05
+  }
+}

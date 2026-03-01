@@ -1,0 +1,149 @@
+{
+  "meta": {
+    "backend": "openai_compat",
+    "question": "List the IMvigor211 studies",
+    "question_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/natural_question_1500.json",
+    "question_index": 0,
+    "batch_mode": 0,
+    "start_index": 0,
+    "limit": 1,
+    "prompt_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_prompt.txt",
+    "schema_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/schema.json",
+    "decompose_examples_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_examples.txt",
+    "seed_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/seed_questions.json",
+    "candidate_json": null,
+    "candidate_sqlite": null,
+    "candidate_table": "query_library",
+    "top_k": 3,
+    "retrieval_per_decomp": 3,
+    "max_decomposed_queries": 5,
+    "sbert": {
+      "model": "/mnt/shared/shared_hf_home/hub/models--sentence-transformers--all-MiniLM-L6-v2/snapshots/c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+      "device": null,
+      "batch_size": 64
+    },
+    "api_base": "https://api.openai.com/v1",
+    "model_name": "gpt-5-nano",
+    "model_path": null,
+    "gen_batch_size": 1,
+    "batch_concurrency": 1,
+    "pipeline_stage": "decompose_then_retrieve"
+  },
+  "counts": {
+    "total_tasks": 1,
+    "error_tasks": 0,
+    "with_decomposition": 1,
+    "with_retrieval": 1
+  },
+  "results": [
+    {
+      "task_index": 0,
+      "question_index": null,
+      "item_id": null,
+      "input_question": "List the IMvigor211 studies",
+      "error": null,
+      "decomposition": {
+        "raw_text": "",
+        "decomposed_queries": [
+          "List the IMvigor211 studies"
+        ],
+        "model_meta": {
+          "provider_call_ok": true,
+          "finish_reason": "length",
+          "stop_reason": null,
+          "token_ids_len": 2048,
+          "backend": "openai_compat"
+        },
+        "error": "FAILED_TO_PARSE_DECOMPOSITION"
+      },
+      "retrieval_trace": [
+        {
+          "decomposed_query": "List the IMvigor211 studies",
+          "top1_candidate_id": "seed[204].query_1",
+          "top1_score": 0.9103893637657166
+        }
+      ],
+      "retrieval_by_decomposition": [
+        {
+          "decomposed_query": "List the IMvigor211 studies",
+          "ranked_results": [
+            {
+              "rank": 1,
+              "total_score": 0.9103893637657166,
+              "sbert_score": 0.9103893637657166,
+              "candidate": {
+                "candidate_id": "seed[204].query_1",
+                "question": "Find me studies from the imvigor211 trials",
+                "sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Cancer type\" FROM clinical_trials WHERE \"Trial name\" LIKE '%imvigor211%';",
+                "parent_question": "Find me studies from the imvigor211 trials",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 2,
+              "total_score": 0.8757869303226471,
+              "sbert_score": 0.8757869303226471,
+              "candidate": {
+                "candidate_id": "seed[203].query_1",
+                "question": "List imblaze13 studies",
+                "sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Cancer type\" FROM clinical_trials WHERE \"Trial name\" LIKE '%imblaze13%'",
+                "parent_question": "List imblaze13 studies",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 3,
+              "total_score": 0.7655842900276184,
+              "sbert_score": 0.7655842900276184,
+              "candidate": {
+                "candidate_id": "seed[156].query_6",
+                "question": "What treatment regimens were used in these studies?",
+                "sql": "SELECT \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal' AND \"Type of combination\" = 'ICI+MEKi';",
+                "parent_question": "Which studies of colorectal cancer tested combinations of immunotherapy, chemotherapy, and anti-VEGF therapies, and what were their primary endpoints?",
+                "source": "seed_json/decomposed"
+              }
+            }
+          ]
+        }
+      ],
+      "ranked_results": [
+        {
+          "rank": 1,
+          "total_score": 0.9103893637657166,
+          "sbert_score": 0.9103893637657166,
+          "candidate": {
+            "candidate_id": "seed[204].query_1",
+            "question": "Find me studies from the imvigor211 trials",
+            "sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Cancer type\" FROM clinical_trials WHERE \"Trial name\" LIKE '%imvigor211%';",
+            "parent_question": "Find me studies from the imvigor211 trials",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 2,
+          "total_score": 0.8757869303226471,
+          "sbert_score": 0.8757869303226471,
+          "candidate": {
+            "candidate_id": "seed[203].query_1",
+            "question": "List imblaze13 studies",
+            "sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Cancer type\" FROM clinical_trials WHERE \"Trial name\" LIKE '%imblaze13%'",
+            "parent_question": "List imblaze13 studies",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 3,
+          "total_score": 0.7655842900276184,
+          "sbert_score": 0.7655842900276184,
+          "candidate": {
+            "candidate_id": "seed[156].query_6",
+            "question": "What treatment regimens were used in these studies?",
+            "sql": "SELECT \"Treatment regimen\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal' AND \"Type of combination\" = 'ICI+MEKi';",
+            "parent_question": "Which studies of colorectal cancer tested combinations of immunotherapy, chemotherapy, and anti-VEGF therapies, and what were their primary endpoints?",
+            "source": "seed_json/decomposed"
+          }
+        }
+      ]
+    }
+  ]
+}

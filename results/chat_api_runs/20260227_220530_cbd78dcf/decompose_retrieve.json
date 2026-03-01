@@ -1,0 +1,149 @@
+{
+  "meta": {
+    "backend": "openai_compat",
+    "question": "generate tables from 2018",
+    "question_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/natural_question_1500.json",
+    "question_index": 0,
+    "batch_mode": 0,
+    "start_index": 0,
+    "limit": 1,
+    "prompt_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_prompt.txt",
+    "schema_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/schema.json",
+    "decompose_examples_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_examples.txt",
+    "seed_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/seed_questions.json",
+    "candidate_json": null,
+    "candidate_sqlite": null,
+    "candidate_table": "query_library",
+    "top_k": 3,
+    "retrieval_per_decomp": 3,
+    "max_decomposed_queries": 5,
+    "sbert": {
+      "model": "/mnt/shared/shared_hf_home/hub/models--sentence-transformers--all-MiniLM-L6-v2/snapshots/c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+      "device": null,
+      "batch_size": 64
+    },
+    "api_base": "https://generativelanguage.googleapis.com/v1beta/openai/",
+    "model_name": "gemini-2.5-flash",
+    "model_path": null,
+    "gen_batch_size": 1,
+    "batch_concurrency": 1,
+    "pipeline_stage": "decompose_then_retrieve"
+  },
+  "counts": {
+    "total_tasks": 1,
+    "error_tasks": 0,
+    "with_decomposition": 1,
+    "with_retrieval": 1
+  },
+  "results": [
+    {
+      "task_index": 0,
+      "question_index": null,
+      "item_id": null,
+      "input_question": "generate tables from 2018",
+      "error": null,
+      "decomposition": {
+        "raw_text": "{\"decomposed_queries\": [\n  \"Which trials have Year = 2018?\"\n]}",
+        "decomposed_queries": [
+          "Which trials have Year = 2018?"
+        ],
+        "model_meta": {
+          "provider_call_ok": true,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids_len": 23,
+          "backend": "openai_compat"
+        },
+        "error": null
+      },
+      "retrieval_trace": [
+        {
+          "decomposed_query": "Which trials have Year = 2018?",
+          "top1_candidate_id": "seed[47].query_3",
+          "top1_score": 0.9354103803634644
+        }
+      ],
+      "retrieval_by_decomposition": [
+        {
+          "decomposed_query": "Which trials have Year = 2018?",
+          "ranked_results": [
+            {
+              "rank": 1,
+              "total_score": 0.9354103803634644,
+              "sbert_score": 0.9354103803634644,
+              "candidate": {
+                "candidate_id": "seed[47].query_3",
+                "question": "What is the Year of these trials?",
+                "sql": "SELECT \"Year\" FROM clinical_trials WHERE \"Cancer type\" = 'Urothelial' AND \"Name of ICI\" = 'Avelumab' AND \"Monotherapy/combination\" = 'combination';",
+                "parent_question": "Show trials of Avelumab combined with other treatments for Urothelial cancer that include the total sample size and trial phase?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 2,
+              "total_score": 0.9311720728874207,
+              "sbert_score": 0.9311720728874207,
+              "candidate": {
+                "candidate_id": "seed[74].query_3",
+                "question": "What is the year for those trials?",
+                "sql": "SELECT \"Year\" FROM clinical_trials WHERE \"Cancer type\" = 'Renal cell' AND \"Name of ICI\" = 'Nivolumab, Ipilimumab' AND \"Follow-up duration for primary endpoint(s) in months | Overall\" > 21;",
+                "parent_question": "List trials of Nivolumab and Ipilimumab for Renal cell cancer with overall follow-up exceeding 21 months?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 3,
+              "total_score": 0.9159394204616547,
+              "sbert_score": 0.9159394204616547,
+              "candidate": {
+                "candidate_id": "seed[164].query_3",
+                "question": "What are the Years for those trials?",
+                "sql": "SELECT \"Year\" FROM clinical_trials WHERE \"Class of ICI\" = 'PD1' AND \"Cancer type\" = 'Non-Small Cell Lung' AND \"Trial phase\" = 'Phase 3' AND \"Monotherapy/combination\" = 'Combination';",
+                "parent_question": "What are the regimens for Phase 3 combination trials using PD1 in Non-Small Cell Lung cancer?",
+                "source": "seed_json/decomposed"
+              }
+            }
+          ]
+        }
+      ],
+      "ranked_results": [
+        {
+          "rank": 1,
+          "total_score": 0.9354103803634644,
+          "sbert_score": 0.9354103803634644,
+          "candidate": {
+            "candidate_id": "seed[47].query_3",
+            "question": "What is the Year of these trials?",
+            "sql": "SELECT \"Year\" FROM clinical_trials WHERE \"Cancer type\" = 'Urothelial' AND \"Name of ICI\" = 'Avelumab' AND \"Monotherapy/combination\" = 'combination';",
+            "parent_question": "Show trials of Avelumab combined with other treatments for Urothelial cancer that include the total sample size and trial phase?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 2,
+          "total_score": 0.9311720728874207,
+          "sbert_score": 0.9311720728874207,
+          "candidate": {
+            "candidate_id": "seed[74].query_3",
+            "question": "What is the year for those trials?",
+            "sql": "SELECT \"Year\" FROM clinical_trials WHERE \"Cancer type\" = 'Renal cell' AND \"Name of ICI\" = 'Nivolumab, Ipilimumab' AND \"Follow-up duration for primary endpoint(s) in months | Overall\" > 21;",
+            "parent_question": "List trials of Nivolumab and Ipilimumab for Renal cell cancer with overall follow-up exceeding 21 months?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 3,
+          "total_score": 0.9159394204616547,
+          "sbert_score": 0.9159394204616547,
+          "candidate": {
+            "candidate_id": "seed[164].query_3",
+            "question": "What are the Years for those trials?",
+            "sql": "SELECT \"Year\" FROM clinical_trials WHERE \"Class of ICI\" = 'PD1' AND \"Cancer type\" = 'Non-Small Cell Lung' AND \"Trial phase\" = 'Phase 3' AND \"Monotherapy/combination\" = 'Combination';",
+            "parent_question": "What are the regimens for Phase 3 combination trials using PD1 in Non-Small Cell Lung cancer?",
+            "source": "seed_json/decomposed"
+          }
+        }
+      ]
+    }
+  ]
+}

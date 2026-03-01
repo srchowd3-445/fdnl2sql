@@ -1,0 +1,12 @@
+[
+  {
+    "task_index": 0,
+    "question_index": null,
+    "item_id": null,
+    "question": "List Geparrrrnuevo",
+    "natural_question": "List Geparrrrnuevo",
+    "pred_sql": "SELECT \"NCT\", \"Author\", \"Year\", \"Originial publication or Follow-up\", \"Name of ICI\", \"Control arm\", \"Cancer type\", \"Trial name\", \"Treatment regimen\" FROM clinical_trials WHERE \"Name of ICI\" = 'Geparrrrnuevo'",
+    "confidence_overall": null,
+    "error": null
+  }
+]

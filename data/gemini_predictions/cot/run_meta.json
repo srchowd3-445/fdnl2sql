@@ -1,0 +1,20 @@
+{
+  "style": "cot",
+  "total_rows": 1500,
+  "pending_rows": 1500,
+  "processed": 1500,
+  "success": 0,
+  "error": 1500,
+  "cache_hit": 106,
+  "cache_miss": 1394,
+  "started_at": "2026-02-25T06:03:53.335565Z",
+  "model": "gemini-2.5-flash",
+  "api_keys": [
+    "key_1",
+    "key_2"
+  ],
+  "api_key_strategy": "round_robin",
+  "api_key_usage_count": {},
+  "elapsed_sec": 390.597,
+  "completed_at": "2026-02-25T06:10:23.932320Z"
+}

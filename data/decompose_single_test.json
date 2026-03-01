@@ -1,0 +1,28 @@
+[
+  {
+    "idx": 2,
+    "item_id": "extra_101_34_keep_two_select_columns_30",
+    "original_question": "List the names of ipilimumab trials for melanoma where the overall follow-up duration was greater than 21 months?",
+    "gt_sql": "SELECT \"Name of ICI\", \"Follow-up duration for primary endpoint(s) in months | Overall\" FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma' AND \"Name of ICI\" = 'Ipilimumab' AND \"Follow-up duration for primary endpoint(s) in months | Overall\" > 21;",
+    "decomposed_query": {
+      "query_1": {
+        "question": "What trials have Cancer type equal to Melanoma?",
+        "sql": "SELECT \"Name of ICI\", \"Follow-up duration for primary endpoint(s) in months | Overall\" FROM clinical_trials WHERE \"Cancer type\" = 'Melanoma';"
+      },
+      "query_2": {
+        "question": "What trials have Name of ICI equal to Ipilimumab?",
+        "sql": "SELECT \"Name of ICI\", \"Follow-up duration for primary endpoint(s) in months | Overall\" FROM clinical_trials WHERE \"Name of ICI\" = 'Ipilimumab';"
+      },
+      "query_3": {
+        "question": "What trials have Follow-up duration for primary endpoint(s) in months | Overall greater than 21?",
+        "sql": "SELECT \"Name of ICI\", \"Follow-up duration for primary endpoint(s) in months | Overall\" FROM clinical_trials WHERE \"Follow-up duration for primary endpoint(s) in months | Overall\" > 21;"
+      }
+    },
+    "status": "ok",
+    "error": null,
+    "source_question_key": "natural_question",
+    "source_sql_key": "gt_sql",
+    "model": "gpt-5-nano",
+    "custom_id": null
+  }
+]

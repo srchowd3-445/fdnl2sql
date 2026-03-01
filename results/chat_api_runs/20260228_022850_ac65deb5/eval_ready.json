@@ -1,0 +1,12 @@
+[
+  {
+    "task_index": 0,
+    "question_index": null,
+    "item_id": null,
+    "question": "List the names of ipilimumab trials for melanoma where the overall follow-up duration was greater than 21 months?",
+    "natural_question": "List the names of ipilimumab trials for melanoma where the overall follow-up duration was greater than 21 months?",
+    "pred_sql": "",
+    "confidence_overall": null,
+    "error": "Connection error."
+  }
+]
