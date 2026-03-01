@@ -1,0 +1,64 @@
+{
+  "status": "ok",
+  "item_id": null,
+  "question": "ATTRACTION-2 and its corresponding authors",
+  "final_sql": "SELECT \"Author\" FROM clinical_trials WHERE \"Trial name\" = 'ATTRACTION-2'",
+  "confidence_overall": null,
+  "error": null,
+  "decomposed_queries": [
+    "ATTRACTION-2 and its corresponding authors"
+  ],
+  "retrieval_top": [
+    {
+      "rank": 1,
+      "score": 0.6277001053094864,
+      "candidate_id": "seed[200].query_1",
+      "candidate_question": "List IMblaze130 authors",
+      "candidate_sql": "SELECT \"Author\" FROM clinical_trials WHERE \"Trial name\" = 'IMblaze130'"
+    },
+    {
+      "rank": 2,
+      "score": 0.6247961670160294,
+      "candidate_id": "seed[156].query_7",
+      "candidate_question": "What were the primary endpoints reported in these studies?",
+      "candidate_sql": "SELECT \"Primary endpoint\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal' AND \"Type of combination\" = 'ICI+MEKi';"
+    },
+    {
+      "rank": 3,
+      "score": 0.62469632178545,
+      "candidate_id": "seed[156].query_3",
+      "candidate_question": "What is the Originial publication or Follow-up for these studies?",
+      "candidate_sql": "SELECT \"Originial publication or Follow-up\" FROM clinical_trials WHERE \"Cancer type\" = 'Colorectal' AND \"Type of combination\" = 'ICI+MEKi';"
+    }
+  ],
+  "execution_preview": {
+    "error": null,
+    "columns": [
+      "Author"
+    ],
+    "rows": [
+      [
+        "Kang YK et al"
+      ],
+      [
+        "Chen LT et al"
+      ]
+    ]
+  },
+  "artifacts": {
+    "decompose_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_034554_fb3b10b9/decompose_retrieve.json",
+    "synth_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_034554_fb3b10b9/synth.json",
+    "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_034554_fb3b10b9/eval_ready.json",
+    "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_034554_fb3b10b9/eval_ready.jsonl",
+    "eval_output_json": null
+  },
+  "meta": {
+    "backend": "openai_compat",
+    "model_name": "gpt-5-nano",
+    "use_pydantic_schema": true,
+    "logprob_mode": "none",
+    "run_eval": 0,
+    "skip_exec": 0,
+    "run_tag": "20260228_034554_fb3b10b9"
+  }
+}

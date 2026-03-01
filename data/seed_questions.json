@@ -4404,5 +4404,35 @@
         "sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Cancer type\" FROM clinical_trials WHERE \"Trial name\" LIKE '%imvigor211%';"
       }
     }
+  },
+  {
+    "original_question": "Give me gastric cancer related research",
+    "gt_sql": "SELECT \"NCT\", \"Trial name\", \"Year\", \"Author\", \"Total sample size\", \"Primary endpoint\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ';",
+    "decomposed_query": {
+      "query_1": {
+        "question": "Give me gastric cancer related research",
+        "sql": "SELECT \"NCT\", \"Trial name\", \"Year\", \"Author\", \"Total sample size\", \"Primary endpoint\", \"Trial phase\" FROM clinical_trials WHERE \"Cancer type\" = 'Gastric/GEJ';"
+      }
+    }
+  },
+  {
+    "original_question": "ATTRACTION-2 and its corresponding authors as well as the NCT",
+    "gt_sql": "SELECT \"NCT\", \"Author\" FROM clinical_trials WHERE \"Name of ICI\" = 'Nivolumab';",
+    "decomposed_query": {
+      "query_1": {
+        "question": "ATTRACTION-2 and its corresponding authors as well as the NCT",
+        "sql": "SELECT \"NCT\", \"Author\" FROM clinical_trials WHERE \"Name of ICI\" = 'Nivolumab';"
+      }
+    }
+  },
+  {
+    "original_question": "please retrieve authors of imvigor211",
+    "gt_sql": "SELECT \"Author\" FROM clinical_trials WHERE \"Trial name\" = 'IMvigor211';",
+    "decomposed_query": {
+      "query_1": {
+        "question": "please retrieve authors of imvigor211",
+        "sql": "SELECT \"Author\" FROM clinical_trials WHERE \"Trial name\" = 'IMvigor211';"
+      }
+    }
   }
 ]

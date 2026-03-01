@@ -1,0 +1,12 @@
+[
+  {
+    "task_index": 0,
+    "question_index": null,
+    "item_id": null,
+    "question": "Can you retrieve information about IMvigor and their authors?",
+    "natural_question": "Can you retrieve information about IMvigor and their authors?",
+    "pred_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Originial publication or Follow-up\" FROM clinical_trials WHERE \"Trial name\" LIKE '%IMvigor%';",
+    "confidence_overall": null,
+    "error": null
+  }
+]

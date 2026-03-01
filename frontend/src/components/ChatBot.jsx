@@ -21,6 +21,7 @@ async function callPipeline(userMessage) {
     } catch {
       // Keep fallback message
     }
+    console.error("Pipeline API call failed", { status: response.status, errText })
     throw new Error(errText)
   }
 
@@ -246,6 +247,7 @@ export default function ChatBot({ onClose, db, onQueryResult, onClearQuery }) {
         const result = await callPipeline(rerunPrompt)
         const finalSql = result?.final_sql || ''
         if (result?.error || !finalSql) {
+          console.error("Pipeline returned error in rerun", { result, finalSql })
           addMessage('bot', {
             text: `Pipeline error: ${result?.error || 'No SQL generated.'}`,
             isError: true,
@@ -280,6 +282,7 @@ export default function ChatBot({ onClose, db, onQueryResult, onClearQuery }) {
           predictedSql: finalSql,
         })
       } catch (e) {
+        console.error("Pipeline request exception in rerun", e)
         addMessage('bot', { text: `❌ ${String(e)}`, isError: true, showFeedback: false })
       } finally {
         setTyping(false)
@@ -461,6 +464,7 @@ export default function ChatBot({ onClose, db, onQueryResult, onClearQuery }) {
       }
 
       if (result?.error || !finalSql) {
+        console.error("Pipeline returned error in send", { result, finalSql })
         addMessage('bot', {
           text: `Pipeline error: ${result?.error || 'No SQL generated.'}`,
           isError: true,
@@ -485,6 +489,7 @@ export default function ChatBot({ onClose, db, onQueryResult, onClearQuery }) {
         predictedSql: finalSql,
       })
     } catch (err) {
+      console.error("Pipeline request exception in send", err)
       addMessage('bot', { text: `❌ ${err.message}`, isError: true, showFeedback: false })
     } finally {
       setTyping(false)

@@ -1,0 +1,296 @@
+{
+  "meta": {
+    "pipeline_stage": "synthesis_from_decomposition_retrieval",
+    "retrieval_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_034732_e194e05f/decompose_retrieve.json",
+    "retrieval_meta": {
+      "backend": "openai_compat",
+      "question": "ATTRACTION-2 and its corresponding authors as well as the NCT",
+      "question_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/natural_question_1500.json",
+      "question_index": 0,
+      "batch_mode": 0,
+      "start_index": 0,
+      "limit": 1,
+      "prompt_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_prompt.txt",
+      "schema_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/schema.json",
+      "decompose_examples_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/decompose_examples.txt",
+      "seed_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/seed_questions.json",
+      "candidate_json": null,
+      "candidate_sqlite": null,
+      "candidate_table": "query_library",
+      "top_k": 3,
+      "retrieval_per_decomp": 3,
+      "max_decomposed_queries": 5,
+      "sbert": {
+        "model": "/mnt/shared/shared_hf_home/hub/models--sentence-transformers--all-MiniLM-L6-v2/snapshots/c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+        "device": null,
+        "batch_size": 64
+      },
+      "api_base": "https://api.openai.com/v1",
+      "model_name": "gpt-5-nano",
+      "model_path": null,
+      "gen_batch_size": 1,
+      "batch_concurrency": 1,
+      "pipeline_stage": "decompose_then_retrieve"
+    },
+    "retrieval_contract": "expects per-decomposed top-k in retrieval_by_decomposition when available",
+    "backend": "openai_compat",
+    "prompt_file": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/prompt/synthesis_prompt.txt",
+    "schema_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/schema.json",
+    "api_base": "https://api.openai.com/v1",
+    "model_name": "gpt-5-nano",
+    "model_path": null,
+    "db_path": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/database.db",
+    "skip_exec": 0,
+    "logprobs": 0,
+    "logprob_mode": "none",
+    "use_pydantic_schema": true,
+    "synth_evidence_per_decomp": 2,
+    "synth_include_global_merged": false,
+    "synth_where_only_evidence": true,
+    "gen_batch_size": 1,
+    "batch_concurrency": 1,
+    "eval": {
+      "run_eval": 0,
+      "gt_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/data/natural_question_1500.json",
+      "eval_script": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/eval_run_baselines_v2.py",
+      "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_034732_e194e05f/eval_ready.json",
+      "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_034732_e194e05f/eval_ready.jsonl",
+      "eval_output_json": null,
+      "eval_ran": false
+    },
+    "acceptance": {
+      "config_path": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/method/decompose_method/seed_acceptance_rules.config",
+      "config_format": "seed_acceptance_rules.config",
+      "acceptance_output_json": null
+    }
+  },
+  "counts": {
+    "total_tasks": 1,
+    "error_tasks": 0,
+    "generated_nonempty_sql": 1,
+    "exec_ok": 1,
+    "with_confidence": 0
+  },
+  "eval_summary": {},
+  "acceptance_summary": {
+    "evaluated": 0,
+    "accepted": 0,
+    "accepted_main_metric": 0,
+    "accepted_non_main": 0,
+    "rejected": 0
+  },
+  "results": [
+    {
+      "task_index": 0,
+      "question_index": null,
+      "item_id": null,
+      "input_question": "ATTRACTION-2 and its corresponding authors as well as the NCT",
+      "error": null,
+      "decomposition": {
+        "raw_text": "",
+        "decomposed_queries": [
+          "ATTRACTION-2 and its corresponding authors as well as the NCT"
+        ],
+        "model_meta": {
+          "provider_call_ok": true,
+          "finish_reason": "length",
+          "stop_reason": null,
+          "token_ids_len": 2048,
+          "backend": "openai_compat"
+        },
+        "error": "FAILED_TO_PARSE_DECOMPOSITION"
+      },
+      "retrieval_trace": [
+        {
+          "decomposed_query": "ATTRACTION-2 and its corresponding authors as well as the NCT",
+          "top1_candidate_id": "seed[150].query_2",
+          "top1_score": 0.6527428328990936
+        }
+      ],
+      "retrieval_by_decomposition": [
+        {
+          "decomposed_query": "ATTRACTION-2 and its corresponding authors as well as the NCT",
+          "ranked_results": [
+            {
+              "rank": 1,
+              "total_score": 0.6527428328990936,
+              "sbert_score": 0.6527428328990936,
+              "candidate": {
+                "candidate_id": "seed[150].query_2",
+                "question": "What are NCT and Author for trials with Name of ICI equal to Atezolizumab?",
+                "sql": "SELECT \"NCT\", \"Author\" FROM clinical_trials WHERE \"Name of ICI\" = 'Atezolizumab';",
+                "parent_question": "List the NCT identifier and author for Small Cell Lung cancer trials using Atezolizumab where the overall follow-up was more than 13.7 months?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 2,
+              "total_score": 0.6488941311836243,
+              "sbert_score": 0.6488941311836243,
+              "candidate": {
+                "candidate_id": "seed[19].query_4",
+                "question": "NCT identifiers for trials where Originial publication or Follow-up equals Follow-up.",
+                "sql": "SELECT \"NCT\" FROM clinical_trials WHERE \"Originial publication or Follow-up\" = 'Follow-up';",
+                "parent_question": "Find the identifiers and publication status of Phase 3 Atezolizumab trials for Non-Small Cell Lung Cancer that are follow-up publications?",
+                "source": "seed_json/decomposed"
+              }
+            },
+            {
+              "rank": 3,
+              "total_score": 0.6452450454235077,
+              "sbert_score": 0.6452450454235077,
+              "candidate": {
+                "candidate_id": "seed[150].query_3",
+                "question": "What are NCT and Author for trials with Follow-up duration for primary endpoint(s) in months | Overall greater than 13.7?",
+                "sql": "SELECT \"NCT\", \"Author\" FROM clinical_trials WHERE \"Follow-up duration for primary endpoint(s) in months | Overall\" > 13.7;",
+                "parent_question": "List the NCT identifier and author for Small Cell Lung cancer trials using Atezolizumab where the overall follow-up was more than 13.7 months?",
+                "source": "seed_json/decomposed"
+              }
+            }
+          ]
+        }
+      ],
+      "ranked_results": [
+        {
+          "rank": 1,
+          "total_score": 0.6527428328990936,
+          "sbert_score": 0.6527428328990936,
+          "candidate": {
+            "candidate_id": "seed[150].query_2",
+            "question": "What are NCT and Author for trials with Name of ICI equal to Atezolizumab?",
+            "sql": "SELECT \"NCT\", \"Author\" FROM clinical_trials WHERE \"Name of ICI\" = 'Atezolizumab';",
+            "parent_question": "List the NCT identifier and author for Small Cell Lung cancer trials using Atezolizumab where the overall follow-up was more than 13.7 months?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 2,
+          "total_score": 0.6488941311836243,
+          "sbert_score": 0.6488941311836243,
+          "candidate": {
+            "candidate_id": "seed[19].query_4",
+            "question": "NCT identifiers for trials where Originial publication or Follow-up equals Follow-up.",
+            "sql": "SELECT \"NCT\" FROM clinical_trials WHERE \"Originial publication or Follow-up\" = 'Follow-up';",
+            "parent_question": "Find the identifiers and publication status of Phase 3 Atezolizumab trials for Non-Small Cell Lung Cancer that are follow-up publications?",
+            "source": "seed_json/decomposed"
+          }
+        },
+        {
+          "rank": 3,
+          "total_score": 0.6452450454235077,
+          "sbert_score": 0.6452450454235077,
+          "candidate": {
+            "candidate_id": "seed[150].query_3",
+            "question": "What are NCT and Author for trials with Follow-up duration for primary endpoint(s) in months | Overall greater than 13.7?",
+            "sql": "SELECT \"NCT\", \"Author\" FROM clinical_trials WHERE \"Follow-up duration for primary endpoint(s) in months | Overall\" > 13.7;",
+            "parent_question": "List the NCT identifier and author for Small Cell Lung cancer trials using Atezolizumab where the overall follow-up was more than 13.7 months?",
+            "source": "seed_json/decomposed"
+          }
+        }
+      ],
+      "synthesized": {
+        "raw_text": "{\"sql\":\"SELECT \\\"NCT\\\", \\\"Author\\\" FROM clinical_trials WHERE \\\"Name of ICI\\\" = 'Nivolumab';\"}",
+        "final_sql": "SELECT \"NCT\", \"Author\" FROM clinical_trials WHERE \"Name of ICI\" = 'Nivolumab';",
+        "field_logprobs": {},
+        "field_confidence": {},
+        "confidence_overall": null,
+        "model_meta": {
+          "provider_call_ok": true,
+          "finish_reason": "stop",
+          "stop_reason": null,
+          "token_ids_len": 1515,
+          "backend": "openai_compat"
+        }
+      },
+      "execution_preview": {
+        "columns": [
+          "NCT",
+          "Author"
+        ],
+        "rows": [
+          [
+            "NCT02267343",
+            "Kang YK et al"
+          ],
+          [
+            "NCT02105636",
+            "Ferris RL et al"
+          ],
+          [
+            "NCT02105636",
+            "Ferris RL et al"
+          ],
+          [
+            "NCT01668784",
+            "Motzer RJ et al"
+          ],
+          [
+            "NCT01673867",
+            "Borghaei  H et al"
+          ],
+          [
+            "NCT01642004",
+            "Brahmer J et al"
+          ],
+          [
+            "NCT02041533",
+            "Carbone DP et al"
+          ],
+          [
+            "NCT02477826",
+            "Hellmann MD et al (1)"
+          ],
+          [
+            "NCT02477826",
+            "Hellmann MD et al (1)"
+          ],
+          [
+            "NCT02477826",
+            "Hellmann MD et al (2)"
+          ],
+          [
+            "NCT02613507",
+            "Wu YL et al"
+          ],
+          [
+            "NCT01721746",
+            "Weber JS et al"
+          ],
+          [
+            "NCT01721746",
+            "Larkin J et al"
+          ],
+          [
+            "NCT01721772",
+            "Robert C et al"
+          ],
+          [
+            "NCT01721772",
+            "Ascierto PA et al"
+          ],
+          [
+            "NCT02267343",
+            "Chen LT et al"
+          ],
+          [
+            "NCT02569242",
+            "Kato K et al"
+          ],
+          [
+            "NCT02523313",
+            "Zimmer L et al"
+          ],
+          [
+            "NCT02017717",
+            "Reardon DA et al"
+          ],
+          [
+            "NCT01668784",
+            "Motzer RJ et al"
+          ]
+        ],
+        "error": null
+      }
+    }
+  ]
+}

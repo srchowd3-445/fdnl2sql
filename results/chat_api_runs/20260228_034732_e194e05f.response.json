@@ -1,0 +1,139 @@
+{
+  "status": "ok",
+  "item_id": null,
+  "question": "ATTRACTION-2 and its corresponding authors as well as the NCT",
+  "final_sql": "SELECT \"NCT\", \"Author\" FROM clinical_trials WHERE \"Name of ICI\" = 'Nivolumab';",
+  "confidence_overall": null,
+  "error": null,
+  "decomposed_queries": [
+    "ATTRACTION-2 and its corresponding authors as well as the NCT"
+  ],
+  "retrieval_top": [
+    {
+      "rank": 1,
+      "score": 0.6527428328990936,
+      "candidate_id": "seed[150].query_2",
+      "candidate_question": "What are NCT and Author for trials with Name of ICI equal to Atezolizumab?",
+      "candidate_sql": "SELECT \"NCT\", \"Author\" FROM clinical_trials WHERE \"Name of ICI\" = 'Atezolizumab';"
+    },
+    {
+      "rank": 2,
+      "score": 0.6488941311836243,
+      "candidate_id": "seed[19].query_4",
+      "candidate_question": "NCT identifiers for trials where Originial publication or Follow-up equals Follow-up.",
+      "candidate_sql": "SELECT \"NCT\" FROM clinical_trials WHERE \"Originial publication or Follow-up\" = 'Follow-up';"
+    },
+    {
+      "rank": 3,
+      "score": 0.6452450454235077,
+      "candidate_id": "seed[150].query_3",
+      "candidate_question": "What are NCT and Author for trials with Follow-up duration for primary endpoint(s) in months | Overall greater than 13.7?",
+      "candidate_sql": "SELECT \"NCT\", \"Author\" FROM clinical_trials WHERE \"Follow-up duration for primary endpoint(s) in months | Overall\" > 13.7;"
+    }
+  ],
+  "execution_preview": {
+    "error": null,
+    "columns": [
+      "NCT",
+      "Author"
+    ],
+    "rows": [
+      [
+        "NCT02267343",
+        "Kang YK et al"
+      ],
+      [
+        "NCT02105636",
+        "Ferris RL et al"
+      ],
+      [
+        "NCT02105636",
+        "Ferris RL et al"
+      ],
+      [
+        "NCT01668784",
+        "Motzer RJ et al"
+      ],
+      [
+        "NCT01673867",
+        "Borghaei  H et al"
+      ],
+      [
+        "NCT01642004",
+        "Brahmer J et al"
+      ],
+      [
+        "NCT02041533",
+        "Carbone DP et al"
+      ],
+      [
+        "NCT02477826",
+        "Hellmann MD et al (1)"
+      ],
+      [
+        "NCT02477826",
+        "Hellmann MD et al (1)"
+      ],
+      [
+        "NCT02477826",
+        "Hellmann MD et al (2)"
+      ],
+      [
+        "NCT02613507",
+        "Wu YL et al"
+      ],
+      [
+        "NCT01721746",
+        "Weber JS et al"
+      ],
+      [
+        "NCT01721746",
+        "Larkin J et al"
+      ],
+      [
+        "NCT01721772",
+        "Robert C et al"
+      ],
+      [
+        "NCT01721772",
+        "Ascierto PA et al"
+      ],
+      [
+        "NCT02267343",
+        "Chen LT et al"
+      ],
+      [
+        "NCT02569242",
+        "Kato K et al"
+      ],
+      [
+        "NCT02523313",
+        "Zimmer L et al"
+      ],
+      [
+        "NCT02017717",
+        "Reardon DA et al"
+      ],
+      [
+        "NCT01668784",
+        "Motzer RJ et al"
+      ]
+    ]
+  },
+  "artifacts": {
+    "decompose_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_034732_e194e05f/decompose_retrieve.json",
+    "synth_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_034732_e194e05f/synth.json",
+    "eval_ready_json": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_034732_e194e05f/eval_ready.json",
+    "eval_ready_jsonl": "/mnt/data1/srchowd3/demo-branch/MAYO_AIM2/results/chat_api_runs/20260228_034732_e194e05f/eval_ready.jsonl",
+    "eval_output_json": null
+  },
+  "meta": {
+    "backend": "openai_compat",
+    "model_name": "gpt-5-nano",
+    "use_pydantic_schema": true,
+    "logprob_mode": "none",
+    "run_eval": 0,
+    "skip_exec": 0,
+    "run_tag": "20260228_034732_e194e05f"
+  }
+}

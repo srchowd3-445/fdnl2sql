@@ -12,8 +12,8 @@ export default function Header() {
             </svg>
           </div>
           <div className="header-title-group">
-            <h1 className="site-name">test-project</h1>
-            <p className="site-tagline">test-project — description</p>
+            <h1 className="site-name">FD-NL2SQL</h1>
+            <p className="site-tagline">Enhanced Oncology Research</p>
           </div>
         </div>
       </div>
