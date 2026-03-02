@@ -1,1 +1,0 @@
-{"task_index": 0, "question_index": null, "item_id": null, "question": "List Eng C et al 1 and their studies", "natural_question": "List Eng C et al 1 and their studies", "pred_sql": "SELECT \"NCT\", \"Trial name\", \"Author\", \"Year\", \"Originial publication or Follow-up\" FROM clinical_trials WHERE \"Author\" = 'Eng C et al 1'", "confidence_overall": null, "error": null}
