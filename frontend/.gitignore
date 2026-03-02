@@ -25,3 +25,6 @@ dist-ssr
 
 package-lock.json
 
+results
+../results
+../results/chat_api_runs/
