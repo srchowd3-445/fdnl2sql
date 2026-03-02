@@ -64,12 +64,17 @@ def parse_args() -> argparse.Namespace:
     )
     ap.add_argument("--sbert-device", default="")
     ap.add_argument("--sbert-batch-size", type=int, default=64)
+    ap.add_argument("--embed-backend", choices=["sbert", "openai"], default="openai")
+    ap.add_argument("--embed-model", default="text-embedding-3-small")
+    ap.add_argument("--embed-api-base", default="https://api.openai.com/v1")
+    ap.add_argument("--embed-api-key", default="")
+    ap.add_argument("--embed-batch-size", type=int, default=128)
 
     # Backend/model
     ap.add_argument("--backend", choices=["openai_compat", "vllm_local"], default="openai_compat")
-    ap.add_argument("--api-base", default="http://127.0.0.1:8000/v1")
+    ap.add_argument("--api-base", default="https://api.openai.com/v1")
     ap.add_argument("--api-key", default="dummy")
-    ap.add_argument("--model-name", default="gemma-3-27b-local")
+    ap.add_argument("--model-name", default="gpt-5-nano")
     ap.add_argument(
         "--model-path",
         default=(
@@ -192,6 +197,12 @@ def build_decompose_cmd(args: argparse.Namespace, p: Dict[str, Path]) -> List[st
         str(args.sbert_model),
         "--sbert-batch-size",
         str(int(args.sbert_batch_size)),
+        "--embed-backend",
+        str(args.embed_backend),
+        "--embed-model",
+        str(args.embed_model),
+        "--embed-batch-size",
+        str(int(args.embed_batch_size)),
         "--backend",
         str(args.backend),
         "--api-base",
@@ -247,6 +258,8 @@ def build_decompose_cmd(args: argparse.Namespace, p: Dict[str, Path]) -> List[st
         cmd.extend(["--seed-json", str(args.seed_json)])
 
     _append(cmd, "--sbert-device", args.sbert_device)
+    _append(cmd, "--embed-api-base", args.embed_api_base)
+    _append(cmd, "--embed-api-key", args.embed_api_key or args.api_key)
     return cmd
 
 

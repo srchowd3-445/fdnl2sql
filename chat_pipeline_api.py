@@ -53,14 +53,19 @@ app = FastAPI(title="MAYO chat pipeline API", version="1.0")
 
 def _build_cmd(req: ChatQueryRequest, response_json: Path, run_tag: str) -> list[str]:
     backend = os.getenv("CHAT_BACKEND", "openai_compat")
-    api_base = os.getenv("CHAT_API_BASE", "http://127.0.0.1:8000/v1")
+    api_base = os.getenv("CHAT_API_BASE", "https://api.openai.com/v1")
     api_key = os.getenv("CHAT_API_KEY", os.getenv("OPENAI_API_KEY", "dummy"))
-    model_name = os.getenv("CHAT_MODEL_NAME", "gemma-3-27b-local")
+    model_name = os.getenv("CHAT_MODEL_NAME", "gpt-5-nano")
     temperature = os.getenv("CHAT_TEMPERATURE", "1")
     decompose_tokens = os.getenv("CHAT_DECOMPOSE_MAX_NEW_TOKENS", "2048")
     synth_tokens = os.getenv("CHAT_SYNTH_MAX_NEW_TOKENS", "2048")
     logprob_mode = os.getenv("CHAT_LOGPROB_MODE", "none")
     logprobs = os.getenv("CHAT_LOGPROBS", "0")
+    embed_backend = os.getenv("CHAT_EMBED_BACKEND", "openai")
+    embed_model = os.getenv("CHAT_EMBED_MODEL", "text-embedding-3-small")
+    embed_api_base = os.getenv("CHAT_EMBED_API_BASE", "")
+    embed_api_key = os.getenv("CHAT_EMBED_API_KEY", api_key)
+    embed_batch_size = os.getenv("CHAT_EMBED_BATCH_SIZE", "128")
 
     cmd = [
         sys.executable,
@@ -86,6 +91,12 @@ def _build_cmd(req: ChatQueryRequest, response_json: Path, run_tag: str) -> list
         str(logprob_mode),
         "--logprobs",
         str(logprobs),
+        "--embed-backend",
+        str(embed_backend),
+        "--embed-model",
+        str(embed_model),
+        "--embed-batch-size",
+        str(embed_batch_size),
         "--skip-exec",
         str(int(req.skip_exec)),
         "--preview-rows",
@@ -106,6 +117,11 @@ def _build_cmd(req: ChatQueryRequest, response_json: Path, run_tag: str) -> list
     candidate_json = os.getenv("CHAT_CANDIDATE_JSON", "").strip()
     candidate_sqlite = os.getenv("CHAT_CANDIDATE_SQLITE", "").strip()
     seed_json = os.getenv("CHAT_SEED_JSON", "").strip()
+    if embed_api_base:
+        cmd.extend(["--embed-api-base", embed_api_base])
+    if embed_api_key:
+        cmd.append(f"--embed-api-key={embed_api_key}")
+
     if candidate_sqlite:
         cmd.extend(["--candidate-sqlite", candidate_sqlite])
     elif candidate_json:
