@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 
@@ -49,6 +50,22 @@ class SeedFeedbackRequest(BaseModel):
 
 
 app = FastAPI(title="MAYO chat pipeline API", version="1.0")
+
+
+def _parse_cors_origins() -> list[str]:
+    raw = os.getenv("CHAT_CORS_ALLOW_ORIGINS", "*")
+    if not raw.strip():
+        return ["*"]
+    return [x.strip() for x in raw.split(",") if x.strip()]
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_parse_cors_origins(),
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 def _build_cmd(req: ChatQueryRequest, response_json: Path, run_tag: str) -> list[str]:
