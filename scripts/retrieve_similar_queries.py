@@ -18,18 +18,29 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
+import os
 import re
 import sqlite3
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
+try:
+    from openai import OpenAI
+except Exception:
+    OpenAI = None
+
 DEFAULT_SBERT_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 DEFAULT_SBERT_BATCH_SIZE = 64
+DEFAULT_EMBED_BACKEND = "sbert"
+DEFAULT_OPENAI_EMBED_MODEL = "text-embedding-3-small"
 
 _SBERT_BACKEND: Optional[Tuple[Any, Any]] = None
 _SBERT_MODEL_CACHE: Dict[Tuple[str, str], Any] = {}
 _SBERT_CANDIDATE_EMBED_CACHE: Dict[Tuple[str, str, str], Any] = {}
+_OPENAI_CLIENT_CACHE: Dict[Tuple[str, str], Any] = {}
+_OPENAI_CANDIDATE_EMBED_CACHE: Dict[Tuple[str, str, str], Any] = {}
 
 
 @dataclass
@@ -82,6 +93,77 @@ def _get_sbert_model(model_name: str, device: Optional[str]) -> Any:
     return model
 
 
+def _get_openai_client(api_base: Optional[str], api_key: Optional[str]) -> Any:
+    if OpenAI is None:
+        raise RuntimeError("openai package is required for embed-backend=openai")
+
+    base = (api_base or "https://api.openai.com/v1").strip()
+    key = (api_key or os.getenv("OPENAI_API_KEY") or "").strip()
+    if not key:
+        raise RuntimeError("OPENAI_API_KEY (or --embed-api-key) is required for embed-backend=openai")
+
+    cache_key = (base, key)
+    cached = _OPENAI_CLIENT_CACHE.get(cache_key)
+    if cached is not None:
+        return cached
+
+    client = OpenAI(base_url=base, api_key=key)
+    _OPENAI_CLIENT_CACHE[cache_key] = client
+    return client
+
+
+def _normalize_vec(v: Sequence[float]) -> List[float]:
+    arr = [float(x) for x in v]
+    norm = math.sqrt(sum(x * x for x in arr))
+    if norm <= 0.0:
+        return arr
+    return [x / norm for x in arr]
+
+
+def _embed_texts_openai(
+    *,
+    client: Any,
+    model: str,
+    texts: Sequence[str],
+    batch_size: int,
+) -> List[List[float]]:
+    out: List[List[float]] = []
+    bsz = max(1, int(batch_size))
+    for i in range(0, len(texts), bsz):
+        chunk = list(texts[i : i + bsz])
+        if not chunk:
+            continue
+        resp = client.embeddings.create(model=model, input=chunk)
+        data = sorted(list(resp.data), key=lambda x: int(x.index))
+        for item in data:
+            out.append(_normalize_vec(item.embedding))
+    return out
+
+
+def _get_candidate_embeddings_openai(
+    *,
+    candidates: Sequence[Candidate],
+    api_base: Optional[str],
+    api_key: Optional[str],
+    model: str,
+    batch_size: int,
+) -> List[List[float]]:
+    key = ((api_base or "").strip(), model, _candidate_signature(candidates))
+    cached = _OPENAI_CANDIDATE_EMBED_CACHE.get(key)
+    if cached is not None:
+        return cached
+
+    client = _get_openai_client(api_base, api_key)
+    embeddings = _embed_texts_openai(
+        client=client,
+        model=model,
+        texts=[c.question for c in candidates],
+        batch_size=batch_size,
+    )
+    _OPENAI_CANDIDATE_EMBED_CACHE[key] = embeddings
+    return embeddings
+
+
 def _candidate_signature(candidates: Sequence[Candidate]) -> str:
     h = hashlib.sha1()
     for c in candidates:
@@ -122,6 +204,11 @@ def rank_candidates(
     sbert_model: str = DEFAULT_SBERT_MODEL,
     sbert_device: Optional[str] = None,
     sbert_batch_size: int = DEFAULT_SBERT_BATCH_SIZE,
+    embed_backend: str = DEFAULT_EMBED_BACKEND,
+    embed_api_base: Optional[str] = None,
+    embed_api_key: Optional[str] = None,
+    embed_model: str = DEFAULT_OPENAI_EMBED_MODEL,
+    embed_batch_size: int = DEFAULT_SBERT_BATCH_SIZE,
 ) -> List[MatchResult]:
     q = (question or "").strip()
     if not q:
@@ -129,26 +216,55 @@ def rank_candidates(
     if not candidates:
         return []
 
-    model = _get_sbert_model(sbert_model, sbert_device)
-    _, util = _get_sbert_backend()
-
-    query_embedding = model.encode(
-        [q],
-        batch_size=1,
-        convert_to_tensor=True,
-        normalize_embeddings=True,
-        show_progress_bar=False,
-    )
-    candidate_embeddings = _get_candidate_embeddings(candidates, sbert_model, sbert_device, sbert_batch_size)
-
-    cosine_scores = util.cos_sim(query_embedding, candidate_embeddings)[0]
+    backend = (embed_backend or DEFAULT_EMBED_BACKEND).strip().lower()
+    if backend not in {"sbert", "openai"}:
+        raise ValueError(f"Unsupported embed_backend={embed_backend!r}; expected sbert|openai")
 
     scored: List[Tuple[float, Candidate]] = []
-    for i, cand in enumerate(candidates):
-        raw = float(cosine_scores[i])
-        # Map cosine [-1, 1] to [0, 1] for stable reporting.
-        sbert_score = max(0.0, min(1.0, (raw + 1.0) / 2.0))
-        scored.append((sbert_score, cand))
+
+    if backend == "openai":
+        client = _get_openai_client(embed_api_base, embed_api_key)
+        q_vecs = _embed_texts_openai(
+            client=client,
+            model=embed_model,
+            texts=[q],
+            batch_size=1,
+        )
+        if not q_vecs:
+            return []
+        q_vec = q_vecs[0]
+        cand_vecs = _get_candidate_embeddings_openai(
+            candidates=candidates,
+            api_base=embed_api_base,
+            api_key=embed_api_key,
+            model=embed_model,
+            batch_size=embed_batch_size,
+        )
+
+        for i, cand in enumerate(candidates):
+            c_vec = cand_vecs[i]
+            raw = float(sum(a * b for a, b in zip(q_vec, c_vec)))
+            sbert_score = max(0.0, min(1.0, (raw + 1.0) / 2.0))
+            scored.append((sbert_score, cand))
+    else:
+        model = _get_sbert_model(sbert_model, sbert_device)
+        _, util = _get_sbert_backend()
+
+        query_embedding = model.encode(
+            [q],
+            batch_size=1,
+            convert_to_tensor=True,
+            normalize_embeddings=True,
+            show_progress_bar=False,
+        )
+        candidate_embeddings = _get_candidate_embeddings(candidates, sbert_model, sbert_device, sbert_batch_size)
+
+        cosine_scores = util.cos_sim(query_embedding, candidate_embeddings)[0]
+
+        for i, cand in enumerate(candidates):
+            raw = float(cosine_scores[i])
+            sbert_score = max(0.0, min(1.0, (raw + 1.0) / 2.0))
+            scored.append((sbert_score, cand))
 
     scored.sort(key=lambda x: x[0], reverse=True)
 
@@ -372,6 +488,11 @@ def build_arg_parser() -> argparse.ArgumentParser:
     ap.add_argument("--sbert-model", default=DEFAULT_SBERT_MODEL, help="Sentence-Transformer model name/path")
     ap.add_argument("--sbert-device", default=None, help="Optional device override, e.g. cpu/cuda")
     ap.add_argument("--sbert-batch-size", type=int, default=DEFAULT_SBERT_BATCH_SIZE, help="Embedding batch size")
+    ap.add_argument("--embed-backend", choices=["sbert", "openai"], default=DEFAULT_EMBED_BACKEND)
+    ap.add_argument("--embed-model", default=DEFAULT_OPENAI_EMBED_MODEL, help="OpenAI embedding model when --embed-backend=openai")
+    ap.add_argument("--embed-api-base", default="", help="OpenAI-compatible embedding API base; default https://api.openai.com/v1")
+    ap.add_argument("--embed-api-key", default="", help="Embedding API key; default OPENAI_API_KEY env")
+    ap.add_argument("--embed-batch-size", type=int, default=128, help="Batch size for OpenAI embedding calls")
 
     ap.add_argument("--top-k", type=int, default=5, help="Top-k candidates to return")
     ap.add_argument("--db-path", help="Optional SQLite DB path to execute top-ranked SQL for preview")
@@ -415,6 +536,11 @@ def main() -> None:
             sbert_model=args.sbert_model,
             sbert_device=args.sbert_device,
             sbert_batch_size=args.sbert_batch_size,
+            embed_backend=args.embed_backend,
+            embed_api_base=(args.embed_api_base or None),
+            embed_api_key=(args.embed_api_key or None),
+            embed_model=args.embed_model,
+            embed_batch_size=int(args.embed_batch_size),
         )
     except RuntimeError as e:
         raise SystemExit(str(e)) from e
@@ -423,10 +549,15 @@ def main() -> None:
     print("INPUT QUESTION")
     print(query_text)
     print("=" * 90)
-    print("Scoring backend: SBERT cosine similarity")
-    print(f"SBERT model: {args.sbert_model}")
-    if args.sbert_device:
-        print(f"SBERT device override: {args.sbert_device}")
+    print(f"Scoring backend: {args.embed_backend}")
+    if args.embed_backend == "openai":
+        print(f"Embedding model: {args.embed_model}")
+        if args.embed_api_base:
+            print(f"Embedding API base override: {args.embed_api_base}")
+    else:
+        print(f"SBERT model: {args.sbert_model}")
+        if args.sbert_device:
+            print(f"SBERT device override: {args.sbert_device}")
     print(f"Candidates loaded: {len(candidates)}")
     print(f"Top-k: {len(ranked)}")
     print("=" * 90)
@@ -465,11 +596,16 @@ def main() -> None:
     if args.output_json:
         payload = {
             "input_question": query_text,
-            "retrieval_backend": "sbert",
+            "retrieval_backend": args.embed_backend,
             "sbert": {
                 "model": args.sbert_model,
                 "device": args.sbert_device,
                 "batch_size": int(args.sbert_batch_size),
+            },
+            "openai_embedding": {
+                "model": args.embed_model,
+                "api_base": (args.embed_api_base or "https://api.openai.com/v1"),
+                "batch_size": int(args.embed_batch_size),
             },
             "ranked_results": [
                 {
