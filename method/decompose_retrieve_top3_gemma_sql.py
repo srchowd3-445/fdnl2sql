@@ -74,6 +74,11 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--sbert-model", default="sentence-transformers/all-MiniLM-L6-v2")
     ap.add_argument("--sbert-device", default=None)
     ap.add_argument("--sbert-batch-size", type=int, default=64)
+    ap.add_argument("--embed-backend", choices=["sbert", "openai"], default="openai")
+    ap.add_argument("--embed-model", default="text-embedding-3-small")
+    ap.add_argument("--embed-api-base", default="https://api.openai.com/v1")
+    ap.add_argument("--embed-api-key", default="")
+    ap.add_argument("--embed-batch-size", type=int, default=128)
 
     ap.add_argument("--schema-json", default=str(root / "data" / "schema.json"))
     ap.add_argument("--prompt-file", default=str(root / "method" / "prompt" / "decompose_prompt.txt"))
@@ -513,6 +518,11 @@ def retrieve_from_decomposition(
     sbert_model: str,
     sbert_device: Optional[str],
     sbert_batch_size: int,
+    embed_backend: str,
+    embed_model: str,
+    embed_api_base: Optional[str],
+    embed_api_key: Optional[str],
+    embed_batch_size: int,
 ) -> Tuple[List[Any], List[Dict[str, Any]], List[Dict[str, Any]]]:
     traces: List[Dict[str, Any]] = []
     best_by_candidate_id: Dict[str, Tuple[float, Any, str]] = {}
@@ -530,6 +540,11 @@ def retrieve_from_decomposition(
             sbert_model=sbert_model,
             sbert_device=sbert_device,
             sbert_batch_size=sbert_batch_size,
+            embed_backend=embed_backend,
+            embed_model=embed_model,
+            embed_api_base=embed_api_base,
+            embed_api_key=embed_api_key,
+            embed_batch_size=embed_batch_size,
         )
 
         top1 = ranked_part[0] if ranked_part else None
@@ -769,6 +784,11 @@ def process_task(
                 sbert_model=args.sbert_model,
                 sbert_device=args.sbert_device,
                 sbert_batch_size=int(args.sbert_batch_size),
+                embed_backend=str(args.embed_backend),
+                embed_model=str(args.embed_model),
+                embed_api_base=(str(args.embed_api_base).strip() or None),
+                embed_api_key=(str(args.embed_api_key).strip() or None),
+                embed_batch_size=int(args.embed_batch_size),
             )
             if not ranked:
                 retrieval_error = "EMPTY_RETRIEVAL_RESULTS"
@@ -871,6 +891,11 @@ def main() -> None:
                 sbert_model=args.sbert_model,
                 sbert_device=args.sbert_device,
                 sbert_batch_size=int(args.sbert_batch_size),
+                embed_backend=str(args.embed_backend),
+                embed_model=str(args.embed_model),
+                embed_api_base=(str(args.embed_api_base).strip() or None),
+                embed_api_key=(str(args.embed_api_key).strip() or None),
+                embed_batch_size=int(args.embed_batch_size),
             )
         except Exception:
             pass
@@ -972,6 +997,12 @@ def main() -> None:
                 "model": args.sbert_model,
                 "device": args.sbert_device,
                 "batch_size": int(args.sbert_batch_size),
+            },
+            "embedding": {
+                "backend": str(args.embed_backend),
+                "model": str(args.embed_model),
+                "api_base": (str(args.embed_api_base).strip() or "https://api.openai.com/v1") if str(args.embed_backend) == "openai" else None,
+                "batch_size": int(args.embed_batch_size),
             },
             "api_base": args.api_base if args.backend == "openai_compat" else None,
             "model_name": args.model_name if args.backend == "openai_compat" else None,
