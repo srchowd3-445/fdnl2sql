@@ -1,8 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 
+const API_BASE = (import.meta.env.VITE_ORCHESTRATOR_PROXY_TARGET || "").trim().replace(/\/$/, "")
+const apiUrl = (path) => (API_BASE ? `${API_BASE}${path}` : path)
+
 // Pipeline API call
 async function callPipeline(userMessage) {
-  const response = await fetch('/api/chat-query', {
+  const response = await fetch(apiUrl('/api/chat-query'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ question: userMessage, skip_exec: 0, preview_rows: 20 }),
@@ -29,7 +32,7 @@ async function callPipeline(userMessage) {
 }
 
 async function saveSeedFeedback(question, predictedSql) {
-  const response = await fetch('/api/seed-feedback', {
+  const response = await fetch(apiUrl('/api/seed-feedback'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ question, predicted_sql: predictedSql }),
@@ -211,7 +214,7 @@ export default function ChatBot({ onClose, db, onQueryResult, onClearQuery }) {
   }, [])
 
   useEffect(() => {
-    fetch('/health')
+    fetch(apiUrl('/health'))
       .then(r => setApiHealthy(r.ok))
       .catch(() => setApiHealthy(false))
   }, [])
